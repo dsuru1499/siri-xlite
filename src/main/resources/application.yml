@@ -1,0 +1,20 @@
+siri:
+  version: 2.0:FR-IDF-2.4
+  participantRef: default
+  port: 8080
+
+
+logging:
+  level:
+    root: INFO
+    org.springframework.data.mongodb.core.ReactiveMongoTemplate: DEBUG
+    org.mongodb: INFO
+
+spring:
+  data:
+    mongodb:
+      database: siri
+
+infinispan:
+  embedded:
+    config-xml: infinispan.xml
