@@ -1,8 +1,8 @@
 package siri_xlite.service.lines_discovery;
 
+import io.vertx.ext.web.RoutingContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import siri_xlite.common.Configuration;
 import siri_xlite.service.common.DefaultParameters;
 import siri_xlite.service.common.SiriException;
 
@@ -11,8 +11,8 @@ import siri_xlite.service.common.SiriException;
 public class LinesDiscoveryParameters extends DefaultParameters {
 
     @Override
-    public void configure(Configuration properties) throws SiriException {
-        super.configure(properties);
+    public void configure(RoutingContext context) throws SiriException {
+        super.configure(context);
     }
 
     @Override

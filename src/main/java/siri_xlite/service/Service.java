@@ -104,7 +104,7 @@ public class Service {
 
             MongoCollection<Document> collection = database.getCollection("vehicle_journey", Document.class);
             collection.drop();
-            collection.createIndex(Indexes.ascending("calls.stopPointRef", "calls.order"));
+            collection.createIndex(Indexes.ascending("calls.stopPointRef", "calls.aimedDepartureTime"));
 
             List<Document> documents = new ArrayList<>(BULK_SIZE);
 

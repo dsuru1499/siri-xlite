@@ -2,30 +2,25 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.model.Call;
+import org.bson.Document;
 import uk.org.siri.siri.CallStatusEnumeration;
 
-import java.io.IOException;
-
-public class MonitoredStopArrivalStatusGroupMarshaller implements Marshaller<Call> {
+public class MonitoredStopArrivalStatusGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<Call> instance = new MonitoredStopArrivalStatusGroupMarshaller();
+    private static final Marshaller<Document> instance = new MonitoredStopArrivalStatusGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, Call source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set arrivalStatus
-        int arrivalStatus = source.arrivalStatus();
-        writer.writeStringField("ArrivalStatus", CallStatusEnumeration.values()[arrivalStatus].name());
+        int arrivalStatus = source.getInteger("arrivalStatus");
+        writeField(writer, "ArrivalPlatformName", CallStatusEnumeration.values()[arrivalStatus].name());
 
         // arrivalProximityText :string;
 
         // set arrivalPlatformName
-        String arrivalPlatformName = source.arrivalPlatformName();
-        if (arrivalPlatformName != null && !arrivalPlatformName.isEmpty()) {
-            writer.writeStringField("ArrivalPlatformName", arrivalPlatformName);
-        }
+        writeField(writer, "ArrivalPlatformName", source.getString("arrivalPlatformName"));
 
         // arrivalBoardingActivity :byte;
         // arrivalStopAssignment :StopAssignment;

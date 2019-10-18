@@ -2,36 +2,23 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import siri_xlite.model.VehicleJourney;
+import org.bson.Document;
 
-import java.io.IOException;
 import java.util.List;
 
-public class JourneyInfoGroupMarshaller implements Marshaller<VehicleJourney> {
+public class JourneyInfoGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<VehicleJourney> instance = new JourneyInfoGroupMarshaller();
+    private static final Marshaller<Document> instance = new JourneyInfoGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, VehicleJourney source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set vehicleJourneyName
-        String vehicleJourneyName = source.vehicleJourneyName();
-        if (StringUtils.isNotEmpty(vehicleJourneyName)) {
-            writer.writeStringField("VehicleJourneyName", vehicleJourneyName);
-        }
+        writeField(writer, "VehicleJourneyName", source.getString("vehicleJourneyName"));
 
         // set journeyNote
-        List<String> journeyNotes = source.journeyNotes();
-        if (CollectionUtils.isNotEmpty(journeyNotes)) {
-            writer.writeArrayFieldStart("JourneyNote");
-            for (String journeyNote : journeyNotes) {
-                writer.writeString(journeyNote);
-            }
-            writer.writeEndArray();
-        }
+        writeArray(writer, "", source.get("JourneyNote", List.class));
 
         // publicContact :SimpleContact;
         // operationsContact:SimpleContact;

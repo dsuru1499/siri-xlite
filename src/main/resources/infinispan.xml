@@ -5,8 +5,11 @@
         xmlns="urn:infinispan:config:9.4">
     <cache-container>
         <transport cluster="siri"/>
-        <replicated-cache name="lines" mode="SYNC">
-            <expiration lifespan="60000"/>
-        </replicated-cache>
+        <invalidation-cache name="lines" mode="SYNC">
+            <expiration lifespan="180000"/>
+        </invalidation-cache>
+        <invalidation-cache name="stoppoints" mode="SYNC">
+            <expiration lifespan="180000"/>
+        </invalidation-cache>
     </cache-container>
 </infinispan>

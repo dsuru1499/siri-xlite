@@ -2,17 +2,15 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.model.Call;
+import org.bson.Document;
 
-import java.io.IOException;
-
-public class CallNoteGroupMarshaller implements Marshaller<Call> {
+public class CallNoteGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<Call> instance = new CallNoteGroupMarshaller();
+    private static final Marshaller<Document> instance = new CallNoteGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, Call source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // callNote :[string];
     }

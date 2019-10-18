@@ -2,34 +2,27 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.model.VehicleJourney;
+import org.bson.Document;
 
-import java.io.IOException;
-
-public class EstimatedTimetableAlterationGroupMarshaller implements Marshaller<VehicleJourney> {
+public class EstimatedTimetableAlterationGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<VehicleJourney> instance = new EstimatedTimetableAlterationGroupMarshaller();
+    private static final Marshaller<Document> instance = new EstimatedTimetableAlterationGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, VehicleJourney source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
-        // set datedVehicleJourneyRef
-        String datedVehicleJourneyRef = source.datedVehicleJourneyRef();
-        if (datedVehicleJourneyRef != null && !datedVehicleJourneyRef.isEmpty()) {
-            writer.writeStringField("DatedVehicleJourneyRef", datedVehicleJourneyRef);
-        }
+        // set datedDocumentRef
+        writeField(writer, "DatedDocumentRef", source.getString("datedDocumentRef"));
 
-        // datedVehicleJourneyIndirectRef :string;
-        // estimatedVehicleJourneyCode :string;
+        // datedDocumentIndirectRef :string;
+        // estimatedDocumentCode :string;
 
         // set extraJourney
-        boolean extraJourney = source.extraJourney();
-        writer.writeBooleanField("ExtraJourney", extraJourney);
+        writeField(writer, "ExtraJourney", source.getBoolean("extraJourney"));
 
         // set cancellation
-        boolean cancellation = source.cancellation();
-        writer.writeBooleanField("Cancellation", cancellation);
+        writeField(writer, "Cancellation", source.getString("cancellation"));
 
     }
 

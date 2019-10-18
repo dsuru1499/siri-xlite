@@ -9,31 +9,16 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.Date;
 import java.util.function.Consumer;
 
 public interface JsonUtils {
 
     JsonFactory factory = new JsonFactory();
-
-    default void writeStartDocument(JsonGenerator writer) {
-        try {
-            writer.writeStartObject();
-            writer.writeObjectFieldStart("Siri");
-        } catch (IOException e) {
-            ExceptionUtils.wrapAndThrow(e);
-        }
-    }
-
-    default void writeEndDocument(JsonGenerator writer) {
-        try {
-            writer.writeEndObject();
-            writer.writeEndObject();
-            writer.flush();
-        } catch (IOException e) {
-            ExceptionUtils.wrapAndThrow(e);
-        }
-    }
 
     default JsonGenerator createJsonWriter(final OutputStream out) {
         JsonGenerator result = null;
@@ -57,7 +42,7 @@ public interface JsonUtils {
         }
     }
 
-    default void write(JsonGenerator writer, String name, String value) {
+    default void writeField(JsonGenerator writer, String name, String value) {
         try {
             if (StringUtils.isNotEmpty(value)) {
                 writer.writeStringField(name, value);
@@ -68,7 +53,28 @@ public interface JsonUtils {
         }
     }
 
-    default void write(JsonGenerator writer, String name, Boolean value) {
+    default void writeField(JsonGenerator writer, String name, Date value) {
+        try {
+            if (value != null) {
+                LocalDateTime date = LocalDateTime.ofInstant(value.toInstant(), ZoneId.systemDefault());
+                writer.writeStringField(name, date.format(DateTimeFormatter.ISO_DATE_TIME));
+            }
+        } catch (IOException e) {
+            ExceptionUtils.wrapAndThrow(e);
+        }
+    }
+
+    default void writeField(JsonGenerator writer, String name, LocalDateTime value) {
+        try {
+            if (value != null) {
+                writer.writeStringField(name, value.format(DateTimeFormatter.ISO_DATE_TIME));
+            }
+        } catch (IOException e) {
+            ExceptionUtils.wrapAndThrow(e);
+        }
+    }
+
+    default void writeField(JsonGenerator writer, String name, Boolean value) {
         try {
             if (value != null) {
                 writer.writeBooleanField(name, value);
@@ -78,7 +84,7 @@ public interface JsonUtils {
         }
     }
 
-    default void write(JsonGenerator writer, String name, Integer value) {
+    default void writeField(JsonGenerator writer, String name, Integer value) {
         try {
             if (value != null) {
                 writer.writeNumberField(name, value);
@@ -88,7 +94,7 @@ public interface JsonUtils {
         }
     }
 
-    default void write(JsonGenerator writer, String name, Long value) {
+    default void writeField(JsonGenerator writer, String name, Long value) {
         try {
             if (value != null) {
                 writer.writeNumberField(name, value);
@@ -98,7 +104,7 @@ public interface JsonUtils {
         }
     }
 
-    default void write(JsonGenerator writer, String name, Float value) {
+    default void writeField(JsonGenerator writer, String name, Float value) {
         try {
             if (value != null) {
                 writer.writeNumberField(name, value);
@@ -108,7 +114,7 @@ public interface JsonUtils {
         }
     }
 
-    default void write(JsonGenerator writer, String name, Double value) {
+    default void writeField(JsonGenerator writer, String name, Double value) {
         try {
             if (value != null) {
                 writer.writeNumberField(name, value);
@@ -118,7 +124,7 @@ public interface JsonUtils {
         }
     }
 
-    default void write(JsonGenerator writer, String name, BigDecimal value) {
+    default void writeField(JsonGenerator writer, String name, BigDecimal value) {
         try {
             if (value != null) {
                 writer.writeNumberField(name, value);
@@ -128,7 +134,7 @@ public interface JsonUtils {
         }
     }
 
-    default <T> void write(JsonGenerator writer, String name, Collection<T> values) {
+    default <T> void writeArray(JsonGenerator writer, String name, Collection<T> values) {
         try {
             if (CollectionUtils.isNotEmpty(values)) {
                 writer.writeArrayFieldStart(name);
@@ -142,7 +148,7 @@ public interface JsonUtils {
         }
     }
 
-    default <T> void write(JsonGenerator writer, String name, Collection<T> values, Consumer<T> consumer) {
+    default <T> void writeArray(JsonGenerator writer, String name, Collection<T> values, Consumer<T> consumer) {
         try {
             if (CollectionUtils.isNotEmpty(values)) {
                 writer.writeArrayFieldStart(name);
@@ -154,21 +160,25 @@ public interface JsonUtils {
         }
     }
 
-    default void write(JsonGenerator writer, Runnable action) {
+    default <T> void writeObject(JsonGenerator writer, T value, Consumer<T> consumer) {
         try {
-            writer.writeStartObject();
-            action.run();
-            writer.writeEndObject();
+            if (value != null) {
+                writer.writeStartObject();
+                consumer.accept(value);
+                writer.writeEndObject();
+            }
         } catch (IOException e) {
             ExceptionUtils.wrapAndThrow(e);
         }
     }
 
-    default void write(JsonGenerator writer, String name, Runnable action) {
+    default <T> void writeObject(JsonGenerator writer, String name, T value, Consumer<T> consumer) {
         try {
-            writer.writeObjectFieldStart(name);
-            action.run();
-            writer.writeEndObject();
+            if (value != null) {
+                writer.writeObjectFieldStart(name);
+                consumer.accept(value);
+                writer.writeEndObject();
+            }
         } catch (IOException e) {
             ExceptionUtils.wrapAndThrow(e);
         }

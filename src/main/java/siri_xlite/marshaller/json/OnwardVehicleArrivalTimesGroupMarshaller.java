@@ -2,29 +2,21 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.common.DateTimeUtils;
-import siri_xlite.model.Call;
-import siri_xlite.service.common.SiriStructureFactory;
+import org.bson.Document;
 
-import java.io.IOException;
-
-public class OnwardVehicleArrivalTimesGroupMarshaller implements Marshaller<Call> {
+public class OnwardVehicleArrivalTimesGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<Call> instance = new OnwardVehicleArrivalTimesGroupMarshaller();
+    private static final Marshaller<Document> instance = new OnwardVehicleArrivalTimesGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, Call source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set aimedArrivalTime
-        long aimedArrivalTime = source.aimedArrivalTime();
-        writer.writeStringField("AimedArrivalTime",
-                SiriStructureFactory.createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(aimedArrivalTime)));
+        writeField(writer, "AimedArrivalTime", source.getDate("aimedArrivalTime"));
 
         // set expectedArrivalTime
-        long expectedArrivalTime = source.expectedArrivalTime();
-        writer.writeStringField("ExpectedArrivalTime",
-                SiriStructureFactory.createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(expectedArrivalTime)));
+        writeField(writer, "ExpectedArrivalTime", source.getDate("expectedArrivalTime"));
 
         // expectedArrivalPredictionQuality :PredictionQuality;
 

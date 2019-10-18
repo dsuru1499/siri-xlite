@@ -2,24 +2,21 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.model.VehicleJourney;
+import org.bson.Document;
 
-import java.io.IOException;
-
-public class TimetableRealtimeInfoGroupMarshaller implements Marshaller<VehicleJourney> {
+public class TimetableRealtimeInfoGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<VehicleJourney> instance = new TimetableRealtimeInfoGroupMarshaller();
+    private static final Marshaller<Document> instance = new TimetableRealtimeInfoGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, VehicleJourney source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
+
         // set monitored
-        boolean monitored = source.monitored();
-        writer.writeBooleanField("Monitored", monitored);
+        writeField(writer, "Monitored", source.getBoolean("monitored"));
 
         // set headwayService
-        boolean headwayService = source.headwayService();
-        writer.writeBooleanField("HeadwayService", headwayService);
+        writeField(writer, "HeadwayService", source.getBoolean("headwayService"));
 
     }
 

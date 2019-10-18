@@ -1,8 +1,9 @@
 siri:
+  port: 8080
   version: 2.0:FR-IDF-2.4
   participantRef: default
-  port: 8080
-
+  producerDomain: default
+  producerName: default
 
 logging:
   level:
@@ -15,6 +16,8 @@ spring:
     mongodb:
       database: siri
 
+
 infinispan:
   embedded:
+    enabled: false
     config-xml: infinispan.xml

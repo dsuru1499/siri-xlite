@@ -2,68 +2,42 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.model.VehicleJourney;
+import org.bson.Document;
 import uk.org.siri.siri.VehicleModesEnumeration;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class JourneyPatternInfoGroupMarshaller implements Marshaller<VehicleJourney> {
+public class JourneyPatternInfoGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<VehicleJourney> instance = new JourneyPatternInfoGroupMarshaller();
+    private static final Marshaller<Document> instance = new JourneyPatternInfoGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, VehicleJourney source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set journeyPatternRef
-        String journeyPatternRef = source.journeyPatternRef();
-        if (journeyPatternRef != null && !journeyPatternRef.isEmpty()) {
-            writer.writeStringField("JourneyPatternRef", journeyPatternRef);
-        }
+        writeField(writer, "JourneyPatternRef", source.getString("journeyPatternRef"));
 
         // set journeyPatternName
-        String journeyPatternName = source.journeyPatternName();
-        if (journeyPatternName != null && !journeyPatternName.isEmpty()) {
-            writer.writeStringField("JourneyPatternName", journeyPatternName);
-        }
+        writeField(writer, "JourneyPatternName", source.getString("journeyPatternName"));
 
         // set vehicleMode
-        List<Integer> list = source.vehicleModes();
-        if (list.size() > 0) {
-            StringBuffer text = null;
-            for (Integer value : list) {
-                VehicleModesEnumeration vehicleMode = (VehicleModesEnumeration.values()[value]);
-                if (text == null) {
-                    text = new StringBuffer();
-                    text.append(vehicleMode.name());
-                } else {
-                    text.append(',');
-                    text.append(vehicleMode.name());
-                }
-            }
-            writer.writeStringField("VehicleMode", text.toString());
-        }
+        List<Integer> list = source.get("vehicleModes", List.class);
+        String text = list.stream().map(t -> VehicleModesEnumeration.values()[t].name())
+                .collect(Collectors.joining(","));
+        writeField(writer, "VehicleMode", text);
 
         // set routeRef
-        String routeRef = source.routeRef();
-        if (routeRef != null && !routeRef.isEmpty()) {
-            writer.writeStringField("RouteRef", routeRef);
-        }
+        writeField(writer, "RouteRef", source.getString("routeRef"));
 
         // set publishedLineName
-        String publishedLineName = source.publishedLineName();
-        if (publishedLineName != null && !publishedLineName.isEmpty()) {
-            writer.writeStringField("PublishedLineName", publishedLineName);
-        }
+        writeField(writer, "PublishedLineName", source.getString("publishedLineName"));
 
         // groupOfLinesRef :string;
 
         // set directionName
-        String directionName = source.directionName();
-        if (directionName != null && !directionName.isEmpty()) {
-            writer.writeStringField("DirectionName", directionName);
-        }
+        writeField(writer, "DirectionName", source.getString("directionName"));
 
         // externalLineRef :string;
     }

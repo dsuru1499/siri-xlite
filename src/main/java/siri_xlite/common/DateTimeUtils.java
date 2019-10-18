@@ -10,6 +10,10 @@ public class DateTimeUtils {
 
     // public static DateTimeFormatter XSD_DATETIME = DateTimeFormatter.ofPattern("%Y-%M-%DT%h:%m:%s%z");
 
+    public static LocalDateTime toLocalDateTime(Date date) {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
+    }
+
     public static LocalDateTime toLocalDateTime(GregorianCalendar calendar) {
         return LocalDateTime.ofInstant(calendar.toInstant(), ZoneId.systemDefault());
     }

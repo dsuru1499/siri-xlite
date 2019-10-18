@@ -2,29 +2,20 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
-import siri_xlite.model.VehicleJourney;
+import org.bson.Document;
 
-import java.io.IOException;
-
-public class LineIdentityGroupMarshaller implements Marshaller<VehicleJourney> {
+public class LineIdentityGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<VehicleJourney> instance = new LineIdentityGroupMarshaller();
+    private static final Marshaller<Document> instance = new LineIdentityGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, VehicleJourney source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set lineRef
-        String lineRef = source.lineRef();
-        if (!StringUtils.isEmpty(lineRef)) {
-            writer.writeStringField("LineRef", lineRef);
-        }
+        writeField(writer, "LineRef", source.getString("lineRef"));
 
         // set directionRef
-        String directionRef = source.directionRef();
-        if (!StringUtils.isEmpty(directionRef)) {
-            writer.writeStringField("DirectionRef", directionRef);
-        }
+        writeField(writer, "DirectionRef", source.getString("directionRef"));
     }
 }

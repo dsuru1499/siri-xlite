@@ -2,36 +2,31 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.model.VehicleJourney;
-import siri_xlite.service.common.SiriStructureFactory;
+import org.bson.Document;
 
-import java.io.IOException;
+import java.time.LocalDateTime;
 
-public class TimetableAlterationGroupMarshaller implements Marshaller<VehicleJourney> {
+public class TimetableAlterationGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<VehicleJourney> instance = new TimetableAlterationGroupMarshaller();
+    private static final Marshaller<Document> instance = new TimetableAlterationGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, VehicleJourney source) throws IOException {
-        // framedVehicleJourneyRef
-        String datedVehicleJourneyRef = source.datedVehicleJourneyRef();
-        if (datedVehicleJourneyRef != null && !datedVehicleJourneyRef.isEmpty()) {
-            writer.writeObjectFieldStart("FramedVehicleJourneyRef");
-            writer.writeStringField("DatedVehicleJourneyRef", datedVehicleJourneyRef);
-            writer.writeStringField("DataFrameRef", SiriStructureFactory.createXMLGregorianCalendar());
-            writer.writeEndObject();
-        }
+    public void write(JsonGenerator writer, Document source) {
+        // framedDocumentRef
+        writeObject(writer, "FramedDocumentRef", source.getString("datedDocumentRef"), datedDocumentRef -> {
+            writeField(writer, "DatedDocumentRef", datedDocumentRef);
+            writeField(writer, "DataFrameRef", LocalDateTime.now());
+        });
 
-        // vehicleJourneyRef :string;
+        // DocumentRef :string;
 
         // set extraJourney
-        boolean extraJourney = source.extraJourney();
-        writer.writeBooleanField("ExtraJourney", extraJourney);
+        writeField(writer, "ExtraJourney", source.getBoolean("extraJourney"));
 
         // set cancellation
-        boolean cancellation = source.cancellation();
-        writer.writeBooleanField("Cancellation", cancellation);
+        writeField(writer, "Cancellation", source.getBoolean("cancellation"));
+
     }
 
 }

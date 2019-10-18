@@ -1,10 +1,11 @@
 package siri_xlite.common;
 
+import io.vertx.ext.web.RoutingContext;
 import siri_xlite.service.common.SiriException;
 
 public interface Parameters {
 
-    void configure(Configuration properties) throws SiriException;
+    void configure(RoutingContext context) throws SiriException;
 
     void validate() throws SiriException;
 

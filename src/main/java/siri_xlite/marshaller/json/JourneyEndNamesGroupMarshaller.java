@@ -2,68 +2,42 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.model.VehicleJourney;
-import siri_xlite.model.Via;
+import org.bson.Document;
 
-import java.io.IOException;
 import java.util.List;
 
-public class JourneyEndNamesGroupMarshaller implements Marshaller<VehicleJourney> {
+public class JourneyEndNamesGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<VehicleJourney> instance = new JourneyEndNamesGroupMarshaller();
+    private static final Marshaller<Document> instance = new JourneyEndNamesGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, VehicleJourney source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set originRef
-        String originRef = source.originRef();
-        if (originRef != null && !originRef.isEmpty()) {
-            writer.writeStringField("OriginRef", originRef);
-        }
+        writeField(writer, "OriginRef", source.getString("originRef"));
 
         // set originName
-        String originName = source.originName();
-        if (originName != null && !originName.isEmpty()) {
-            writer.writeStringField("OriginName", originName);
-        }
+        writeField(writer, "OriginName", source.getString("originName"));
 
         // originShortName :string;
         // destinationDisplayAtOrigin :string;
 
         // set via
-        List<Via> vias = source.vias();
-        if (vias != null && vias.size() > 0) {
+        writeArray(writer, "Via", source.get("vias", List.class), (Document t) -> {
 
-            writer.writeArrayFieldStart("Via");
-            for (Via via : vias) {
+            // set placeRef
+            writeField(writer, "PlaceRef", t.getString("placeRef"));
 
-                // set placeRef
-                String placeRef = via.placeRef();
-                if (placeRef != null && !placeRef.isEmpty()) {
-                    writer.writeStringField("PlaceRef", placeRef);
-                }
-
-                // set placeName
-                String placeName = via.placeName();
-                if (placeName != null && !placeName.isEmpty()) {
-                    writer.writeStringField("PlaceName", placeName);
-                }
-            }
-            writer.writeEndArray();
-        }
+            // set placeName
+            writeField(writer, "PlaceName", t.getString("placeName"));
+        });
 
         // set destinationRef
-        String destinationRef = source.destinationRef();
-        if (destinationRef != null && !destinationRef.isEmpty()) {
-            writer.writeStringField("DestinationRef", destinationRef);
-        }
+        writeField(writer, "DestinationRef", source.getString("destinationRef"));
 
         // set destinationName
-        String destinationName = source.destinationName();
-        if (destinationName != null && !destinationName.isEmpty()) {
-            writer.writeStringField("DestinationName", destinationName);
-        }
+        writeField(writer, "DestinationName", source.getString("destinationName"));
 
         // destinationShortName :string;
         // ? originDisplayAtDestination :string;

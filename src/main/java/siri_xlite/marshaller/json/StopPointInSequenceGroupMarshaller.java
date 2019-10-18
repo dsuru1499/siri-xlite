@@ -2,33 +2,25 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.model.Call;
+import org.bson.Document;
 
-import java.io.IOException;
-
-public class StopPointInSequenceGroupMarshaller implements Marshaller<Call> {
+public class StopPointInSequenceGroupMarshaller implements Marshaller<Document> {
     @Getter
-    private static final Marshaller<Call> instance = new StopPointInSequenceGroupMarshaller();
+    private static final Marshaller<Document> instance = new StopPointInSequenceGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, Call source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set stopPointRef
-        String stopPointRef = source.stopPointRef();
-        if (stopPointRef != null && !stopPointRef.isEmpty()) {
-            writer.writeStringField("StopPointRef", stopPointRef);
-        }
+        writeField(writer, "StopPointRef", source.getString("stopPointRef"));
 
         // visitNumber :ushort;
 
         // set order
-        int order = source.order();
-        writer.writeNumberField("Order", order);
+        writeField(writer, "Order", source.getInteger("order"));
 
         // set stopPointName
-        String stopPointName = source.stopPointName();
-        if (stopPointName != null && !stopPointName.isEmpty()) {
-            writer.writeStringField("StopPointName", stopPointName);
-        }
+        writeField(writer, "StopPointName", source.getString("stopPointName"));
+
     }
 }

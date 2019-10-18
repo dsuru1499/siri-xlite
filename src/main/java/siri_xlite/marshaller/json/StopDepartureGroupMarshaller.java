@@ -2,36 +2,25 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
-import siri_xlite.common.DateTimeUtils;
-import siri_xlite.model.Call;
-import siri_xlite.service.common.SiriStructureFactory;
+import org.bson.Document;
 import uk.org.siri.siri.CallStatusEnumeration;
 
-import java.io.IOException;
-
-public class StopDepartureGroupMarshaller implements Marshaller<Call> {
+public class StopDepartureGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<Call> instance = new StopDepartureGroupMarshaller();
+    private static final Marshaller<Document> instance = new StopDepartureGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, Call source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set aimedDepartureTime
-        long aimedDepartureTime = source.aimedDepartureTime();
-        writer.writeStringField("AimedDepartureTime",
-                SiriStructureFactory.createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(aimedDepartureTime)));
+        writeField(writer, "AimedDepartureTime", source.getDate("aimedDepartureTime"));
 
         // set actualDepartureTime
-        long actualDepartureTime = source.actualDepartureTime();
-        writer.writeStringField("ActualDepartureTime",
-                SiriStructureFactory.createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(actualDepartureTime)));
+        writeField(writer, "ActualDepartureTime", source.getDate("actualDepartureTime"));
 
         // set expectedDepartureTime
-        long expectedDepartureTime = source.expectedDepartureTime();
-        writer.writeStringField("ExpectedDepartureTime",
-                SiriStructureFactory.createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(expectedDepartureTime)));
+        writeField(writer, "ExpectedDepartureTime", source.getDate("expectedDepartureTime"));
 
         // provisionalExpectedDepartureTime :long;
 
@@ -44,16 +33,13 @@ public class StopDepartureGroupMarshaller implements Marshaller<Call> {
         // expectedLatestPassengerAccessTime :long;
 
         // set departureStatus
-        int departureStatus = source.departureStatus();
-        writer.writeStringField("DepartureStatus", CallStatusEnumeration.values()[departureStatus].name());
+        int departureStatus = source.getInteger("departureStatus");
+        writeField(writer, "DepartureStatus", CallStatusEnumeration.values()[departureStatus].name());
 
         // departureProximityText :string;
 
         // set departurePlatformName
-        String departurePlatformName = source.departurePlatformName();
-        if (!StringUtils.isEmpty(departurePlatformName)) {
-            writer.writeStringField("DeparturePlatformName", departurePlatformName);
-        }
+        writeField(writer, "DeparturePlatformName", source.getString("departurePlatformName"));
 
         // departureBoardingActivity :byte;
 

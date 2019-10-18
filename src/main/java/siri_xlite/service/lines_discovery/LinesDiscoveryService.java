@@ -2,18 +2,19 @@ package siri_xlite.service.lines_discovery;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-import io.reactivex.Flowable;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import siri_xlite.Configuration;
 import siri_xlite.common.Color;
-import siri_xlite.repositories.LineDiscoveryCache;
-import siri_xlite.repositories.LinesDiscoveryDocument;
+import siri_xlite.repositories.LinesDocument;
+import siri_xlite.repositories.LinesRepository;
 import siri_xlite.service.common.LinesDiscovery;
 import siri_xlite.service.common.ParametersFactory;
-import siri_xlite.service.common.SiriException;
 import siri_xlite.service.common.SiriSubscriber;
 
 @Slf4j
@@ -21,22 +22,22 @@ import siri_xlite.service.common.SiriSubscriber;
 public class LinesDiscoveryService implements LinesDiscovery {
 
     @Autowired
-    private LineDiscoveryCache cache;
+    private Configuration configuration;
 
-    protected void validate(LinesDiscoveryParameters parameters) throws SiriException {
-        parameters.validate();
-    }
+    @Autowired
+    private LinesRepository repository;
 
     @Override
     public void handle(final RoutingContext context) {
         try {
+            Monitor monitor = MonitorFactory.start(LINES_DISCOVERY);
+
             SiriSubscriber<Document, LinesDiscoveryParameters> subscriber = LinesDiscoverySubscriber.create(context);
-            Monitor monitor = MonitorFactory.start("lines-discovery");
-            Flowable.fromCallable(() -> {
+            Mono.fromCallable(() -> {
                 LinesDiscoveryParameters parameters = ParametersFactory.create(LinesDiscoveryParameters.class, context);
-                subscriber.configure(parameters);
+                subscriber.configure(configuration, parameters);
                 return parameters;
-            }).flatMap(this::stream).doAfterTerminate(() -> {
+            }).flatMapMany(this::stream).doAfterTerminate(() -> {
                 subscriber.close();
                 log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
             }).subscribe(subscriber);
@@ -45,9 +46,9 @@ public class LinesDiscoveryService implements LinesDiscovery {
         }
     }
 
-    private Flowable<LinesDiscoveryDocument> stream(LinesDiscoveryParameters parameters) {
-        Monitor monitor = MonitorFactory.start("lines-discovery-query");
-        Flowable<LinesDiscoveryDocument> result = Flowable.fromIterable(cache.findAll());
+    private Flux<LinesDocument> stream(LinesDiscoveryParameters parameters) {
+        Monitor monitor = MonitorFactory.start(LINES_DISCOVERY + "-query");
+        Flux<LinesDocument> result = repository.findAll();
         log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
         return result;
     }

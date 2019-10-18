@@ -2,60 +2,42 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import org.apache.commons.collections4.CollectionUtils;
-import siri_xlite.model.JourneyPart;
-import siri_xlite.model.VehicleJourney;
+import org.bson.Document;
 
-import java.io.IOException;
 import java.util.List;
 
-public class TrainOperationalInfoGroupMarshaller implements Marshaller<VehicleJourney> {
+public class TrainOperationalInfoGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<VehicleJourney> instance = new TrainOperationalInfoGroupMarshaller();
+    private static final Marshaller<Document> instance = new TrainOperationalInfoGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, VehicleJourney source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // trainBlockPart : [TrainBlockPart];
         // blockRef :string;
         // courseOfJourneyRef :string;
-        // vehicleJourneyRef :string;
+        // DocumentRef :string;
         // vehicleRef :string;
-        // additionalVehicleJourneyRef :[string];
+        // additionalDocumentRef :[string];
         // driverRef :string;
         // driverName :string;
 
         // set trainNumbers
-        List<String> trainNumbers = source.trainNumbers();
-        if (!CollectionUtils.isEmpty(trainNumbers)) {
-            writer.writeArrayFieldStart("TrainNumbers");
-            for (String trainNumber : trainNumbers) {
-                writer.writeStartObject();
-                writer.writeStringField("TrainNumberRef", trainNumber);
-                writer.writeEndObject();
-            }
-            writer.writeEndArray();
-        }
+        List<String> trainNumbers = source.get("trainNumbers", List.class);
+        writeArray(writer, "TrainNumbers", trainNumbers, t -> {
+            writeObject(writer, t, trainNumber -> writeField(writer, "TrainNumberRef", trainNumber));
+        });
 
         // set journeyParts
-        List<JourneyPart> journeyParts = source.journeyParts();
-        if (!CollectionUtils.isEmpty(journeyParts)) {
-            writer.writeArrayFieldStart("JourneyParts");
-            for (JourneyPart journeyPart : journeyParts) {
-                writer.writeStartObject();
+        List<Document> journeyParts = source.get("journeyParts", List.class);
+        writeArray(writer, "JourneyParts", journeyParts, t -> {
+            writeObject(writer, t, journeyPart -> {
+                writeField(writer, "JourneyPartRef", journeyPart.getString("journeyPartRef"));
+                writeField(writer, "TrainNumberRef", journeyPart.getString("trainNumberRef"));
 
-                // set journeyPartRef
-                String journeyPartRef = journeyPart.journeyPartRef();
-                writer.writeStringField("JourneyPartRef", journeyPartRef);
+            });
+        });
 
-                // set trainNumberRef
-                String trainNumberRef = journeyPart.trainNumberRef();
-                writer.writeStringField("TrainNumberRef", trainNumberRef);
-
-                writer.writeEndObject();
-            }
-            writer.writeEndArray();
-        }
     }
 }

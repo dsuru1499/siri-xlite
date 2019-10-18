@@ -31,13 +31,18 @@ public abstract class ParametersFactory<T> {
                 throw new RuntimeException(e);
             }
         }
-        return (T) factory.create(context);
+
+        Parameters parameters = factory.create(context);
+        parameters.validate();
+
+        return (T) parameters;
     }
 
     private static String getClassName(Class<? extends Parameters> clazz) {
         String name = clazz.getSimpleName();
         String service = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE,
                 name.substring(0, name.lastIndexOf("Parameters")));
-        return "siri_lite.service." + service + "." + name + "Factory";
+        return "siri_xlite.service." + service + "." + name + "Factory";
     }
+
 }

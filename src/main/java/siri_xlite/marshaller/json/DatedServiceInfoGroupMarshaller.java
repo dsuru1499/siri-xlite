@@ -2,31 +2,25 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.model.VehicleJourney;
+import org.bson.Document;
 import uk.org.siri.siri.FirstOrLastJourneyEnumeration;
 
-import java.io.IOException;
-
-public class DatedServiceInfoGroupMarshaller implements Marshaller<VehicleJourney> {
+public class DatedServiceInfoGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<VehicleJourney> instance = new DatedServiceInfoGroupMarshaller();
+    private static final Marshaller<Document> instance = new DatedServiceInfoGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, VehicleJourney source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set destinationDisplay
-        String destinationDisplay = source.destinationDisplay();
-        if (destinationDisplay != null && !destinationDisplay.isEmpty()) {
-            writer.writeStringField("DestinationDisplay", destinationDisplay);
-        }
+        writeField(writer, "DestinationDisplay", source.getString("destinationDisplay"));
 
         // lineNote :[string];
 
         // set firstOrLastJourney
-        int firstOrLastJourney = source.firstOrLastJourney();
-        writer.writeStringField("FirstOrLastJourney",
-                FirstOrLastJourneyEnumeration.values()[firstOrLastJourney].name());
+        int firstOrLastJourney = source.getInteger("firstOrLastJourney");
+        writeField(writer, "FirstOrLastJourney", FirstOrLastJourneyEnumeration.values()[firstOrLastJourney].name());
     }
 
 }

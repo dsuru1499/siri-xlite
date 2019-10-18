@@ -2,34 +2,24 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.common.DateTimeUtils;
-import siri_xlite.model.Call;
-import siri_xlite.service.common.SiriStructureFactory;
+import org.bson.Document;
 
-import java.io.IOException;
-
-public class VehicleDepartureTimesGroupMarshaller implements Marshaller<Call> {
+public class VehicleDepartureTimesGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<Call> instance = new VehicleDepartureTimesGroupMarshaller();
+    private static final Marshaller<Document> instance = new VehicleDepartureTimesGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, Call source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set aimedDepartureTime
-        long aimedDepartureTime = source.aimedDepartureTime();
-        writer.writeStringField("AimedDepartureTime",
-                SiriStructureFactory.createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(aimedDepartureTime)));
+        writeField(writer, "AimedDepartureTime", source.getDate("aimedDepartureTime"));
 
         // set actualDepartureTime
-        long actualDepartureTime = source.actualDepartureTime();
-        writer.writeStringField("ActualDepartureTime",
-                SiriStructureFactory.createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(actualDepartureTime)));
+        writeField(writer, "ActualDepartureTime", source.getDate("actualDepartureTime"));
 
         // set expectedDepartureTime
-        long expectedDepartureTime = source.expectedDepartureTime();
-        writer.writeStringField("ExpectedDepartureTime",
-                SiriStructureFactory.createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(expectedDepartureTime)));
+        writeField(writer, "ExpectedDepartureTime", source.getDate("expectedDepartureTime"));
 
     }
 }

@@ -2,49 +2,36 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.common.DateTimeUtils;
-import siri_xlite.model.Call;
-import siri_xlite.service.common.SiriStructureFactory;
+import org.bson.Document;
 import uk.org.siri.siri.CallStatusEnumeration;
 
-import java.io.IOException;
-
-public class StopArrivalGroupMarshaller implements Marshaller<Call> {
+public class StopArrivalGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<Call> instance = new StopArrivalGroupMarshaller();
+    private static final Marshaller<Document> instance = new StopArrivalGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, Call source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set aimedArrivalTime
-        long aimedArrivalTime = source.aimedArrivalTime();
-        writer.writeStringField("AimedArrivalTime",
-                SiriStructureFactory.createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(aimedArrivalTime)));
+        writeField(writer, "AimedArrivalTime", source.getDate("aimedArrivalTime"));
 
         // set actualArrivalTime
-        long actualArrivalTime = source.actualArrivalTime();
-        writer.writeStringField("ActualArrivalTime",
-                SiriStructureFactory.createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(actualArrivalTime)));
+        writeField(writer, "ActualArrivalTime", source.getDate("actualArrivalTime"));
 
         // set expectedArrivalTime
-        long expectedArrivalTime = source.expectedArrivalTime();
-        writer.writeStringField("ExpectedArrivalTime",
-                SiriStructureFactory.createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(expectedArrivalTime)));
+        writeField(writer, "ExpectedArrivalTime", source.getDate("expectedArrivalTime"));
 
         // set latestExpectedArrivalTime
 
         // set arrivalStatus
-        int arrivalStatus = source.arrivalStatus();
-        writer.writeStringField("ArrivalStatus", CallStatusEnumeration.values()[arrivalStatus].name());
+        int arrivalStatus = source.getInteger("arrivalStatus");
+        writeField(writer, "ArrivalStatus", CallStatusEnumeration.values()[arrivalStatus].name());
 
         // arrivalProximityText :string;
 
         // set arrivalPlatformName
-        String arrivalPlatformName = source.arrivalPlatformName();
-        if (arrivalPlatformName != null && !arrivalPlatformName.isEmpty()) {
-            writer.writeStringField("ArrivalPlatformName", arrivalPlatformName);
-        }
+        writeField(writer, "ArrivalPlatformName", source.getString("arrivalPlatformName"));
 
         // arrivalBoardingActivity :byte;
 

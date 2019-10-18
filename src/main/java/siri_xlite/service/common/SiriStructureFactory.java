@@ -1,10 +1,13 @@
 package siri_xlite.service.common;
 
+import siri_xlite.common.DateTimeUtils;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.UUID;
 
 public class SiriStructureFactory {
@@ -16,6 +19,10 @@ public class SiriStructureFactory {
     public static String createXMLGregorianCalendar(long epochMilli) {
         LocalDateTime dateTime = Instant.ofEpochMilli(epochMilli).atZone(ZoneId.systemDefault()).toLocalDateTime();
         return createXMLGregorianCalendar(dateTime);
+    }
+
+    public static String createXMLGregorianCalendar(Date date) {
+        return createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(date));
     }
 
     public static String createXMLGregorianCalendar(LocalDateTime dateTime) {

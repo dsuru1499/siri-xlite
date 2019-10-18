@@ -2,39 +2,29 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.common.DateTimeUtils;
-import siri_xlite.model.VehicleJourney;
-import siri_xlite.service.common.SiriStructureFactory;
+import org.bson.Document;
 import uk.org.siri.siri.FirstOrLastJourneyEnumeration;
 
-import java.io.IOException;
-
-public class JourneyEndTimesGroupMarshaller implements Marshaller<VehicleJourney> {
+public class JourneyEndTimesGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<VehicleJourney> instance = new JourneyEndTimesGroupMarshaller();
+    private static final Marshaller<Document> instance = new JourneyEndTimesGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, VehicleJourney source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set headwayService
-        boolean headwayService = source.headwayService();
-        writer.writeBooleanField("HeadwayService", headwayService);
+        writeField(writer, "HeadwayService", source.getBoolean("headwayService"));
 
         // set originAimedDepartureTime
-        long originAimedDepartureTime = source.originAimedDepartureTime();
-        writer.writeStringField("OriginAimedDepartureTime", SiriStructureFactory
-                .createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(originAimedDepartureTime)));
+        writeField(writer, "OriginAimedDepartureTime", source.getDate("originAimedDepartureTime"));
 
         // set destinationAimedArrivalTime
-        long destinationAimedArrivalTime = source.destinationAimedArrivalTime();
-        writer.writeStringField("DestinationAimedArrivalTime", SiriStructureFactory
-                .createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(destinationAimedArrivalTime)));
+        writeField(writer, "DestinationAimedArrivalTime", source.getDate("destinationAimedArrivalTime"));
 
         // set firstOrLastJourney
-        int firstOrLastJourney = source.firstOrLastJourney();
-        writer.writeStringField("FirstOrLastJourney",
-                FirstOrLastJourneyEnumeration.values()[firstOrLastJourney].name());
+        Integer firstOrLastJourney = source.getInteger("firstOrLastJourney");
+        writeField(writer, "FirstOrLastJourney", FirstOrLastJourneyEnumeration.values()[firstOrLastJourney].name());
 
     }
 }

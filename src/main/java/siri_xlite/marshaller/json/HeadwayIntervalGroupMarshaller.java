@@ -2,26 +2,24 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.model.Call;
+import org.bson.Document;
 import siri_xlite.service.common.SiriStructureFactory;
 
-import java.io.IOException;
-
-public class HeadwayIntervalGroupMarshaller implements Marshaller<Call> {
+public class HeadwayIntervalGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<Call> instance = new HeadwayIntervalGroupMarshaller();
+    private static final Marshaller<Document> instance = new HeadwayIntervalGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, Call source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set aimedHeadwayInterval
-        long aimedHeadwayInterval = source.aimedHeadwayInterval();
-        writer.writeStringField("AimedHeadwayInterval", SiriStructureFactory.createDuration(aimedHeadwayInterval));
+        long aimedHeadwayInterval = source.getLong("aimedHeadwayInterval");
+        writeField(writer, "AimedHeadwayInterval", SiriStructureFactory.createDuration(aimedHeadwayInterval));
 
         // set expectedHeadwayInterval
-        long expectedHeadwayInterval = source.expectedHeadwayInterval();
-        writer.writeStringField("ExpectedHeadwayInterval",
-                SiriStructureFactory.createDuration(expectedHeadwayInterval));
+        long expectedHeadwayInterval = source.getLong("aimedHeadwayInterval");
+        writeField(writer, "ExpectedHeadwayInterval", SiriStructureFactory.createDuration(expectedHeadwayInterval));
+
     }
 }

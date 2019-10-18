@@ -8,6 +8,6 @@ import java.io.IOException;
 
 public interface Marshaller<T> extends JsonUtils {
 
-    <P extends Parameters> void write(JsonGenerator writer, T source) throws IOException;
+    <P extends Parameters> void write(JsonGenerator writer, T source);
 
 }

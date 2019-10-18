@@ -2,21 +2,18 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
-import siri_xlite.model.Call;
+import org.bson.Document;
 
-import java.io.IOException;
-
-public class CallRealtimeGroupMarshaller implements Marshaller<Call> {
+public class CallRealtimeGroupMarshaller implements Marshaller<Document> {
 
     @Getter
-    private static final Marshaller<Call> instance = new CallRealtimeGroupMarshaller();
+    private static final Marshaller<Document> instance = new CallRealtimeGroupMarshaller();
 
     @Override
-    public void write(JsonGenerator writer, Call source) throws IOException {
+    public void write(JsonGenerator writer, Document source) {
 
         // set vehicleAtStop
-        boolean vehicleAtStop = source.vehicleAtStop();
-        writer.writeBooleanField("VehicleAtStop", vehicleAtStop);
+        writeField(writer, "VehicleAtStop", source.getBoolean("vehicleAtStop"));
 
         // vehicleLocationAtStop : Location;
     }
