@@ -1,7 +1,6 @@
-package siri_xlite.common;
+package siri_xlite.service.common;
 
 import io.vertx.ext.web.RoutingContext;
-import siri_xlite.service.common.SiriException;
 
 public interface Parameters {
 

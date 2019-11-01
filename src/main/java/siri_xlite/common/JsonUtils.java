@@ -18,7 +18,30 @@ import java.util.function.Consumer;
 
 public interface JsonUtils {
 
+    String VERSION = "version";
+    String HREF = "href";
+    String ID = "id";
+
     JsonFactory factory = new JsonFactory();
+
+    default void writeStartDocument(JsonGenerator writer, String href, String version) {
+        try {
+            writer.writeStartArray();
+            // writeField(writer, VERSION, version);
+            // writeField(writer, HREF, href);
+        } catch (IOException e) {
+            ExceptionUtils.wrapAndThrow(e);
+        }
+    }
+
+    default void writeEndDocument(JsonGenerator writer) {
+        try {
+            writer.writeEndArray();
+            writer.flush();
+        } catch (IOException e) {
+            ExceptionUtils.wrapAndThrow(e);
+        }
+    }
 
     default JsonGenerator createJsonWriter(final OutputStream out) {
         JsonGenerator result = null;
@@ -28,18 +51,6 @@ public interface JsonUtils {
             ExceptionUtils.wrapAndThrow(e);
         }
         return result;
-    }
-
-    default void writeNaturalLanguageString(JsonGenerator writer, String name, String value) {
-        try {
-            writer.writeArrayFieldStart(name);
-            writer.writeStartObject();
-            writer.writeStringField("value", value);
-            writer.writeEndObject();
-            writer.writeEndArray();
-        } catch (IOException e) {
-            ExceptionUtils.wrapAndThrow(e);
-        }
     }
 
     default void writeField(JsonGenerator writer, String name, String value) {
@@ -134,6 +145,17 @@ public interface JsonUtils {
         }
     }
 
+    default void writeField(JsonGenerator writer, String name, Enum value) {
+        try {
+            if (value != null) {
+                writer.writeStringField(name, value.name());
+            }
+
+        } catch (IOException e) {
+            ExceptionUtils.wrapAndThrow(e);
+        }
+    }
+
     default <T> void writeArray(JsonGenerator writer, String name, Collection<T> values) {
         try {
             if (CollectionUtils.isNotEmpty(values)) {
@@ -184,11 +206,6 @@ public interface JsonUtils {
         }
     }
 
-    @FunctionalInterface
-    interface ConsumerWithException<T, E extends Throwable> {
-        void accept(T t) throws E;
-    }
-
     default <T, E extends Exception> Consumer<T> wrapper(ConsumerWithException<T, E> fn) {
         return t -> {
             try {
@@ -199,11 +216,6 @@ public interface JsonUtils {
         };
     }
 
-    @FunctionalInterface
-    interface RunnableWithException<E extends Throwable> {
-        void run() throws E;
-    }
-
     default <T, E extends Exception> Runnable wrapper(RunnableWithException<E> fn) {
         return () -> {
             try {
@@ -212,6 +224,17 @@ public interface JsonUtils {
                 throw new RuntimeException(e);
             }
         };
+    }
+
+    @FunctionalInterface
+    interface ConsumerWithException<T, E extends Throwable> {
+        void accept(T t) throws E;
+    }
+
+    @FunctionalInterface
+    interface RunnableWithException<E extends Throwable> {
+        void run() throws E;
+
     }
 
 }

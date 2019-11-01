@@ -3,6 +3,7 @@ package siri_xlite.model;
 import lombok.Builder;
 import org.bson.Document;
 
+import java.util.Date;
 import java.util.List;
 
 import static siri_xlite.common.DocumentUtils.append;
@@ -11,13 +12,13 @@ public class CallBuilder {
 
     @Builder
     public static Document create(Boolean extraCall, Boolean cancellation, String stopPointRef, Integer order,
-            String stopPointName, String originDisplay, String destinationDisplay, List<String> situationRefs,
-            Long aimedArrivalTime, Long actualDepartureTime, Long expectedArrivalTime, Integer arrivalStatus,
-            String arrivalProximityText, String arrivalPlatformName, Long aimedDepartureTime,
-            Long expectedDepartureTime, Long actualArrivalTime, Integer departureStatus, String departurePlatformName,
-            Integer departureBoardingActivity, Long aimedHeadwayInterval, Long expectedHeadwayInterval,
-            Long distanceFromStop, Long numberOfStopsAway, Boolean vehicleAtStop, Boolean platformTraversal,
-            List<Document> targetedInterchanges) {
+                                  String stopPointName, String originDisplay, String destinationDisplay, List<String> situationRefs,
+                                  Date aimedArrivalTime, Date actualDepartureTime, Date expectedArrivalTime, Integer arrivalStatus,
+                                  String arrivalProximityText, String arrivalPlatformName, Date aimedDepartureTime,
+                                  Date expectedDepartureTime, Date actualArrivalTime, Integer departureStatus, String departurePlatformName,
+                                  Integer departureBoardingActivity, Long aimedHeadwayInterval, Long expectedHeadwayInterval,
+                                  Long distanceFromStop, Long numberOfStopsAway, Boolean vehicleAtStop, Boolean platformTraversal,
+                                  List<Document> targetedInterchanges) {
 
         Document result = new Document();
         append(result, "extraCall", extraCall);

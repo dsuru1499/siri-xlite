@@ -2,6 +2,7 @@ package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.bson.Document;
 import uk.org.siri.siri.VehicleModesEnumeration;
 
@@ -10,6 +11,12 @@ import java.util.stream.Collectors;
 
 public class JourneyPatternInfoGroupMarshaller implements Marshaller<Document> {
 
+    public static final String JOURNEY_PATTERN_REF = "journeyPatternRef";
+    public static final String JOURNEY_PATTERN_NAME = "journeyPatternName";
+    public static final String VEHICLE_MODES = "vehicleModes";
+    public static final String ROUTE_REF = "routeRef";
+    public static final String PUBLISHED_LINE_NAME = "publishedLineName";
+    public static final String DIRECTION_NAME = "directionName";
     @Getter
     private static final Marshaller<Document> instance = new JourneyPatternInfoGroupMarshaller();
 
@@ -17,27 +24,29 @@ public class JourneyPatternInfoGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set journeyPatternRef
-        writeField(writer, "JourneyPatternRef", source.getString("journeyPatternRef"));
+        writeField(writer, JOURNEY_PATTERN_REF, source.getString(JOURNEY_PATTERN_REF));
 
         // set journeyPatternName
-        writeField(writer, "JourneyPatternName", source.getString("journeyPatternName"));
+        writeField(writer, JOURNEY_PATTERN_NAME, source.getString(JOURNEY_PATTERN_NAME));
 
         // set vehicleMode
-        List<Integer> list = source.get("vehicleModes", List.class);
-        String text = list.stream().map(t -> VehicleModesEnumeration.values()[t].name())
-                .collect(Collectors.joining(","));
-        writeField(writer, "VehicleMode", text);
+        List<Integer> values = source.get(VEHICLE_MODES, List.class);
+        if (CollectionUtils.isNotEmpty(values)) {
+            String text = values.stream().map(t -> VehicleModesEnumeration.values()[t].name())
+                    .collect(Collectors.joining(","));
+            writeField(writer, VEHICLE_MODES, text);
+        }
 
         // set routeRef
-        writeField(writer, "RouteRef", source.getString("routeRef"));
+        writeField(writer, ROUTE_REF, source.getString(ROUTE_REF));
 
         // set publishedLineName
-        writeField(writer, "PublishedLineName", source.getString("publishedLineName"));
+        writeField(writer, PUBLISHED_LINE_NAME, source.getString(PUBLISHED_LINE_NAME));
 
         // groupOfLinesRef :string;
 
         // set directionName
-        writeField(writer, "DirectionName", source.getString("directionName"));
+        writeField(writer, DIRECTION_NAME, source.getString(DIRECTION_NAME));
 
         // externalLineRef :string;
     }

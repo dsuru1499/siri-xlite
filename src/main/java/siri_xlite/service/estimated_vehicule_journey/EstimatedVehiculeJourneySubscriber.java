@@ -1,0 +1,68 @@
+package siri_xlite.service.estimated_vehicule_journey;
+
+import io.vertx.ext.web.RoutingContext;
+import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
+import siri_xlite.marshaller.json.*;
+import siri_xlite.service.common.ItemSubscriber;
+import siri_xlite.service.common.SiriSubscriber;
+
+import java.util.List;
+
+@Slf4j
+public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<EstimatedVehiculeJourneyParameters> {
+
+    public static final String EXTRA_CALL = "extraCall";
+    public static final String CANCELLATION = "cancellation";
+
+    private EstimatedVehiculeJourneySubscriber(RoutingContext context) {
+        super(context);
+    }
+
+    public static SiriSubscriber<Document, EstimatedVehiculeJourneyParameters> create(RoutingContext context) {
+        return new EstimatedVehiculeJourneySubscriber(context);
+    }
+
+    @Override
+    protected void writeItem(Document t) {
+        writeObject(writer, t, source -> {
+            LineIdentityGroupMarshaller.getInstance().write(writer, source);
+            EstimatedTimetableAlterationGroupMarshaller.getInstance().write(writer, source);
+            JourneyPatternInfoGroupMarshaller.getInstance().write(writer, source);
+            JourneyEndNamesGroupMarshaller.getInstance().write(writer, source);
+            ServiceInfoGroupMarshaller.getInstance().write(writer, source);
+            JourneyInfoGroupMarshaller.getInstance().write(writer, source);
+            JourneyEndTimesGroupMarshaller.getInstance().write(writer, source);
+            DisruptionGroupMarshaller.getInstance().write(writer, source);
+            JourneyProgressGroupMarshaller.getInstance().write(writer, source);
+            TrainOperationalInfoGroupMarshaller.getInstance().write(writer, source);
+
+            // EstimatedCalls calls
+            writeArray(writer, "estimatedCalls", source.get("calls", List.class), this::writeEstimatedCall);
+        });
+    }
+
+    private void writeEstimatedCall(Document t) {
+        writeObject(writer, t, source -> {
+            StopPointInSequenceGroupMarshaller.getInstance().write(writer, source);
+
+            // setExtraCall
+            writeField(writer, EXTRA_CALL, source.getBoolean(EXTRA_CALL));
+
+            // cancellation
+            writeField(writer, CANCELLATION, source.getBoolean(CANCELLATION));
+
+            // CallRealTimeInfoGroupMarshaller.getInstance().write(writer, source);
+            CallPropertyGroupMarshaller.getInstance().write(writer, source);
+            // CallNoteGroupMarshaller.getInstance().write(writer, source);
+            DisruptionGroupMarshaller.getInstance().write(writer, source);
+            OnwardVehicleArrivalTimesGroupMarshaller.getInstance().write(writer, source);
+            MonitoredStopArrivalStatusGroupMarshaller.getInstance().write(writer, source);
+            OnwardVehicleDepartureTimesGroupMarshaller.getInstance().write(writer, source);
+            // PassengerDepartureTimesGroupMarshaller.getInstance().write(writer, source);
+            MonitoredStopDepartureStatusGroupMarshaller.getInstance().write(writer, source);
+            HeadwayIntervalGroupMarshaller.getInstance().write(writer, source);
+            StopProximityGroupMarshaller.getInstance().write(writer, source);
+        });
+    }
+}

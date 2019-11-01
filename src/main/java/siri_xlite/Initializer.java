@@ -1,12 +1,7 @@
-package siri_xlite.service;
+package siri_xlite;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Indexes;
 import gtfs.importer.GtfsImporter;
 import gtfs.importer.Index;
 import gtfs.model.*;
@@ -17,9 +12,13 @@ import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import siri_xlite.common.Color;
 import siri_xlite.common.ZipUtils;
 import siri_xlite.model.*;
+import siri_xlite.repositories.LinesRepository;
+import siri_xlite.repositories.StopPointsRepository;
+import siri_xlite.repositories.VehicleJourneyRepository;
 import uk.org.siri.siri.CallStatusEnumeration;
 
 import java.io.*;
@@ -29,30 +28,39 @@ import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static siri_xlite.common.DateTimeUtils.toEpochMilli;
-
 @Log4j2
 @org.springframework.stereotype.Service
-public class Service {
+public class Initializer {
     private static final String SEP = "-";
     private static final String ARCHIVE = "data.zip";
     private static final String OUTPUT_DIR = "siri";
     private static final int BULK_SIZE = 1000;
 
-    private MongoDatabase database;
+//    private MongoDatabase database;
 
-    public static void main(String[] args) {
-        Service service = new Service();
-        service.initialize();
-    }
+    @Autowired
+    private LinesRepository linesRepository;
+
+    @Autowired
+    private StopPointsRepository stopPointsRepository;
+
+    @Autowired
+    private VehicleJourneyRepository vehicleJourneyRepository;
+
+
+//    public static void main(String[] args) {
+//        Initializer service = new Initializer();
+//        service.initialize();
+//    }
 
     // @PostConstruct
     // @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Paris")
-    private void initialize() {
+    public void initialize() {
 
         Monitor monitor = MonitorFactory.start();
         log.info(Color.YELLOW + "[DSU] initialize model (~ 1mn)" + Color.NORMAL);
@@ -73,8 +81,8 @@ public class Service {
             log.error(e.getMessage(), e);
         }
 
-        MongoClient client = MongoClients.create("mongodb://localhost");
-        this.database = client.getDatabase("siri");
+//        MongoClient client = MongoClients.create("mongodb://localhost");
+//        this.database = client.getDatabase("siri");
 
         clear();
         GtfsImporter importer = new GtfsImporter(path.toString());
@@ -94,7 +102,7 @@ public class Service {
     }
 
     private void fillVehicleJourney(GtfsImporter importer, SetValuedMap<String, String> lineRefs,
-            SetValuedMap<String, Destination> destinations) {
+                                    SetValuedMap<String, Destination> destinations) {
 
         Monitor monitor = MonitorFactory.start("vehicle_journey");
         Monitor tripMonitor = MonitorFactory.start("trip");
@@ -102,17 +110,18 @@ public class Service {
 
         try {
 
-            MongoCollection<Document> collection = database.getCollection("vehicle_journey", Document.class);
-            collection.drop();
-            collection.createIndex(Indexes.ascending("calls.stopPointRef", "calls.aimedDepartureTime"));
+//            MongoCollection<Document> collection = database.getCollection("vehicle_journey", Document.class);
+//            collection.drop();
+//            collection.createIndex(Indexes.ascending("calls.stopPointRef", "calls.aimedDepartureTime"));
 
-            List<Document> documents = new ArrayList<>(BULK_SIZE);
+            List<VehicleJourneyDocument> documents = new ArrayList<>(BULK_SIZE);
 
-            VehicleJourneyBuilder.DocumentBuilder builder = VehicleJourneyBuilder.builder();
+            VehicleJourneyBuilder.VehicleJourneyDocumentBuilder builder = VehicleJourneyBuilder.builder();
             LocationBuilder.DocumentBuilder location = LocationBuilder.builder();
             CallBuilder.DocumentBuilder call = CallBuilder.builder();
 
-            builder.recordedAtTime(System.currentTimeMillis());
+            Date now = new Date();
+            builder.recordedAtTime(now);
 
             Index<Calendar> calendars = importer.getCalendarByService();
             Index<CalendarDate> dates = importer.getCalendarDateByService();
@@ -131,7 +140,7 @@ public class Service {
                     // log.info("TRIP {} " , trip.getTripId());
 
                     builder.delay(0L);
-                    builder.recordedAtTime(System.currentTimeMillis());
+                    builder.recordedAtTime(now);
                     builder.bearing(0d);
                     builder.vehicleLocation(location.longitude(0d).latitude(0d).build());
                     builder.vehicleJourneyName(trip.getTripId());
@@ -178,22 +187,22 @@ public class Service {
                         if (i == 0) {
                             builder.originRef(stop.getStopId());
                             builder.originName(stop.getStopName());
-                            builder.originAimedDepartureTime(toEpochMilli(stopTime.getDepartureTime().getTime()));
+                            builder.originAimedDepartureTime(stopTime.getDepartureTime().getTime());
                             builder.originDisplay(stop.getStopName());
                         }
 
                         if (!stopTimesIterator.hasNext()) {
                             builder.destinationRef(stop.getStopId());
                             builder.destinationName(stop.getStopName());
-                            builder.destinationAimedArrivalTime(toEpochMilli(stopTime.getArrivalTime().getTime()));
+                            builder.destinationAimedArrivalTime(stopTime.getArrivalTime().getTime());
                             builder.destinationDisplay(stop.getStopName());
 
                             destinations.put(route.getRouteId(), Destination.builder().destinationRef(stop.getStopId())
                                     .placeName(stop.getStopName()).build());
                         }
 
-                        long aimedArrivalTime = toEpochMilli(stopTime.getArrivalTime().getTime());
-                        long aimedDepartureTime = toEpochMilli(stopTime.getDepartureTime().getTime());
+                        Date aimedArrivalTime = stopTime.getArrivalTime().getTime();
+                        Date aimedDepartureTime = stopTime.getDepartureTime().getTime();
                         calls.add(call.aimedArrivalTime(aimedArrivalTime).expectedArrivalTime(aimedArrivalTime)
                                 .actualArrivalTime(aimedArrivalTime).aimedDepartureTime(aimedDepartureTime)
                                 .expectedDepartureTime(aimedDepartureTime).actualDepartureTime(aimedDepartureTime)
@@ -208,7 +217,8 @@ public class Service {
                     documents.add(builder.build());
 
                     if (documents.size() == BULK_SIZE) {
-                        collection.insertMany(documents);
+                        vehicleJourneyRepository.saveAll(documents);
+//                        collection.insertMany(documents);
                         documents.clear();
                     }
 
@@ -217,7 +227,8 @@ public class Service {
             }
 
             if (documents.size() > 0) {
-                collection.insertMany(documents);
+                vehicleJourneyRepository.saveAll(documents);
+//                collection.insertMany(documents);
             }
 
         } catch (Exception e) {
@@ -241,19 +252,20 @@ public class Service {
 
         try {
 
-            MongoCollection<Document> collection = database.getCollection("lines", Document.class);
-            collection.drop();
-            collection.createIndex(Indexes.ascending("_parent"));
+            linesRepository.clearAll();
 
-            LineBuilder.DocumentBuilder builder = LineBuilder.builder();
+//            MongoCollection<Document> collection = database.getCollection("lines", Document.class);
+//            collection.drop();
+
+            LineBuilder.LineDocumentBuilder builder = LineBuilder.builder();
             DestinationBuilder.DocumentBuilder destination = DestinationBuilder.builder();
 
-            List<Document> documents = new ArrayList<>(BULK_SIZE);
+            List<LineDocument> documents = new ArrayList<>(BULK_SIZE);
 
             for (Route route : importer.getRouteById()) {
                 routeMonitor.start();
 
-                Document document = builder.lineRef(route.getRouteId()).lineName(route.getRouteLongName())
+                LineDocument document = builder.lineRef(route.getRouteId()).lineName(route.getRouteLongName())
                         .destinations(destinations.get(route.getRouteId()).stream().map(
                                 t -> destination.destinationRef(t.destinationRef()).placeName(t.placeName()).build())
                                 .collect(Collectors.toList()))
@@ -262,7 +274,8 @@ public class Service {
                 documents.add(document);
 
                 if (documents.size() == BULK_SIZE) {
-                    collection.insertMany(documents);
+                    linesRepository.saveAll(documents);
+//                    collection.insertMany(documents);
                     documents.clear();
                 }
 
@@ -270,7 +283,8 @@ public class Service {
             }
 
             if (documents.size() > 0) {
-                collection.insertMany(documents);
+                linesRepository.saveAll(documents);
+//                collection.insertMany(documents);
             }
 
         } catch (Exception e) {
@@ -287,17 +301,19 @@ public class Service {
         Monitor stopMonitor = MonitorFactory.start("stop");
 
         try {
+            stopPointsRepository.clearAll();
 
-            MongoCollection<Document> collection = database.getCollection("stoppoints", Document.class);
-            collection.drop();
+//            MongoCollection<Document> collection = database.getCollection("stoppoints", Document.class);
+//            collection.drop();
+//            collection.createIndex(Indexes.ascending("_parent"));
 
-            List<Document> documents = new ArrayList<>(BULK_SIZE);
-            StopPointBuilder.DocumentBuilder builder = StopPointBuilder.builder();
+            List<StopPointDocument> documents = new ArrayList<>(BULK_SIZE);
+            StopPointBuilder.StopPointDocumentBuilder builder = StopPointBuilder.builder();
             LocationBuilder.DocumentBuilder location = LocationBuilder.builder();
             for (Stop stop : importer.getStopById()) {
                 stopMonitor.start();
 
-                Document document = builder.stopPointRef(stop.getStopId()).parent(stop.getParentStation())
+                StopPointDocument document = builder.stopPointRef(stop.getStopId()).parent(stop.getParentStation())
                         .stopName(stop.getStopName()).lineRefs(lineRefs.get(stop.getStopId()))
                         .location(location.longitude(stop.getStopLon().doubleValue())
                                 .latitude(stop.getStopLat().doubleValue()).build())
@@ -305,7 +321,8 @@ public class Service {
 
                 documents.add(document);
                 if (documents.size() == BULK_SIZE) {
-                    collection.insertMany(documents);
+                    stopPointsRepository.saveAll(documents);
+//                    collection.insertMany(documents);
                     documents.clear();
                 }
 
@@ -313,7 +330,8 @@ public class Service {
             }
 
             if (documents.size() > 0) {
-                collection.insertMany(documents);
+                stopPointsRepository.saveAll(documents);
+//                collection.insertMany(documents);
             }
 
         } catch (Exception e) {
@@ -340,29 +358,29 @@ public class Service {
             // if ((now.compareTo(startDate) >= 0) && (now.compareTo(endDate) <=
             // 0)) {
             switch (day) {
-            case MONDAY:
-                result = calendar.getMonday();
-                break;
-            case TUESDAY:
-                result = calendar.getTuesday();
-                break;
-            case WEDNESDAY:
-                result = calendar.getWednesday();
-                break;
-            case THURSDAY:
-                result = calendar.getThursday();
-                break;
-            case FRIDAY:
-                result = calendar.getFriday();
-                break;
-            case SATURDAY:
-                result = calendar.getSaturday();
-                break;
-            case SUNDAY:
-                result = calendar.getSunday();
-                break;
-            default:
-                break;
+                case MONDAY:
+                    result = calendar.getMonday();
+                    break;
+                case TUESDAY:
+                    result = calendar.getTuesday();
+                    break;
+                case WEDNESDAY:
+                    result = calendar.getWednesday();
+                    break;
+                case THURSDAY:
+                    result = calendar.getThursday();
+                    break;
+                case FRIDAY:
+                    result = calendar.getFriday();
+                    break;
+                case SATURDAY:
+                    result = calendar.getSaturday();
+                    break;
+                case SUNDAY:
+                    result = calendar.getSunday();
+                    break;
+                default:
+                    break;
             }
 
             // }

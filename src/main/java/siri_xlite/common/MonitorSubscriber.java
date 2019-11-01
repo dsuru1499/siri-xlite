@@ -5,7 +5,6 @@ import com.jamonapi.MonitorFactory;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.internal.subscribers.LambdaSubscriber;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -18,7 +17,7 @@ public class MonitorSubscriber<T> implements Subscriber<T> {
     private Monitor monitor;
 
     public MonitorSubscriber(String label, Consumer<? super T> onNext, Consumer<? super Throwable> onError,
-            Action onComplete, Consumer<? super Subscription> onSubscribe) {
+                             Action onComplete, Consumer<? super Subscription> onSubscribe) {
         this.label = label;
         this.subscriber = new LambdaSubscriber<T>(onNext, onError, onComplete, onSubscribe);
     }
@@ -26,6 +25,20 @@ public class MonitorSubscriber<T> implements Subscriber<T> {
     public MonitorSubscriber(String label, Subscriber<T> subscriber) {
         this.label = label;
         this.subscriber = subscriber;
+    }
+
+    public static <T> MonitorSubscriber<T> create(String label, Consumer<? super T> onNext) {
+        return MonitorSubscriber.create(label, onNext, null, null, null);
+    }
+
+    public static <T> MonitorSubscriber<T> create(String label, Consumer<? super T> onNext,
+                                                  Consumer<? super Throwable> onError) {
+        return MonitorSubscriber.create(label, onNext, onError, null, null);
+    }
+
+    public static <T> MonitorSubscriber<T> create(String label, Consumer<? super T> onNext,
+                                                  Consumer<? super Throwable> onError, Action onComplete, Consumer<? super Subscription> onSubscribe) {
+        return new MonitorSubscriber<T>(label, onNext, onError, onComplete, onSubscribe);
     }
 
     @Override
@@ -62,19 +75,5 @@ public class MonitorSubscriber<T> implements Subscriber<T> {
 
     protected void stop() {
         log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
-    }
-
-    public static <T> MonitorSubscriber<T> create(String label, Consumer<? super T> onNext) {
-        return MonitorSubscriber.create(label, onNext, null, null, null);
-    }
-
-    public static <T> MonitorSubscriber<T> create(String label, Consumer<? super T> onNext,
-            Consumer<? super Throwable> onError) {
-        return MonitorSubscriber.create(label, onNext, onError, null, null);
-    }
-
-    public static <T> MonitorSubscriber<T> create(String label, Consumer<? super T> onNext,
-            Consumer<? super Throwable> onError, Action onComplete, Consumer<? super Subscription> onSubscribe) {
-        return new MonitorSubscriber<T>(label, onNext, onError, onComplete, onSubscribe);
     }
 }

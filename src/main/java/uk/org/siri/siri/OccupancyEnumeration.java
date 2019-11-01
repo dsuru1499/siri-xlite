@@ -1,4 +1,3 @@
-
 package uk.org.siri.siri;
 
 import javax.xml.bind.annotation.XmlEnum;
@@ -8,11 +7,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Classe Java pour OccupancyEnumeration.
- * 
+ *
  * <p>
  * Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="OccupancyEnumeration">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NMTOKEN">
@@ -22,7 +21,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlType(name = "OccupancyEnumeration")
 @XmlEnum
@@ -38,10 +36,6 @@ public enum OccupancyEnumeration {
         value = v;
     }
 
-    public String value() {
-        return value;
-    }
-
     public static OccupancyEnumeration fromValue(String v) {
         for (OccupancyEnumeration c : OccupancyEnumeration.values()) {
             if (c.value.equals(v)) {
@@ -49,6 +43,10 @@ public enum OccupancyEnumeration {
             }
         }
         throw new IllegalArgumentException(v);
+    }
+
+    public String value() {
+        return value;
     }
 
 }

@@ -3,6 +3,7 @@ package siri_xlite.model;
 import lombok.Builder;
 import org.bson.Document;
 
+import java.util.Date;
 import java.util.List;
 
 import static siri_xlite.common.DocumentUtils.append;
@@ -10,19 +11,19 @@ import static siri_xlite.common.DocumentUtils.append;
 public class VehicleJourneyBuilder {
 
     @Builder
-    public static Document create(Long recordedAtTime, String lineRef, String directionRef,
-            String datedVehicleJourneyRef, Boolean extraJourney, Boolean cancellation, String journeyPatternRef,
-            String journeyPatternName, List<Integer> vehicleModes, String routeRef, String publishedLineName,
-            String directionName, String originRef, String originName, List<Document> vias, String destinationRef,
-            String destinationName, String operatorRef, String productCategoryRef, List<String> serviceFeatureRefs,
-            List<String> vehicleFeatureRefs, String vehicleJourneyName, List<String> journeyNotes,
-            Boolean headwayService, Long originAimedDepartureTime, Long destinationAimedArrivalTime,
-            Integer firstOrLastJourney, List<String> situationRefs, Boolean monitored, String monitoringError,
-            Boolean inCongestion, Boolean inPanic, Document vehicleLocation, Double bearing, Integer occupancy,
-            Long delay, List<String> trainNumbers, List<Document> journeyParts, String originDisplay,
-            String destinationDisplay, List<Document> calls) {
+    public static VehicleJourneyDocument create(Date recordedAtTime, String lineRef, String directionRef,
+                                                String datedVehicleJourneyRef, Boolean extraJourney, Boolean cancellation, String journeyPatternRef,
+                                                String journeyPatternName, List<Integer> vehicleModes, String routeRef, String publishedLineName,
+                                                String directionName, String originRef, String originName, List<Document> vias, String destinationRef,
+                                                String destinationName, String operatorRef, String productCategoryRef, List<String> serviceFeatureRefs,
+                                                List<String> vehicleFeatureRefs, String vehicleJourneyName, List<String> journeyNotes,
+                                                Boolean headwayService, Date originAimedDepartureTime, Date destinationAimedArrivalTime,
+                                                Integer firstOrLastJourney, List<String> situationRefs, Boolean monitored, String monitoringError,
+                                                Boolean inCongestion, Boolean inPanic, Document vehicleLocation, Double bearing, Integer occupancy,
+                                                Long delay, List<String> trainNumbers, List<Document> journeyParts, String originDisplay,
+                                                String destinationDisplay, List<Document> calls) {
 
-        Document result = new Document("_id", vehicleJourneyName);
+        VehicleJourneyDocument result = new VehicleJourneyDocument("_id", vehicleJourneyName);
         append(result, "recordedAtTime", recordedAtTime);
         append(result, "lineRef", lineRef);
         append(result, "directionRef", directionRef);

@@ -1,4 +1,3 @@
-
 package uk.org.siri.siri;
 
 import javax.xml.bind.annotation.XmlEnum;
@@ -8,11 +7,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Classe Java pour CallStatusEnumeration.
- * 
+ *
  * <p>
  * Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="CallStatusEnumeration">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NMTOKEN">
@@ -28,7 +27,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlType(name = "CallStatusEnumeration")
 @XmlEnum
@@ -36,35 +34,30 @@ public enum CallStatusEnumeration {
 
     /**
      * Service is on time.
-     * 
      */
     @XmlEnumValue("onTime")
     ON_TIME("onTime"),
 
     /**
      * Service is earlier than expected.
-     * 
      */
     @XmlEnumValue("early")
     EARLY("early"),
 
     /**
      * Service is delayed.
-     * 
      */
     @XmlEnumValue("delayed")
     DELAYED("delayed"),
 
     /**
      * Service is cancelled.
-     * 
      */
     @XmlEnumValue("cancelled")
     CANCELLED("cancelled"),
 
     /**
      * Service has arrived.
-     * 
      */
     @XmlEnumValue("arrived")
     ARRIVED("arrived"), @XmlEnumValue("departed")
@@ -73,14 +66,12 @@ public enum CallStatusEnumeration {
 
     /**
      * There is no information about the service.
-     * 
      */
     @XmlEnumValue("noReport")
     NO_REPORT("noReport"),
 
     /**
      * Service is not expected to call this stop. For instance a flexible service that has not yet been preordered.
-     * 
      */
     @XmlEnumValue("notExpected")
     NOT_EXPECTED("notExpected");
@@ -90,10 +81,6 @@ public enum CallStatusEnumeration {
         value = v;
     }
 
-    public String value() {
-        return value;
-    }
-
     public static CallStatusEnumeration fromValue(String v) {
         for (CallStatusEnumeration c : CallStatusEnumeration.values()) {
             if (c.value.equals(v)) {
@@ -101,6 +88,10 @@ public enum CallStatusEnumeration {
             }
         }
         throw new IllegalArgumentException(v);
+    }
+
+    public String value() {
+        return value;
     }
 
 }

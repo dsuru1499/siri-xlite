@@ -37,8 +37,12 @@ public class SiriStructureFactory {
         return UUID.randomUUID().toString();
     }
 
-    public static String createDuration(long delay) {
-        return Duration.ofMillis(delay).toString();
+    public static String createDuration(Long delay) {
+        String result = null;
+        if (delay != null) {
+            result = Duration.ofMillis(delay).toString();
+        }
+        return result;
     }
 
 }

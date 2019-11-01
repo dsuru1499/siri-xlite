@@ -10,10 +10,10 @@ import static siri_xlite.common.DocumentUtils.append;
 public class StopPointBuilder {
 
     @Builder
-    public static Document create(String stopPointRef, String parent, String stopName, Document location,
-            Collection<String> lineRefs) {
+    public static StopPointDocument create(String stopPointRef, String parent, String stopName, Document location,
+                                           Collection<String> lineRefs) {
 
-        Document result = new Document("_id", stopPointRef);
+        StopPointDocument result = new StopPointDocument("_id", stopPointRef);
         append(result, "stopPointRef", stopPointRef);
         append(result, "_parent", parent);
         append(result, "stopName", stopName);

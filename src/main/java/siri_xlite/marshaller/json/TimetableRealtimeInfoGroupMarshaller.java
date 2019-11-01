@@ -6,6 +6,8 @@ import org.bson.Document;
 
 public class TimetableRealtimeInfoGroupMarshaller implements Marshaller<Document> {
 
+    public static final String MONITORED = "monitored";
+    public static final String HEADWAY_SERVICE = "headwayService";
     @Getter
     private static final Marshaller<Document> instance = new TimetableRealtimeInfoGroupMarshaller();
 
@@ -13,10 +15,10 @@ public class TimetableRealtimeInfoGroupMarshaller implements Marshaller<Document
     public void write(JsonGenerator writer, Document source) {
 
         // set monitored
-        writeField(writer, "Monitored", source.getBoolean("monitored"));
+        writeField(writer, MONITORED, source.getBoolean(MONITORED));
 
         // set headwayService
-        writeField(writer, "HeadwayService", source.getBoolean("headwayService"));
+        writeField(writer, HEADWAY_SERVICE, source.getBoolean(HEADWAY_SERVICE));
 
     }
 

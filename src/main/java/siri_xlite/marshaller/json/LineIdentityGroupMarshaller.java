@@ -6,6 +6,8 @@ import org.bson.Document;
 
 public class LineIdentityGroupMarshaller implements Marshaller<Document> {
 
+    public static final String LINE_REF = "lineRef";
+    public static final String DIRECTION_REF = "directionRef";
     @Getter
     private static final Marshaller<Document> instance = new LineIdentityGroupMarshaller();
 
@@ -13,9 +15,9 @@ public class LineIdentityGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set lineRef
-        writeField(writer, "LineRef", source.getString("lineRef"));
+        writeField(writer, LINE_REF, source.getString(LINE_REF));
 
         // set directionRef
-        writeField(writer, "DirectionRef", source.getString("directionRef"));
+        writeField(writer, DIRECTION_REF, source.getString(DIRECTION_REF));
     }
 }

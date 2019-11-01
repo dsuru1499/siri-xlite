@@ -4,7 +4,6 @@ import io.vertx.core.MultiMap;
 import io.vertx.ext.web.RoutingContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import siri_xlite.common.Parameters;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

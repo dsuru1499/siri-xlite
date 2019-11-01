@@ -8,6 +8,8 @@ import java.util.List;
 
 public class JourneyInfoGroupMarshaller implements Marshaller<Document> {
 
+    public static final String VEHICLE_JOURNEY_NAME = "vehicleJourneyName";
+    public static final String JOURNEY_NOTE = "journeyNote";
     @Getter
     private static final Marshaller<Document> instance = new JourneyInfoGroupMarshaller();
 
@@ -15,10 +17,10 @@ public class JourneyInfoGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set vehicleJourneyName
-        writeField(writer, "VehicleJourneyName", source.getString("vehicleJourneyName"));
+        writeField(writer, VEHICLE_JOURNEY_NAME, source.getString(VEHICLE_JOURNEY_NAME));
 
         // set journeyNote
-        writeArray(writer, "", source.get("JourneyNote", List.class));
+        writeArray(writer, JOURNEY_NOTE, source.get(JOURNEY_NOTE, List.class));
 
         // publicContact :SimpleContact;
         // operationsContact:SimpleContact;

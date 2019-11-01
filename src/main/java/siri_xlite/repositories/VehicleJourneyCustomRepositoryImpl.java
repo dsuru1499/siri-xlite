@@ -1,34 +1,104 @@
 package siri_xlite.repositories;
 
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Flux;
+import siri_xlite.model.VehicleJourneyDocument;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
+import static org.springframework.data.domain.Sort.Order;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
+import static siri_xlite.marshaller.json.OnwardVehicleDepartureTimesGroupMarshaller.AIMED_DEPARTURE_TIME;
+import static siri_xlite.marshaller.json.SiriServiceMarshaller.INDEX;
+import static siri_xlite.marshaller.json.StopPointInSequenceGroupMarshaller.ORDER;
+import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 
 @Slf4j
 public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomRepository {
 
     @Autowired
-    ReactiveMongoTemplate template;
+    private ReactiveMongoTemplate template;
 
     @Autowired
-    EmbeddedCacheManager manager;
+    private EmbeddedCacheManager manager;
 
     @Override
-    public Flux<VehicleJourneyDocument> findByStopPointRef(Flux<String> ids) {
-
-        Collection<String> list = ids.collectList().block();
-        Query query = query(Criteria.where("calls.stopPointRef").in(list));
-        query.with(Sort.by("calls.aimedDepartureTime"));
-        return template.find(query, VehicleJourneyDocument.class);
+    public Flux<VehicleJourneyDocument> findByLineRef(String id) {
+        Query query = query(where("lineRef").is(id));
+        query.with(Sort.by(Order.by("routeRef"), Order.by("originAimedDepartureTime")));
+        return template.find(query, VehicleJourneyDocument.class, COLLECTION_NAME);
     }
 
+    @Override
+    public Flux<VehicleJourneyDocument> findByStopPointRef(String id) {
+        Query query = query(Criteria.where("calls.stopPointRef").is(id));
+        return template.find(query, Document.class, COLLECTION_NAME).flatMap(t -> create(t, id));
+    }
+
+    private Flux<VehicleJourneyDocument> create(Document document, String id) {
+        List<VehicleJourneyDocument> list = new ArrayList<>();
+        List<Document> calls = document.get("calls", List.class);
+        for (int i = 0; i < calls.size(); i++) {
+            Document call = calls.get(i);
+            if (call.getString("stopPointRef").equals(id)) {
+                VehicleJourneyDocument result = new VehicleJourneyDocument(document);
+                result.put(INDEX, i);
+                result.put(ORDER, call.getInteger(ORDER));
+                result.put(AIMED_DEPARTURE_TIME, call.getDate(AIMED_DEPARTURE_TIME));
+                list.add(result);
+            }
+        }
+        return Flux.fromIterable(list);
+    }
+
+    @Override
+    public void clearAll() {
+        manager.getCache(COLLECTION_NAME).clear();
+        template.dropCollection(COLLECTION_NAME);
+        template.indexOps(COLLECTION_NAME).ensureIndex(new Index().on("calls.stopPointRef", Sort.Direction.ASC));
+    }
+
+    // db.collection.aggregate([
+    // { $match: { "calls.stopPointRef": { $in: [ "StopPoint:10:58" ] } }},
+    // { $project: {
+    // "datedVehicleJourneyRef" : 1,
+    // "calls" : {
+    // $filter: { input: "$calls", as: "call", cond: { $in: [ "$$call.stopPointRef", [ "StopPoint:10:58" ] ] }
+    // }
+    // }}
+    // ]).toArray();
+
+    // @Override
+    // public Flux<Document> findByStopPointRef(String id) {
+    // final String[] fields = {"datedVehicleJourneyRef", "lineRef", "destinationRef", "operatorRef",
+    // "originAimedDepartureTime", "calls"};
+    // // ArrayOperators.In in = arrayOf("call.stopPointRef").containsValue(id);
+    //
+    // ComparisonOperators.Eq in = valueOf("call.stopPointRef").equalToValue(id);
+    // AggregationExpression filter = filter("calls").as("call").by(in);
+    // MatchOperation matchStage = match(where("calls.stopPointRef").is(id));
+    // ProjectionOperation projectStage = project(fields).and(filter).as("calls");
+    // Aggregation aggregation = newAggregation(matchStage, projectStage);
+    //
+    // return template.aggregate(aggregation, COLLECTION_NAME, Document.class).flatMap(t -> {
+    // List<Document> list = new ArrayList<>();
+    // List<Document> calls = t.get("calls", List.class);
+    // return Flux.fromIterable(calls).map(call -> {
+    // Document result = new Document(t);
+    // result.put(ORDER, call.getInteger(ORDER));
+    // result.put(AIMED_DEPARTURE_TIME, call.getDate(AIMED_DEPARTURE_TIME));
+    // return result;
+    // });
+    // });
+    // }
 }

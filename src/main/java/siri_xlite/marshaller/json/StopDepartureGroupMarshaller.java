@@ -7,6 +7,11 @@ import uk.org.siri.siri.CallStatusEnumeration;
 
 public class StopDepartureGroupMarshaller implements Marshaller<Document> {
 
+    public static final String AIMED_DEPARTURE_TIME = "aimedDepartureTime";
+    public static final String ACTUAL_DEPARTURE_TIME = "actualDepartureTime";
+    public static final String EXPECTED_DEPARTURE_TIME = "expectedDepartureTime";
+    public static final String DEPARTURE_STATUS = "departureStatus";
+    public static final String DEPARTURE_PLATFORM_NAME = "departurePlatformName";
     @Getter
     private static final Marshaller<Document> instance = new StopDepartureGroupMarshaller();
 
@@ -14,13 +19,13 @@ public class StopDepartureGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set aimedDepartureTime
-        writeField(writer, "AimedDepartureTime", source.getDate("aimedDepartureTime"));
+        writeField(writer, AIMED_DEPARTURE_TIME, source.getDate(AIMED_DEPARTURE_TIME));
 
         // set actualDepartureTime
-        writeField(writer, "ActualDepartureTime", source.getDate("actualDepartureTime"));
+        writeField(writer, ACTUAL_DEPARTURE_TIME, source.getDate(ACTUAL_DEPARTURE_TIME));
 
         // set expectedDepartureTime
-        writeField(writer, "ExpectedDepartureTime", source.getDate("expectedDepartureTime"));
+        writeField(writer, EXPECTED_DEPARTURE_TIME, source.getDate(EXPECTED_DEPARTURE_TIME));
 
         // provisionalExpectedDepartureTime :long;
 
@@ -33,13 +38,15 @@ public class StopDepartureGroupMarshaller implements Marshaller<Document> {
         // expectedLatestPassengerAccessTime :long;
 
         // set departureStatus
-        int departureStatus = source.getInteger("departureStatus");
-        writeField(writer, "DepartureStatus", CallStatusEnumeration.values()[departureStatus].name());
+        Integer departureStatus = source.getInteger(DEPARTURE_STATUS);
+        if (departureStatus != null) {
+            writeField(writer, DEPARTURE_STATUS, CallStatusEnumeration.values()[departureStatus]);
+        }
 
         // departureProximityText :string;
 
         // set departurePlatformName
-        writeField(writer, "DeparturePlatformName", source.getString("departurePlatformName"));
+        writeField(writer, DEPARTURE_PLATFORM_NAME, source.getString(DEPARTURE_PLATFORM_NAME));
 
         // departureBoardingActivity :byte;
 

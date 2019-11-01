@@ -1,4 +1,3 @@
-
 package uk.org.siri.siri;
 
 import javax.xml.bind.annotation.XmlEnum;
@@ -8,11 +7,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Classe Java pour VehicleModesEnumeration.
- * 
+ *
  * <p>
  * Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="VehicleModesEnumeration">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NMTOKEN">
@@ -27,7 +26,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlType(name = "VehicleModesEnumeration")
 @XmlEnum
@@ -48,10 +46,6 @@ public enum VehicleModesEnumeration {
         value = v;
     }
 
-    public String value() {
-        return value;
-    }
-
     public static VehicleModesEnumeration fromValue(String v) {
         for (VehicleModesEnumeration c : VehicleModesEnumeration.values()) {
             if (c.value.equals(v)) {
@@ -59,6 +53,10 @@ public enum VehicleModesEnumeration {
             }
         }
         throw new IllegalArgumentException(v);
+    }
+
+    public String value() {
+        return value;
     }
 
 }

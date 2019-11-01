@@ -6,23 +6,26 @@ import org.bson.Document;
 
 public class EstimatedTimetableAlterationGroupMarshaller implements Marshaller<Document> {
 
+    public static final String DATED_VEHICLE_JOURNEY_REF = "datedVehicleJourneyRef";
+    public static final String EXTRA_JOURNEY = "extraJourney";
+    public static final String CANCELLATION = "cancellation";
     @Getter
     private static final Marshaller<Document> instance = new EstimatedTimetableAlterationGroupMarshaller();
 
     @Override
     public void write(JsonGenerator writer, Document source) {
 
-        // set datedDocumentRef
-        writeField(writer, "DatedDocumentRef", source.getString("datedDocumentRef"));
+        // set datedVehicleJourneyRef
+        writeField(writer, DATED_VEHICLE_JOURNEY_REF, source.getString(DATED_VEHICLE_JOURNEY_REF));
 
-        // datedDocumentIndirectRef :string;
-        // estimatedDocumentCode :string;
+        // datedVehicleJourneyIndirectRef :string;
+        // estimatedVehicleJourneyCode :string;
 
         // set extraJourney
-        writeField(writer, "ExtraJourney", source.getBoolean("extraJourney"));
+        writeField(writer, EXTRA_JOURNEY, source.getBoolean(EXTRA_JOURNEY));
 
         // set cancellation
-        writeField(writer, "Cancellation", source.getString("cancellation"));
+        writeField(writer, CANCELLATION, source.getString(CANCELLATION));
 
     }
 

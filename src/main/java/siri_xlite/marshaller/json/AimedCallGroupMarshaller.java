@@ -8,6 +8,12 @@ import uk.org.siri.siri.DepartureBoardingActivityEnumeration;
 
 public class AimedCallGroupMarshaller implements Marshaller<Document> {
 
+    public static final String AIMED_ARRIVAL_TIME = "aimedArrivalTime";
+    public static final String ARRIVAL_PLATFORM_NAME = "arrivalPlatformName";
+    public static final String AIMED_DEPARTURE_TIME = "aimedDepartureTime";
+    public static final String DEPARTURE_PLATFORM_NAME = "departurePlatformName";
+    public static final String DEPARTURE_BOARDING_ACTIVITY = "departureBoardingActivity";
+    public static final String AIMED_HEADWAY_INTERVAL = "aimedHeadwayInterval";
     @Getter
     private static final Marshaller<Document> instance = new AimedCallGroupMarshaller();
 
@@ -15,33 +21,34 @@ public class AimedCallGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set aimedArrivalTime
-        writeField(writer, "AimedArrivalTime", source.getDate("aimedArrivalTime"));
+        writeField(writer, AIMED_ARRIVAL_TIME, source.getDate(AIMED_ARRIVAL_TIME));
 
         // set arrivalPlatformName
-        writeField(writer, "AimedDepartureTime", source.getString("arrivalPlatformName"));
+        writeField(writer, ARRIVAL_PLATFORM_NAME, source.getString(ARRIVAL_PLATFORM_NAME));
 
         // arrivalBoardingActivity :byte;
 
         // set arrivalOperatorRefs
 
         // set aimedDepartureTime
-        writeField(writer, "AimedDepartureTime", source.getDate("aimedDepartureTime"));
+        writeField(writer, AIMED_DEPARTURE_TIME, source.getDate(AIMED_DEPARTURE_TIME));
 
         // set departurePlatformName
-        writeField(writer, "DeparturePlatformName", source.getString("departurePlatformName"));
+        writeField(writer, DEPARTURE_PLATFORM_NAME, source.getString(DEPARTURE_PLATFORM_NAME));
 
         // set departureBoardingActivity
-        int departureBoardingActivity = source.getInteger("departureBoardingActivity");
-        writeField(writer, "DepartureBoardingActivity",
-                DepartureBoardingActivityEnumeration.values()[departureBoardingActivity].name());
-
+        Integer departureBoardingActivity = source.getInteger(DEPARTURE_BOARDING_ACTIVITY);
+        if (departureBoardingActivity != null) {
+            writeField(writer, DEPARTURE_BOARDING_ACTIVITY,
+                    DepartureBoardingActivityEnumeration.values()[departureBoardingActivity]);
+        }
         // set departureOperatorRefs
 
         // aimedLatestPassengerAccessTime :long;
 
         // set aimedHeadwayInterval
-        long aimedHeadwayInterval = source.getLong("aimedHeadwayInterval");
-        writeField(writer, "AimedHeadwayInterval", SiriStructureFactory.createDuration(aimedHeadwayInterval));
+        Long aimedHeadwayInterval = source.getLong(AIMED_HEADWAY_INTERVAL);
+        writeField(writer, AIMED_HEADWAY_INTERVAL, SiriStructureFactory.createDuration(aimedHeadwayInterval));
 
     }
 

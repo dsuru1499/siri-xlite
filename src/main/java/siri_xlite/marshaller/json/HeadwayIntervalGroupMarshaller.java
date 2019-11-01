@@ -7,6 +7,8 @@ import siri_xlite.service.common.SiriStructureFactory;
 
 public class HeadwayIntervalGroupMarshaller implements Marshaller<Document> {
 
+    public static final String AIMED_HEADWAY_INTERVAL = "aimedHeadwayInterval";
+    public static final String EXPECTED_HEADWAY_INTERVAL = "expectedHeadwayInterval";
     @Getter
     private static final Marshaller<Document> instance = new HeadwayIntervalGroupMarshaller();
 
@@ -14,12 +16,12 @@ public class HeadwayIntervalGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set aimedHeadwayInterval
-        long aimedHeadwayInterval = source.getLong("aimedHeadwayInterval");
-        writeField(writer, "AimedHeadwayInterval", SiriStructureFactory.createDuration(aimedHeadwayInterval));
+        Long aimedHeadwayInterval = source.getLong(AIMED_HEADWAY_INTERVAL);
+        writeField(writer, AIMED_HEADWAY_INTERVAL, SiriStructureFactory.createDuration(aimedHeadwayInterval));
 
         // set expectedHeadwayInterval
-        long expectedHeadwayInterval = source.getLong("aimedHeadwayInterval");
-        writeField(writer, "ExpectedHeadwayInterval", SiriStructureFactory.createDuration(expectedHeadwayInterval));
+        Long expectedHeadwayInterval = source.getLong(EXPECTED_HEADWAY_INTERVAL);
+        writeField(writer, EXPECTED_HEADWAY_INTERVAL, SiriStructureFactory.createDuration(expectedHeadwayInterval));
 
     }
 }

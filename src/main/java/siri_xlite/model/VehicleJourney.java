@@ -1,11 +1,11 @@
 package siri_xlite.model;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Singular;
 import lombok.Value;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
 import java.util.List;
 
 @Value
@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public final class VehicleJourney {
     // EstimatedVehicleJourney
-    private Long recordedAtTime;
+    private Date recordedAtTime;
 
     // LineIdentityGroup
     private String lineRef;
@@ -63,8 +63,8 @@ public final class VehicleJourney {
     // publicContact :SimpleContact;
     // operationsContact:SimpleContact;
     private Boolean headwayService;
-    private Long originAimedDepartureTime;
-    private Long destinationAimedArrivalTime;
+    private Date originAimedDepartureTime;
+    private Date destinationAimedArrivalTime;
     private Integer firstOrLastJourney;
     // DisruptionGroup
     // ? facilityConditionElement :[FacilityCondition];

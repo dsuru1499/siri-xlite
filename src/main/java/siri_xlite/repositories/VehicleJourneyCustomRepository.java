@@ -1,9 +1,13 @@
 package siri_xlite.repositories;
 
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
+import siri_xlite.model.VehicleJourneyDocument;
 
 public interface VehicleJourneyCustomRepository {
 
-    Flux<VehicleJourneyDocument> findByStopPointRef(Flux<String> ids);
+    Flux<VehicleJourneyDocument> findByStopPointRef(String id);
+
+    Flux<VehicleJourneyDocument> findByLineRef(String id);
+
+    void clearAll();
 }

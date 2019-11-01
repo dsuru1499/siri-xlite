@@ -8,6 +8,10 @@ import java.util.List;
 
 public class ServiceInfoGroupMarshaller implements Marshaller<Document> {
 
+    public static final String OPERATOR_REF = "operatorRef";
+    public static final String PRODUCT_CATEGORY_REF = "productCategoryRef";
+    public static final String SERVICE_FEATURE_REFS = "serviceFeatureRefs";
+    public static final String VEHICLE_FEATURE_REFS = "vehicleFeatureRefs";
     @Getter
     private static final Marshaller<Document> instance = new ServiceInfoGroupMarshaller();
 
@@ -15,16 +19,16 @@ public class ServiceInfoGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set operatorRef
-        writeField(writer, "OperatorRef", source.getString("operatorRef"));
+        writeField(writer, OPERATOR_REF, source.getString(OPERATOR_REF));
 
         // set productCategoryRef
-        writeField(writer, "ProductCategoryRef", source.getString("productCategoryRef"));
+        writeField(writer, PRODUCT_CATEGORY_REF, source.getString(PRODUCT_CATEGORY_REF));
 
         // set serviceFeatureRef
-        writeArray(writer, "ServiceFeatureRefs", source.get("serviceFeatureRefs", List.class));
+        writeArray(writer, SERVICE_FEATURE_REFS, source.get(SERVICE_FEATURE_REFS, List.class));
 
         // set vehicleFeatureRef
-        writeArray(writer, "VehicleFeatureRef", source.get("vehicleFeatureRefs", List.class));
+        writeArray(writer, VEHICLE_FEATURE_REFS, source.get(VEHICLE_FEATURE_REFS, List.class));
 
     }
 }

@@ -8,6 +8,16 @@ import uk.org.siri.siri.OccupancyEnumeration;
 
 public class JourneyProgressGroupMarshaller implements Marshaller<Document> {
 
+    public static final String MONITORED = "monitored";
+    public static final String MONITORING_ERROR = "monitoringError";
+    public static final String IN_CONGESTION = "inCongestion";
+    public static final String IN_PANIC = "inPanic";
+    public static final String LONGITUDE = "longitude";
+    public static final String LATITUDE = "latitude";
+    public static final String VEHICLE_LOCATION = "vehicleLocation";
+    public static final String BEARING = "bearing";
+    public static final String OCCUPANCY = "occupancy";
+    public static final String DELAY = "delay";
     @Getter
     private static final Marshaller<Document> instance = new JourneyProgressGroupMarshaller();
 
@@ -15,44 +25,46 @@ public class JourneyProgressGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set monitored
-        writeField(writer, "Monitored", source.getBoolean("monitored"));
+        writeField(writer, MONITORED, source.getBoolean(MONITORED));
 
         // set monitoringError
-        writeField(writer, "monitoringError", source.getString("monitoringError"));
+        writeField(writer, MONITORING_ERROR, source.getString(MONITORING_ERROR));
 
         // set inCongestion
-        writeField(writer, "InCongestion", source.getBoolean("inCongestion"));
+        writeField(writer, IN_CONGESTION, source.getBoolean(IN_CONGESTION));
 
         // set inPanic
-        writeField(writer, "InPanic", source.getBoolean("inPanic"));
+        writeField(writer, IN_PANIC, source.getBoolean(IN_PANIC));
 
         // predictionInaccurate :bool;
         // dataSource :string;
         // confidenceLevel :string;
 
         // set vehicleLocation
-        Document vehicleLocation = source.get("vehicleLocation", Document.class);
-        writeObject(writer, "VehicleLocation", vehicleLocation, location -> {
-            writeField(writer, "Longitude", location.getDouble("longitude"));
-            writeField(writer, "Latitude", location.getDouble("latitude"));
+        Document vehicleLocation = source.get(VEHICLE_LOCATION, Document.class);
+        writeObject(writer, VEHICLE_LOCATION, vehicleLocation, location -> {
+            writeField(writer, LONGITUDE, location.getDouble(LONGITUDE));
+            writeField(writer, LATITUDE, location.getDouble(LATITUDE));
         });
 
         // ? locationRecordedAtTime :long;
 
         // set bearing
-        writeField(writer, "bearing", source.getDouble("bearing"));
+        writeField(writer, BEARING, source.getDouble(BEARING));
 
         // progressRate :string;
         // ? velocity : long;
         // ? engineOn :bool;
 
         // set occupancy
-        Integer occupancy = source.getInteger("occupancy");
-        writeField(writer, "monitoringError", OccupancyEnumeration.values()[occupancy].name());
+        Integer occupancy = source.getInteger(OCCUPANCY);
+        if (occupancy != null) {
+            writeField(writer, MONITORING_ERROR, OccupancyEnumeration.values()[occupancy]);
+        }
 
         // set delay
-        long delay = source.getLong("delay");
-        writeField(writer, "delay", SiriStructureFactory.createDuration(delay));
+        Long delay = source.getLong(DELAY);
+        writeField(writer, DELAY, SiriStructureFactory.createDuration(delay));
 
         // progressStatus :[string];
         // vehicleStatus : string;

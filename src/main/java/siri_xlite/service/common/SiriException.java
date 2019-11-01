@@ -50,10 +50,6 @@ public class SiriException extends Exception {
         this.values = values;
     }
 
-    public static enum ERROR_CODE {
-        UnapprovedKeyAccessError, UnknownParticipantError, UnknownEndpointError, EndpointDeniedAccessError, EndpointNotAvailableAccessError, ServiceNotAvailableError, CapabilityNotSupportedError, AccessNotAllowedError, InvalidDataReferencesError, BeyondDataHorizon, NoInfoForTopicError, ParametersIgnoredError, UnknownExtensionsError, AllowedResourceUsageExceededError, OtherError
-    }
-
     public static SiriException createUnapprovedKeyAccessError(String value) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("Key", value);
@@ -131,6 +127,10 @@ public class SiriException extends Exception {
 
     public static SiriException createOtherError(Throwable e) {
         return new SiriException(ERROR_CODE.OtherError, e);
+    }
+
+    public static enum ERROR_CODE {
+        UnapprovedKeyAccessError, UnknownParticipantError, UnknownEndpointError, EndpointDeniedAccessError, EndpointNotAvailableAccessError, ServiceNotAvailableError, CapabilityNotSupportedError, AccessNotAllowedError, InvalidDataReferencesError, BeyondDataHorizon, NoInfoForTopicError, ParametersIgnoredError, UnknownExtensionsError, AllowedResourceUsageExceededError, OtherError
     }
 
 }

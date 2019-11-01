@@ -11,7 +11,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import siri_xlite.Configuration;
 import siri_xlite.common.Color;
-import siri_xlite.repositories.LinesDocument;
+import siri_xlite.model.LineDocument;
 import siri_xlite.repositories.LinesRepository;
 import siri_xlite.service.common.LinesDiscovery;
 import siri_xlite.service.common.ParametersFactory;
@@ -46,9 +46,9 @@ public class LinesDiscoveryService implements LinesDiscovery {
         }
     }
 
-    private Flux<LinesDocument> stream(LinesDiscoveryParameters parameters) {
+    private Flux<LineDocument> stream(LinesDiscoveryParameters parameters) {
         Monitor monitor = MonitorFactory.start(LINES_DISCOVERY + "-query");
-        Flux<LinesDocument> result = repository.findAll();
+        Flux<LineDocument> result = repository.findAll();
         log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
         return result;
     }

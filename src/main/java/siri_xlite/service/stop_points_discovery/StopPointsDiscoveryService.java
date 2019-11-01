@@ -10,7 +10,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import siri_xlite.Configuration;
 import siri_xlite.common.Color;
-import siri_xlite.repositories.StopPointsDocument;
+import siri_xlite.model.StopPointDocument;
 import siri_xlite.repositories.StopPointsRepository;
 import siri_xlite.service.common.ParametersFactory;
 import siri_xlite.service.common.SiriSubscriber;
@@ -47,9 +47,9 @@ public class StopPointsDiscoveryService implements StopPointsDiscovery {
         }
     }
 
-    private Flux<StopPointsDocument> stream(StopPointsDiscoveryParameters parameters) {
+    private Flux<StopPointDocument> stream(StopPointsDiscoveryParameters parameters) {
         Monitor monitor = MonitorFactory.start(STOPPOINTS_DISCOVERY + "-query");
-        Flux<StopPointsDocument> result = repository.findAll();
+        Flux<StopPointDocument> result = repository.findAll();
         log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
         return result;
     }

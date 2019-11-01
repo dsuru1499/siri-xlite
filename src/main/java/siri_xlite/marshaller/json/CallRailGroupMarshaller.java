@@ -6,6 +6,7 @@ import org.bson.Document;
 
 public class CallRailGroupMarshaller implements Marshaller<Document> {
 
+    public static final String PLATFORM_TRAVERSAL = "platformTraversal";
     @Getter
     private static final Marshaller<Document> instance = new CallRailGroupMarshaller();
 
@@ -15,7 +16,7 @@ public class CallRailGroupMarshaller implements Marshaller<Document> {
         // reversesAtStop :bool;
 
         // set platformTraversal
-        writeField(writer, "PlatformTraversal", source.getBoolean("platformTraversal"));
+        writeField(writer, PLATFORM_TRAVERSAL, source.getBoolean(PLATFORM_TRAVERSAL));
 
         // signalStatus :string;
     }

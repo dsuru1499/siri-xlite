@@ -8,6 +8,13 @@ import java.util.List;
 
 public class JourneyEndNamesGroupMarshaller implements Marshaller<Document> {
 
+    public static final String ORIGIN_REF = "originRef";
+    public static final String ORIGIN_NAME = "originName";
+    public static final String VIAS = "vias";
+    public static final String PLACE_REF = "placeRef";
+    public static final String PLACE_NAME = "placeName";
+    public static final String DESTINATION_REF = "destinationRef";
+    public static final String DESTINATION_NAME = "destinationName";
     @Getter
     private static final Marshaller<Document> instance = new JourneyEndNamesGroupMarshaller();
 
@@ -15,29 +22,29 @@ public class JourneyEndNamesGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set originRef
-        writeField(writer, "OriginRef", source.getString("originRef"));
+        writeField(writer, ORIGIN_REF, source.getString(ORIGIN_REF));
 
         // set originName
-        writeField(writer, "OriginName", source.getString("originName"));
+        writeField(writer, ORIGIN_NAME, source.getString(ORIGIN_NAME));
 
         // originShortName :string;
         // destinationDisplayAtOrigin :string;
 
         // set via
-        writeArray(writer, "Via", source.get("vias", List.class), (Document t) -> {
+        writeArray(writer, VIAS, source.get(VIAS, List.class), (Document t) -> {
 
             // set placeRef
-            writeField(writer, "PlaceRef", t.getString("placeRef"));
+            writeField(writer, PLACE_REF, t.getString(PLACE_REF));
 
             // set placeName
-            writeField(writer, "PlaceName", t.getString("placeName"));
+            writeField(writer, PLACE_NAME, t.getString(PLACE_NAME));
         });
 
         // set destinationRef
-        writeField(writer, "DestinationRef", source.getString("destinationRef"));
+        writeField(writer, DESTINATION_REF, source.getString(DESTINATION_REF));
 
         // set destinationName
-        writeField(writer, "DestinationName", source.getString("destinationName"));
+        writeField(writer, DESTINATION_REF, source.getString(DESTINATION_NAME));
 
         // destinationShortName :string;
         // ? originDisplayAtDestination :string;

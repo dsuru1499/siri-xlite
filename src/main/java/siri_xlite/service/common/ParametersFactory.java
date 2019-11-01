@@ -3,7 +3,6 @@ package siri_xlite.service.common;
 import com.google.common.base.CaseFormat;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
-import siri_xlite.common.Parameters;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +11,6 @@ import java.util.Map;
 public abstract class ParametersFactory<T> {
 
     private static Map<Class<? extends Parameters>, ParametersFactory<?>> _factories = new HashMap<>();
-
-    protected abstract Parameters create(RoutingContext context) throws Exception;
 
     public static <T> void register(Class<? extends Parameters> clazz, ParametersFactory<T> factory) {
         _factories.put(clazz, factory);
@@ -44,5 +41,7 @@ public abstract class ParametersFactory<T> {
                 name.substring(0, name.lastIndexOf("Parameters")));
         return "siri_xlite.service." + service + "." + name + "Factory";
     }
+
+    protected abstract Parameters create(RoutingContext context) throws Exception;
 
 }

@@ -1,11 +1,11 @@
 package siri_xlite.model;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Singular;
 import lombok.Value;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
 import java.util.List;
 
 @Value
@@ -43,9 +43,9 @@ public final class Call {
     private List<String> situationRefs;
 
     // OnwardVehicleArrivalTimesGroup VehicleArrivalTimesGroup, MonitoredCallArrivalTimesGroup
-    private Long aimedArrivalTime;
-    private Long actualDepartureTime;
-    private Long expectedArrivalTime;
+    private Date aimedArrivalTime;
+    private Date actualDepartureTime;
+    private Date expectedArrivalTime;
     // expectedArrivalPredictionQuality :PredictionQuality;
     // latestExpectedArrivalTime :long;
 
@@ -58,12 +58,12 @@ public final class Call {
     // arrivalOperatorRefs :[string];
 
     // OnwardVehicleDepartureTimesGroup VehicleDepartureTimesGroup, MonitoredCallDepartureTimesGroup
-    private Long aimedDepartureTime;
-    private Long expectedDepartureTime;
+    private Date aimedDepartureTime;
+    private Date expectedDepartureTime;
     // provisionalExpectedDepartureTime :long;
     // earliestExpectedDepartureTime :long;
     // expectedDeparturePredictionQuality :PredictionQuality;
-    private Long actualArrivalTime;
+    private Date actualArrivalTime;
 
     // PassengerDepartureTimesGroup
     // aimedLatestPassengerAccessTime :long;

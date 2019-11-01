@@ -8,6 +8,10 @@ import java.util.List;
 
 public class TrainOperationalInfoGroupMarshaller implements Marshaller<Document> {
 
+    public static final String TRAIN_NUMBERS = "trainNumbers";
+    public static final String JOURNEY_PARTS = "journeyParts";
+    public static final String JOURNEY_PART_REF = "journeyPartRef";
+    public static final String TRAIN_NUMBER_REF = "trainNumberRef";
     @Getter
     private static final Marshaller<Document> instance = new TrainOperationalInfoGroupMarshaller();
 
@@ -24,17 +28,17 @@ public class TrainOperationalInfoGroupMarshaller implements Marshaller<Document>
         // driverName :string;
 
         // set trainNumbers
-        List<String> trainNumbers = source.get("trainNumbers", List.class);
-        writeArray(writer, "TrainNumbers", trainNumbers, t -> {
-            writeObject(writer, t, trainNumber -> writeField(writer, "TrainNumberRef", trainNumber));
+        List<String> trainNumbers = source.get(TRAIN_NUMBERS, List.class);
+        writeArray(writer, TRAIN_NUMBERS, trainNumbers, t -> {
+            writeObject(writer, t, trainNumber -> writeField(writer, TRAIN_NUMBER_REF, trainNumber));
         });
 
         // set journeyParts
-        List<Document> journeyParts = source.get("journeyParts", List.class);
-        writeArray(writer, "JourneyParts", journeyParts, t -> {
+        List<Document> journeyParts = source.get(JOURNEY_PARTS, List.class);
+        writeArray(writer, JOURNEY_PARTS, journeyParts, t -> {
             writeObject(writer, t, journeyPart -> {
-                writeField(writer, "JourneyPartRef", journeyPart.getString("journeyPartRef"));
-                writeField(writer, "TrainNumberRef", journeyPart.getString("trainNumberRef"));
+                writeField(writer, JOURNEY_PART_REF, journeyPart.getString(JOURNEY_PART_REF));
+                writeField(writer, TRAIN_NUMBER_REF, journeyPart.getString(TRAIN_NUMBER_REF));
 
             });
         });

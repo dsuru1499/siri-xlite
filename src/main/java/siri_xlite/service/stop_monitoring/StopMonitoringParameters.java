@@ -11,9 +11,9 @@ import uk.org.siri.siri.StopVisitTypeEnumeration;
 @EqualsAndHashCode(callSuper = true)
 public class StopMonitoringParameters extends DefaultParameters {
 
-    public static final String STOPPOINT = "stopppoint";
+    public static final String STOPPOINT_REF = "stoppoint";
 
-    private String stopPoint;
+    private String stopPointRef;
 
     private String MonitoringRef;
     private Integer MaximumNumberOfCallsPrevious;
@@ -23,7 +23,7 @@ public class StopMonitoringParameters extends DefaultParameters {
     @Override
     public void configure(RoutingContext context) throws SiriException {
         super.configure(context);
-        setStopPoint(values.get(STOPPOINT));
+        setStopPointRef(values.get(STOPPOINT_REF));
     }
 
     @Override

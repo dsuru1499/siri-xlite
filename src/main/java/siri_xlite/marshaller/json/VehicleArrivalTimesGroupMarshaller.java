@@ -6,6 +6,9 @@ import org.bson.Document;
 
 public class VehicleArrivalTimesGroupMarshaller implements Marshaller<Document> {
 
+    public static final String AIMED_ARRIVAL_TIME = "aimedArrivalTime";
+    public static final String ACTUAL_ARRIVAL_TIME = "actualArrivalTime";
+    public static final String EXPECTED_ARRIVAL_TIME = "expectedArrivalTime";
     @Getter
     private static final Marshaller<Document> instance = new VehicleArrivalTimesGroupMarshaller();
 
@@ -13,13 +16,13 @@ public class VehicleArrivalTimesGroupMarshaller implements Marshaller<Document> 
     public void write(JsonGenerator writer, Document source) {
 
         // set aimedArrivalTime
-        writeField(writer, "AimedArrivalTime", source.getDate("aimedArrivalTime"));
+        writeField(writer, AIMED_ARRIVAL_TIME, source.getDate(AIMED_ARRIVAL_TIME));
 
         // set actualArrivalTime
-        writeField(writer, "ActualArrivalTime", source.getDate("actualArrivalTime"));
+        writeField(writer, ACTUAL_ARRIVAL_TIME, source.getDate(ACTUAL_ARRIVAL_TIME));
 
         // set expectedArrivalTime
-        writeField(writer, "ExpectedArrivalTime", source.getDate("expectedArrivalTime"));
+        writeField(writer, EXPECTED_ARRIVAL_TIME, source.getDate(EXPECTED_ARRIVAL_TIME));
 
     }
 }

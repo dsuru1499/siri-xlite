@@ -8,24 +8,29 @@ import java.time.LocalDateTime;
 
 public class TimetableAlterationGroupMarshaller implements Marshaller<Document> {
 
+    public static final String EXTRA_JOURNEY = "extraJourney";
+    public static final String CANCELLATION = "cancellation";
+    public static final String DATED_DOCUMENT_REF = "datedDocumentRef";
+    public static final String FRAMED_DOCUMENT_REF = "framedDocumentRef";
+    public static final String DATA_FRAME_REF = "dataFrameRef";
     @Getter
     private static final Marshaller<Document> instance = new TimetableAlterationGroupMarshaller();
 
     @Override
     public void write(JsonGenerator writer, Document source) {
         // framedDocumentRef
-        writeObject(writer, "FramedDocumentRef", source.getString("datedDocumentRef"), datedDocumentRef -> {
-            writeField(writer, "DatedDocumentRef", datedDocumentRef);
-            writeField(writer, "DataFrameRef", LocalDateTime.now());
+        writeObject(writer, FRAMED_DOCUMENT_REF, source.getString(DATED_DOCUMENT_REF), datedDocumentRef -> {
+            writeField(writer, DATED_DOCUMENT_REF, datedDocumentRef);
+            writeField(writer, DATA_FRAME_REF, LocalDateTime.now());
         });
 
         // DocumentRef :string;
 
         // set extraJourney
-        writeField(writer, "ExtraJourney", source.getBoolean("extraJourney"));
+        writeField(writer, EXTRA_JOURNEY, source.getBoolean(EXTRA_JOURNEY));
 
         // set cancellation
-        writeField(writer, "Cancellation", source.getBoolean("cancellation"));
+        writeField(writer, CANCELLATION, source.getBoolean(CANCELLATION));
 
     }
 

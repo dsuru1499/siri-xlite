@@ -1,4 +1,3 @@
-
 package uk.org.siri.siri;
 
 import javax.xml.bind.annotation.XmlEnum;
@@ -8,11 +7,11 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Classe Java pour FirstOrLastJourneyEnumeration.
- * 
+ *
  * <p>
  * Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
  * <p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="FirstOrLastJourneyEnumeration">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NMTOKEN">
@@ -23,7 +22,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlType(name = "FirstOrLastJourneyEnumeration")
 @XmlEnum
@@ -40,10 +38,6 @@ public enum FirstOrLastJourneyEnumeration {
         value = v;
     }
 
-    public String value() {
-        return value;
-    }
-
     public static FirstOrLastJourneyEnumeration fromValue(String v) {
         for (FirstOrLastJourneyEnumeration c : FirstOrLastJourneyEnumeration.values()) {
             if (c.value.equals(v)) {
@@ -51,6 +45,10 @@ public enum FirstOrLastJourneyEnumeration {
             }
         }
         throw new IllegalArgumentException(v);
+    }
+
+    public String value() {
+        return value;
     }
 
 }

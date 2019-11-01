@@ -6,6 +6,8 @@ import org.bson.Document;
 
 public class CallPropertyGroupMarshaller implements Marshaller<Document> {
 
+    public static final String ORIGIN_DISPLAY = "originDisplay";
+    public static final String DESTINATION_DISPLAY = "destinationDisplay";
     @Getter
     private static final Marshaller<Document> instance = new CallPropertyGroupMarshaller();
 
@@ -17,10 +19,10 @@ public class CallPropertyGroupMarshaller implements Marshaller<Document> {
         // requestStop :bool;
 
         // set originDisplay
-        writeField(writer, "OriginDisplay", source.getString("originDisplay"));
+        writeField(writer, ORIGIN_DISPLAY, source.getString(ORIGIN_DISPLAY));
 
         // set destinationDisplay
-        writeField(writer, "DestinationDisplay", source.getString("destinationDisplay"));
+        writeField(writer, DESTINATION_DISPLAY, source.getString(DESTINATION_DISPLAY));
 
     }
 

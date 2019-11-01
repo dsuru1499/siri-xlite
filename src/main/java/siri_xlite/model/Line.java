@@ -1,7 +1,6 @@
 package siri_xlite.model;
 
 import lombok.Builder;
-import lombok.Data;
 import lombok.Singular;
 import lombok.Value;
 import lombok.experimental.Accessors;

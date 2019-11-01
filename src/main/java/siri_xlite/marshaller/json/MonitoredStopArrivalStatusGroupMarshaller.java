@@ -7,6 +7,8 @@ import uk.org.siri.siri.CallStatusEnumeration;
 
 public class MonitoredStopArrivalStatusGroupMarshaller implements Marshaller<Document> {
 
+    public static final String ARRIVAL_STATUS = "arrivalStatus";
+    public static final String ARRIVAL_PLATFORM_NAME = "arrivalPlatformName";
     @Getter
     private static final Marshaller<Document> instance = new MonitoredStopArrivalStatusGroupMarshaller();
 
@@ -14,13 +16,14 @@ public class MonitoredStopArrivalStatusGroupMarshaller implements Marshaller<Doc
     public void write(JsonGenerator writer, Document source) {
 
         // set arrivalStatus
-        int arrivalStatus = source.getInteger("arrivalStatus");
-        writeField(writer, "ArrivalPlatformName", CallStatusEnumeration.values()[arrivalStatus].name());
-
+        Integer arrivalStatus = source.getInteger(ARRIVAL_STATUS);
+        if (arrivalStatus != null) {
+            writeField(writer, ARRIVAL_STATUS, CallStatusEnumeration.values()[arrivalStatus]);
+        }
         // arrivalProximityText :string;
 
         // set arrivalPlatformName
-        writeField(writer, "ArrivalPlatformName", source.getString("arrivalPlatformName"));
+        writeField(writer, ARRIVAL_PLATFORM_NAME, source.getString(ARRIVAL_PLATFORM_NAME));
 
         // arrivalBoardingActivity :byte;
         // arrivalStopAssignment :StopAssignment;

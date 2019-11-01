@@ -10,9 +10,9 @@ import static siri_xlite.common.DocumentUtils.append;
 public class LineBuilder {
 
     @Builder
-    public static Document create(String lineRef, String lineName, Collection<Document> destinations) {
+    public static LineDocument create(String lineRef, String lineName, Collection<Document> destinations) {
 
-        Document result = new Document("_id", lineRef);
+        LineDocument result = new LineDocument("_id", lineRef);
         append(result, "lineRef", lineRef);
         append(result, "lineName", lineName);
         append(result, "destinations", destinations);
