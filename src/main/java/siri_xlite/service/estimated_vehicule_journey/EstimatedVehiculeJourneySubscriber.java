@@ -14,6 +14,8 @@ public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<Estimated
 
     public static final String EXTRA_CALL = "extraCall";
     public static final String CANCELLATION = "cancellation";
+    public static final String ESTIMATED_CALLS = "estimatedCalls";
+    public static final String CALLS = "calls";
 
     private EstimatedVehiculeJourneySubscriber(RoutingContext context) {
         super(context);
@@ -38,7 +40,7 @@ public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<Estimated
             TrainOperationalInfoGroupMarshaller.getInstance().write(writer, source);
 
             // EstimatedCalls calls
-            writeArray(writer, "estimatedCalls", source.get("calls", List.class), this::writeEstimatedCall);
+            writeArray(writer, ESTIMATED_CALLS, source.get(CALLS, List.class), this::writeEstimatedCall);
         });
     }
 

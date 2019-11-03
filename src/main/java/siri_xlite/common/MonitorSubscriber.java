@@ -17,7 +17,7 @@ public class MonitorSubscriber<T> implements Subscriber<T> {
     private Monitor monitor;
 
     public MonitorSubscriber(String label, Consumer<? super T> onNext, Consumer<? super Throwable> onError,
-                             Action onComplete, Consumer<? super Subscription> onSubscribe) {
+            Action onComplete, Consumer<? super Subscription> onSubscribe) {
         this.label = label;
         this.subscriber = new LambdaSubscriber<T>(onNext, onError, onComplete, onSubscribe);
     }
@@ -32,12 +32,12 @@ public class MonitorSubscriber<T> implements Subscriber<T> {
     }
 
     public static <T> MonitorSubscriber<T> create(String label, Consumer<? super T> onNext,
-                                                  Consumer<? super Throwable> onError) {
+            Consumer<? super Throwable> onError) {
         return MonitorSubscriber.create(label, onNext, onError, null, null);
     }
 
     public static <T> MonitorSubscriber<T> create(String label, Consumer<? super T> onNext,
-                                                  Consumer<? super Throwable> onError, Action onComplete, Consumer<? super Subscription> onSubscribe) {
+            Consumer<? super Throwable> onError, Action onComplete, Consumer<? super Subscription> onSubscribe) {
         return new MonitorSubscriber<T>(label, onNext, onError, onComplete, onSubscribe);
     }
 

@@ -60,8 +60,7 @@ public class StopMonitoringService implements StopMonitoring {
     private Flux<VehicleJourneyDocument> stream(StopMonitoringParameters parameters) {
         Monitor monitor = MonitorFactory.start(STOP_MONITORING + "-query");
         Flux<VehicleJourneyDocument> result = stopPointsRepository.findAllById(parameters.getStopPointRef())
-                .flatMap(vehicleJourneyRepository::findByStopPointRef)
-                .sort(AIMED_DEPARTURE_TIME_COMPARATOR);
+                .flatMap(vehicleJourneyRepository::findByStopPointRef).sort(AIMED_DEPARTURE_TIME_COMPARATOR);
         log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
         return result;
     }

@@ -6,6 +6,7 @@ import io.vertx.ext.web.RoutingContext;
 import lombok.extern.log4j.Log4j;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import siri_xlite.Configuration;
@@ -17,7 +18,7 @@ import siri_xlite.service.common.SiriSubscriber;
 import siri_xlite.service.common.StopPointsDiscovery;
 
 @Log4j
-@org.springframework.stereotype.Service("siri_lite.stop_points_discovery")
+@Service("siri_lite.stop_points_discovery")
 public class StopPointsDiscoveryService implements StopPointsDiscovery {
 
     @Autowired

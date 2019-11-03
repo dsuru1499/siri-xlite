@@ -10,6 +10,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+import siri_xlite.service.Initializer;
 import siri_xlite.service.SiriVerticle;
 
 import javax.annotation.PostConstruct;
@@ -22,10 +24,11 @@ import java.io.IOException;
 public class Application {
 
     @Autowired
-    private Initializer service;
+    private SiriVerticle siriVerticle;
+
 
     @Autowired
-    private SiriVerticle siriVerticle;
+    private Initializer initializer;
 
     public static void main(String[] args) {
         BasicConfigurator.configure();
@@ -34,7 +37,6 @@ public class Application {
 
     @PostConstruct
     private void initialize() {
-        service.initialize();
         Vertx vertx = Vertx.vertx();
         vertx.deployVerticle(siriVerticle);
     }

@@ -1,4 +1,4 @@
-package siri_xlite;
+package siri_xlite.service;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -13,6 +13,7 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import siri_xlite.common.Color;
 import siri_xlite.common.ZipUtils;
 import siri_xlite.model.*;
@@ -34,14 +35,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Log4j2
-@org.springframework.stereotype.Service
+@Service
 public class Initializer {
     private static final String SEP = "-";
     private static final String ARCHIVE = "data.zip";
     private static final String OUTPUT_DIR = "siri";
     private static final int BULK_SIZE = 1000;
 
-//    private MongoDatabase database;
+    // private MongoDatabase database;
 
     @Autowired
     private LinesRepository linesRepository;
@@ -52,15 +53,9 @@ public class Initializer {
     @Autowired
     private VehicleJourneyRepository vehicleJourneyRepository;
 
-
-//    public static void main(String[] args) {
-//        Initializer service = new Initializer();
-//        service.initialize();
-//    }
-
     // @PostConstruct
     // @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Paris")
-    public void initialize() {
+    public boolean initialize() {
 
         Monitor monitor = MonitorFactory.start();
         log.info(Color.YELLOW + "[DSU] initialize model (~ 1mn)" + Color.NORMAL);
@@ -81,8 +76,8 @@ public class Initializer {
             log.error(e.getMessage(), e);
         }
 
-//        MongoClient client = MongoClients.create("mongodb://localhost");
-//        this.database = client.getDatabase("siri");
+        // MongoClient client = MongoClients.create("mongodb://localhost");
+        // this.database = client.getDatabase("siri");
 
         clear();
         GtfsImporter importer = new GtfsImporter(path.toString());
@@ -94,6 +89,8 @@ public class Initializer {
 
         importer.dispose();
         log.info(Color.YELLOW + "[DSU] model initialized : " + monitor.stop() + Color.NORMAL);
+
+        return true;
 
     }
 
@@ -110,9 +107,11 @@ public class Initializer {
 
         try {
 
-//            MongoCollection<Document> collection = database.getCollection("vehicle_journey", Document.class);
-//            collection.drop();
-//            collection.createIndex(Indexes.ascending("calls.stopPointRef", "calls.aimedDepartureTime"));
+            vehicleJourneyRepository.clearAll();
+
+            // MongoCollection<Document> collection = database.getCollection("vehicle_journey", Document.class);
+            // collection.drop();
+            // collection.createIndex(Indexes.ascending("calls.stopPointRef", "calls.aimedDepartureTime"));
 
             List<VehicleJourneyDocument> documents = new ArrayList<>(BULK_SIZE);
 
@@ -217,8 +216,8 @@ public class Initializer {
                     documents.add(builder.build());
 
                     if (documents.size() == BULK_SIZE) {
-                        vehicleJourneyRepository.saveAll(documents);
-//                        collection.insertMany(documents);
+                        vehicleJourneyRepository.saveAll(documents).blockLast();
+                        // collection.insertMany(documents);
                         documents.clear();
                     }
 
@@ -227,8 +226,8 @@ public class Initializer {
             }
 
             if (documents.size() > 0) {
-                vehicleJourneyRepository.saveAll(documents);
-//                collection.insertMany(documents);
+                vehicleJourneyRepository.saveAll(documents).blockLast();
+                // collection.insertMany(documents);
             }
 
         } catch (Exception e) {
@@ -254,8 +253,8 @@ public class Initializer {
 
             linesRepository.clearAll();
 
-//            MongoCollection<Document> collection = database.getCollection("lines", Document.class);
-//            collection.drop();
+            // MongoCollection<Document> collection = database.getCollection("lines", Document.class);
+            // collection.drop();
 
             LineBuilder.LineDocumentBuilder builder = LineBuilder.builder();
             DestinationBuilder.DocumentBuilder destination = DestinationBuilder.builder();
@@ -274,8 +273,8 @@ public class Initializer {
                 documents.add(document);
 
                 if (documents.size() == BULK_SIZE) {
-                    linesRepository.saveAll(documents);
-//                    collection.insertMany(documents);
+                    linesRepository.saveAll(documents).blockLast();
+                    // collection.insertMany(documents);
                     documents.clear();
                 }
 
@@ -283,8 +282,8 @@ public class Initializer {
             }
 
             if (documents.size() > 0) {
-                linesRepository.saveAll(documents);
-//                collection.insertMany(documents);
+                linesRepository.saveAll(documents).blockLast();
+                // collection.insertMany(documents);
             }
 
         } catch (Exception e) {
@@ -303,9 +302,9 @@ public class Initializer {
         try {
             stopPointsRepository.clearAll();
 
-//            MongoCollection<Document> collection = database.getCollection("stoppoints", Document.class);
-//            collection.drop();
-//            collection.createIndex(Indexes.ascending("_parent"));
+            // MongoCollection<Document> collection = database.getCollection("stoppoints", Document.class);
+            // collection.drop();
+            // collection.createIndex(Indexes.ascending("_parent"));
 
             List<StopPointDocument> documents = new ArrayList<>(BULK_SIZE);
             StopPointBuilder.StopPointDocumentBuilder builder = StopPointBuilder.builder();
@@ -321,8 +320,8 @@ public class Initializer {
 
                 documents.add(document);
                 if (documents.size() == BULK_SIZE) {
-                    stopPointsRepository.saveAll(documents);
-//                    collection.insertMany(documents);
+                    stopPointsRepository.saveAll(documents).blockLast();
+                    // collection.insertMany(documents);
                     documents.clear();
                 }
 
@@ -330,8 +329,8 @@ public class Initializer {
             }
 
             if (documents.size() > 0) {
-                stopPointsRepository.saveAll(documents);
-//                collection.insertMany(documents);
+                stopPointsRepository.saveAll(documents).blockLast();
+                // collection.insertMany(documents);
             }
 
         } catch (Exception e) {

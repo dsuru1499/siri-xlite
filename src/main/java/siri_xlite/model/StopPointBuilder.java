@@ -11,11 +11,11 @@ public class StopPointBuilder {
 
     @Builder
     public static StopPointDocument create(String stopPointRef, String parent, String stopName, Document location,
-                                           Collection<String> lineRefs) {
+            Collection<String> lineRefs) {
 
-        StopPointDocument result = new StopPointDocument("_id", stopPointRef);
+        StopPointDocument result = new StopPointDocument();
         append(result, "stopPointRef", stopPointRef);
-        append(result, "_parent", parent);
+        append(result, "parent", parent);
         append(result, "stopName", stopName);
         append(result, "lineRefs", lineRefs);
         append(result, "location", location);

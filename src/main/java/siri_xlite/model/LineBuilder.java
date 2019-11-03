@@ -12,7 +12,7 @@ public class LineBuilder {
     @Builder
     public static LineDocument create(String lineRef, String lineName, Collection<Document> destinations) {
 
-        LineDocument result = new LineDocument("_id", lineRef);
+        LineDocument result = new LineDocument();
         append(result, "lineRef", lineRef);
         append(result, "lineName", lineName);
         append(result, "destinations", destinations);

@@ -15,8 +15,7 @@ import siri_xlite.marshaller.json.SiriExceptionMarshaller;
 import java.io.ByteArrayOutputStream;
 
 @Slf4j
-public abstract class ItemSubscriber<P extends DefaultParameters>
-        implements SiriSubscriber<Document, P>, HttpStatus {
+public abstract class ItemSubscriber<P extends DefaultParameters> implements SiriSubscriber<Document, P>, HttpStatus {
 
     protected final RoutingContext context;
     protected Configuration configuration;

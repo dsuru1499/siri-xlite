@@ -11,6 +11,14 @@ import java.util.Collection;
 @Slf4j
 public class StopPointsDiscoverySubcriber extends CollectionSubscriber<StopPointsDiscoveryParameters> {
 
+    public static final String STOP_POINT_REF = "stopPointRef";
+    public static final String STOP_NAME = "stopName";
+    public static final String LINE_REFS = "lineRefs";
+    public static final String LOCATION = "location";
+    public static final String LONGITUDE = "longitude";
+    public static final String LATITUDE = "latitude";
+    public static final String LINES = "lines";
+
     public StopPointsDiscoverySubcriber(RoutingContext context) {
         super(context);
     }
@@ -22,13 +30,13 @@ public class StopPointsDiscoverySubcriber extends CollectionSubscriber<StopPoint
     @Override
     protected void writeItem(Document t) {
         writeObject(writer, t, source -> {
-            writeField(writer, "StopPointRef", source.getString("stopPointRef"));
-            writeField(writer, "stopName", source.getString("stopName"));
-            writeArray(writer, "Lines", (Collection<String>) source.get("lineRefs"),
-                    value -> writeObject(writer, value, (lineRef) -> writeField(writer, "LineRef", lineRef)));
-            writeObject(writer, "Location", (Document) source.get("location"), (Document location) -> {
-                writeField(writer, "Longitude", location.getDouble("longitude"));
-                writeField(writer, "Latitude", location.getDouble("latitude"));
+            writeField(writer, STOP_POINT_REF, source.getString(STOP_POINT_REF));
+            writeField(writer, STOP_NAME, source.getString(STOP_NAME));
+            writeArray(writer, LINES, (Collection<String>) source.get(LINE_REFS),
+                    value -> writeObject(writer, value, (lineRef) -> writeField(writer, LINE_REFS, lineRef)));
+            writeObject(writer, LOCATION, (Document) source.get(LOCATION), (Document location) -> {
+                writeField(writer, LONGITUDE, location.getDouble(LONGITUDE));
+                writeField(writer, LATITUDE, location.getDouble(LATITUDE));
             });
         });
     }

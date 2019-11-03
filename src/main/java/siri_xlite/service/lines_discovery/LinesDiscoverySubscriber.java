@@ -11,6 +11,13 @@ import java.util.List;
 @Slf4j
 public class LinesDiscoverySubscriber extends CollectionSubscriber<LinesDiscoveryParameters> {
 
+    public static final String DESTINATIONS = "destinations";
+    public static final String LINE_REF = "lineRef";
+    public static final String LINE_NAME = "lineName";
+    public static final String MONITORED = "monitored";
+    public static final String DESTINATION_REF = "destinationRef";
+    public static final String PLACE_NAME = "placeName";
+
     protected LinesDiscoverySubscriber(RoutingContext context) {
         super(context);
     }
@@ -22,19 +29,17 @@ public class LinesDiscoverySubscriber extends CollectionSubscriber<LinesDiscover
     @Override
     protected void writeItem(Document t) {
         writeObject(writer, t, source -> {
-            writeField(writer, "LineRef", source.getString("lineRef"));
-            writeField(writer, "LineName", source.getString("lineName"));
-            writeField(writer, "Monitored", true);
-            writeObject(writer, "Destinations", source.get("destinations", List.class),
-                    (List<Document> destinations) -> writeArray(writer, "Destination", destinations,
-                            this::writeDestination));
+            writeField(writer, LINE_REF, source.getString(LINE_REF));
+            writeField(writer, LINE_NAME, source.getString(LINE_NAME));
+            writeField(writer, MONITORED, true);
+            writeArray(writer, DESTINATIONS, source.get(DESTINATIONS, List.class), this::writeDestination);
         });
     }
 
     private void writeDestination(Document source) {
         writeObject(writer, source, destination -> {
-            writeField(writer, "DestinationRef", destination.getString("destinationRef"));
-            writeField(writer, "PlaceName", destination.getString("placeName"));
+            writeField(writer, DESTINATION_REF, destination.getString(DESTINATION_REF));
+            writeField(writer, PLACE_NAME, destination.getString(PLACE_NAME));
         });
     }
 

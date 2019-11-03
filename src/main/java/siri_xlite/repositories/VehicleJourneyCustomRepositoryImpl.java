@@ -6,10 +6,12 @@ import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import org.springframework.data.mongodb.core.index.CompoundIndexDefinition;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import siri_xlite.model.VehicleJourneyDocument;
 
 import java.util.ArrayList;
@@ -24,13 +26,19 @@ import static siri_xlite.marshaller.json.StopPointInSequenceGroupMarshaller.ORDE
 import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 
 @Slf4j
-public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomRepository {
+public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomRepository<String> {
 
     @Autowired
     private ReactiveMongoTemplate template;
 
     @Autowired
     private EmbeddedCacheManager manager;
+
+    @Override
+    public Mono<VehicleJourneyDocument> findById(String id) {
+        Query query = query(where("datedVehicleJourneyRef").is(id));
+        return template.findOne(query, VehicleJourneyDocument.class, COLLECTION_NAME);
+    }
 
     @Override
     public Flux<VehicleJourneyDocument> findByLineRef(String id) {
@@ -64,8 +72,11 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
     @Override
     public void clearAll() {
         manager.getCache(COLLECTION_NAME).clear();
-        template.dropCollection(COLLECTION_NAME);
-        template.indexOps(COLLECTION_NAME).ensureIndex(new Index().on("calls.stopPointRef", Sort.Direction.ASC));
+        template.dropCollection(COLLECTION_NAME)
+                .then(template.createCollection(COLLECTION_NAME))
+                .then(template.indexOps(COLLECTION_NAME).ensureIndex(new Index().unique().on("datedVehicleJourneyRef", Sort.Direction.ASC)))
+                .then(template.indexOps(COLLECTION_NAME).ensureIndex(new Index().on("calls.stopPointRef", Sort.Direction.ASC)))
+                .block();
     }
 
     // db.collection.aggregate([

@@ -15,7 +15,7 @@ public abstract class ZipUtils {
         log.info("[DSU] unzip archive : " + archive + " to " + outputDir);
 
         ZipFile zipfile = new ZipFile(archive);
-        for (Enumeration<? extends ZipEntry> e = zipfile.entries(); e.hasMoreElements(); ) {
+        for (Enumeration<? extends ZipEntry> e = zipfile.entries(); e.hasMoreElements();) {
             ZipEntry entry = (ZipEntry) e.nextElement();
             unzipEntry(zipfile, entry, outputDir);
         }

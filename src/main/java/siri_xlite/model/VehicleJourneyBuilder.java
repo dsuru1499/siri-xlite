@@ -12,18 +12,18 @@ public class VehicleJourneyBuilder {
 
     @Builder
     public static VehicleJourneyDocument create(Date recordedAtTime, String lineRef, String directionRef,
-                                                String datedVehicleJourneyRef, Boolean extraJourney, Boolean cancellation, String journeyPatternRef,
-                                                String journeyPatternName, List<Integer> vehicleModes, String routeRef, String publishedLineName,
-                                                String directionName, String originRef, String originName, List<Document> vias, String destinationRef,
-                                                String destinationName, String operatorRef, String productCategoryRef, List<String> serviceFeatureRefs,
-                                                List<String> vehicleFeatureRefs, String vehicleJourneyName, List<String> journeyNotes,
-                                                Boolean headwayService, Date originAimedDepartureTime, Date destinationAimedArrivalTime,
-                                                Integer firstOrLastJourney, List<String> situationRefs, Boolean monitored, String monitoringError,
-                                                Boolean inCongestion, Boolean inPanic, Document vehicleLocation, Double bearing, Integer occupancy,
-                                                Long delay, List<String> trainNumbers, List<Document> journeyParts, String originDisplay,
-                                                String destinationDisplay, List<Document> calls) {
+            String datedVehicleJourneyRef, Boolean extraJourney, Boolean cancellation, String journeyPatternRef,
+            String journeyPatternName, List<Integer> vehicleModes, String routeRef, String publishedLineName,
+            String directionName, String originRef, String originName, List<Document> vias, String destinationRef,
+            String destinationName, String operatorRef, String productCategoryRef, List<String> serviceFeatureRefs,
+            List<String> vehicleFeatureRefs, String vehicleJourneyName, List<String> journeyNotes,
+            Boolean headwayService, Date originAimedDepartureTime, Date destinationAimedArrivalTime,
+            Integer firstOrLastJourney, List<String> situationRefs, Boolean monitored, String monitoringError,
+            Boolean inCongestion, Boolean inPanic, Document vehicleLocation, Double bearing, Integer occupancy,
+            Long delay, List<String> trainNumbers, List<Document> journeyParts, String originDisplay,
+            String destinationDisplay, List<Document> calls) {
 
-        VehicleJourneyDocument result = new VehicleJourneyDocument("_id", vehicleJourneyName);
+        VehicleJourneyDocument result = new VehicleJourneyDocument();
         append(result, "recordedAtTime", recordedAtTime);
         append(result, "lineRef", lineRef);
         append(result, "directionRef", directionRef);
