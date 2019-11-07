@@ -1,28 +1,35 @@
 package siri_xlite.service.estimated_vehicule_journey;
 
-import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
+import org.infinispan.Cache;
 import siri_xlite.marshaller.json.*;
+import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.ItemSubscriber;
-import siri_xlite.service.common.SiriSubscriber;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 
 @Slf4j
-public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<EstimatedVehiculeJourneyParameters> {
+public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<EstimatedVehiculeJourneyParameters>
+        implements Constants {
 
     public static final String EXTRA_CALL = "extraCall";
     public static final String CANCELLATION = "cancellation";
     public static final String ESTIMATED_CALLS = "estimatedCalls";
     public static final String CALLS = "calls";
 
-    private EstimatedVehiculeJourneySubscriber(RoutingContext context) {
-        super(context);
-    }
-
-    public static SiriSubscriber<Document, EstimatedVehiculeJourneyParameters> create(RoutingContext context) {
-        return new EstimatedVehiculeJourneySubscriber(context);
+    @Override
+    public void onComplete() {
+        super.onComplete();
+        String etag = getEtag();
+        if (StringUtils.isNotEmpty(etag)) {
+            Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
+            cache.putForExternalRead(getEtag(), getEtag(), LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
+        }
     }
 
     @Override

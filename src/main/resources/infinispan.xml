@@ -6,13 +6,10 @@
     <cache-container>
         <transport cluster="siri"/>
         <invalidation-cache name="lines" mode="SYNC">
-            <expiration lifespan="180000"/>
         </invalidation-cache>
         <invalidation-cache name="stoppoints" mode="SYNC">
-            <expiration lifespan="180000"/>
         </invalidation-cache>
         <invalidation-cache name="vehicle_journey" mode="SYNC">
-            <expiration lifespan="180000"/>
         </invalidation-cache>
     </cache-container>
 </infinispan>

@@ -1,30 +1,37 @@
 package siri_xlite.service.estimated_timetable;
 
 import io.vertx.core.http.HttpServerRequest;
-import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
+import org.infinispan.Cache;
+import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.CollectionSubscriber;
-import siri_xlite.service.common.SiriSubscriber;
+
+import java.util.concurrent.TimeUnit;
 
 import static siri_xlite.marshaller.json.EstimatedTimetableAlterationGroupMarshaller.DATED_VEHICLE_JOURNEY_REF;
 import static siri_xlite.marshaller.json.JourneyEndNamesGroupMarshaller.DESTINATION_REF;
 import static siri_xlite.marshaller.json.JourneyEndTimesGroupMarshaller.ORIGIN_AIMED_DEPARTURE_TIME;
 import static siri_xlite.marshaller.json.JourneyPatternInfoGroupMarshaller.ROUTE_REF;
-import static siri_xlite.marshaller.json.LineIdentityGroupMarshaller.LINE_REF;
 import static siri_xlite.marshaller.json.ServiceInfoGroupMarshaller.OPERATOR_REF;
+import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 import static siri_xlite.service.SiriVerticle.*;
 import static siri_xlite.service.common.EstimatedVehiculeJourney.ESTIMATED_VEHICLE_JOURNEY;
 
 @Slf4j
-public class EstimatedTimetableSubscriber extends CollectionSubscriber<EstimatedTimetableParameters> {
+public class EstimatedTimetableSubscriber extends CollectionSubscriber<EstimatedTimetableParameters>
+        implements Constants {
 
-    protected EstimatedTimetableSubscriber(RoutingContext context) {
-        super(context);
-    }
-
-    public static SiriSubscriber<Document, EstimatedTimetableParameters> create(RoutingContext context) {
-        return new EstimatedTimetableSubscriber(context);
+    @Override
+    public void onComplete() {
+        super.onComplete();
+        String etag = getEtag();
+        if (StringUtils.isNotEmpty(etag)) {
+            Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
+            cache.putForExternalRead(LINE_REF + getEtag(), getEtag(), LIFESPAN, TimeUnit.SECONDS, MAX_IDLE,
+                    TimeUnit.SECONDS);
+        }
     }
 
     @Override

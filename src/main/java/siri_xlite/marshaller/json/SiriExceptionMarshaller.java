@@ -12,6 +12,8 @@ import java.util.Map;
 public class SiriExceptionMarshaller implements Marshaller<SiriException>, JsonUtils {
 
     public static final String ERROR_TEXT = "errorText";
+    private static final String ERROR_CODE = "errorCode";
+
     @Getter
     private static final Marshaller<SiriException> instance = new SiriExceptionMarshaller();
 
@@ -35,7 +37,8 @@ public class SiriExceptionMarshaller implements Marshaller<SiriException>, JsonU
         case AllowedResourceUsageExceededError:
         case OtherError: {
 
-            writeObject(writer, e.getCode().name(), e, t -> {
+            writeObject(writer, e, t -> {
+                writeField(writer, ERROR_CODE, e.getCode().name());
                 writeField(writer, ERROR_TEXT, ExceptionUtils.getMessage(t));
                 Map<String, Object> values = t.getValues();
                 if (values != null) {

@@ -1,32 +1,45 @@
 package siri_xlite.repositories;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
-import org.springframework.data.mongodb.core.index.CompoundIndexDefinition;
 import org.springframework.data.mongodb.core.index.Index;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import siri_xlite.common.Color;
 import siri_xlite.model.VehicleJourneyDocument;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import static org.springframework.data.domain.Sort.Order;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static siri_xlite.marshaller.json.OnwardVehicleDepartureTimesGroupMarshaller.AIMED_DEPARTURE_TIME;
-import static siri_xlite.marshaller.json.SiriServiceMarshaller.INDEX;
+import static siri_xlite.marshaller.json.SiriMarshaller.INDEX;
 import static siri_xlite.marshaller.json.StopPointInSequenceGroupMarshaller.ORDER;
 import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 
 @Slf4j
 public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomRepository<String> {
+
+    public static final int LIFESPAN = 24 * 60 * 60;
+    public static final int MAX_IDLE = 60 * 60;
+    public static final String LINE_REF = "LINE_REF:";
+    public static final String STOPPOINT_REF = "STOPPOINT_REF:";
+
+    public static Comparator<Document> AIMED_DEPARTURE_TIME_COMPARATOR = Comparator
+            .comparing(t -> t.getDate(AIMED_DEPARTURE_TIME));
+
+    private ResourceBundle messages = ResourceBundle.getBundle(this.getClass().getPackageName() + ".Messages");
 
     @Autowired
     private ReactiveMongoTemplate template;
@@ -34,23 +47,45 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
     @Autowired
     private EmbeddedCacheManager manager;
 
+    @Autowired
+    private StopPointsRepository stopPointsRepository;
+
     @Override
     public Mono<VehicleJourneyDocument> findById(String id) {
-        Query query = query(where("datedVehicleJourneyRef").is(id));
-        return template.findOne(query, VehicleJourneyDocument.class, COLLECTION_NAME);
+        Monitor monitor = MonitorFactory.start(COLLECTION_NAME);
+        try {
+            Query query = query(where("datedVehicleJourneyRef").is(id));
+            return template.findOne(query, VehicleJourneyDocument.class, COLLECTION_NAME);
+        } finally {
+            log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
+        }
     }
 
     @Override
     public Flux<VehicleJourneyDocument> findByLineRef(String id) {
-        Query query = query(where("lineRef").is(id));
-        query.with(Sort.by(Order.by("routeRef"), Order.by("originAimedDepartureTime")));
-        return template.find(query, VehicleJourneyDocument.class, COLLECTION_NAME);
+        Monitor monitor = MonitorFactory.start(COLLECTION_NAME);
+
+        try {
+            Query query = query(where("lineRef").is(id));
+            query.with(Sort.by(Order.by("routeRef"), Order.by("originAimedDepartureTime")));
+            return template.find(query, VehicleJourneyDocument.class, COLLECTION_NAME);
+        } finally {
+            log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
+        }
     }
 
     @Override
     public Flux<VehicleJourneyDocument> findByStopPointRef(String id) {
-        Query query = query(Criteria.where("calls.stopPointRef").is(id));
-        return template.find(query, Document.class, COLLECTION_NAME).flatMap(t -> create(t, id));
+        Monitor monitor = MonitorFactory.start(COLLECTION_NAME);
+
+        try {
+            List<String> stopPointRefs = stopPointsRepository.findAllById(id).collectList().block();
+            Query query = query(where("calls.stopPointRef").in(stopPointRefs));
+            query.with(Sort.by(Order.by("originAimedDepartureTime")));
+            return template.find(query, Document.class, COLLECTION_NAME).flatMap(t -> create(t, id));
+        } finally {
+            log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
+        }
     }
 
     private Flux<VehicleJourneyDocument> create(Document document, String id) {
@@ -72,10 +107,11 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
     @Override
     public void clearAll() {
         manager.getCache(COLLECTION_NAME).clear();
-        template.dropCollection(COLLECTION_NAME)
-                .then(template.createCollection(COLLECTION_NAME))
-                .then(template.indexOps(COLLECTION_NAME).ensureIndex(new Index().unique().on("datedVehicleJourneyRef", Sort.Direction.ASC)))
-                .then(template.indexOps(COLLECTION_NAME).ensureIndex(new Index().on("calls.stopPointRef", Sort.Direction.ASC)))
+        template.dropCollection(COLLECTION_NAME).then(template.createCollection(COLLECTION_NAME))
+                .then(template.indexOps(COLLECTION_NAME)
+                        .ensureIndex(new Index().unique().on("datedVehicleJourneyRef", Sort.Direction.ASC)))
+                .then(template.indexOps(COLLECTION_NAME)
+                        .ensureIndex(new Index().on("calls.stopPointRef", Sort.Direction.ASC)))
                 .block();
     }
 

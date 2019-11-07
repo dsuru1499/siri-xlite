@@ -5,64 +5,84 @@ import com.jamonapi.MonitorFactory;
 import io.reactivex.Flowable;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
+import org.apache.commons.lang3.StringUtils;
+import org.infinispan.Cache;
+import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import siri_xlite.Configuration;
 import siri_xlite.common.Color;
-import siri_xlite.repositories.StopPointsRepository;
 import siri_xlite.model.VehicleJourneyDocument;
+import siri_xlite.service.common.Constants;
+import siri_xlite.repositories.Messages;
+import siri_xlite.repositories.NotModifiedException;
 import siri_xlite.repositories.VehicleJourneyRepository;
 import siri_xlite.service.common.ParametersFactory;
-import siri_xlite.service.common.SiriSubscriber;
 import siri_xlite.service.common.StopMonitoring;
 
-import java.util.Comparator;
+import java.util.ResourceBundle;
 
-import static siri_xlite.marshaller.json.OnwardVehicleDepartureTimesGroupMarshaller.AIMED_DEPARTURE_TIME;
+import static siri_xlite.repositories.LinesRepository.COLLECTION_NAME;
+import static siri_xlite.service.common.SiriSubscriber.getEtag;
 
 @Slf4j
 @Service
-public class StopMonitoringService implements StopMonitoring {
+public class StopMonitoringService implements StopMonitoring, Constants {
 
-    public static Comparator<Document> AIMED_DEPARTURE_TIME_COMPARATOR = Comparator
-            .comparing(t -> t.getDate(AIMED_DEPARTURE_TIME));
+    private static final ResourceBundle messages = ResourceBundle
+            .getBundle(Messages.class.getPackageName() + ".Messages");
 
     @Autowired
     private Configuration configuration;
 
     @Autowired
-    private StopPointsRepository stopPointsRepository;
+    private VehicleJourneyRepository repository;
 
     @Autowired
-    private VehicleJourneyRepository vehicleJourneyRepository;
+    protected EmbeddedCacheManager manager;
+
+    @Autowired
+    protected StopMonitoringSubscriber subscriber;
+
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public StopMonitoringSubscriber stopMonitoringSubscriber() {
+        return new StopMonitoringSubscriber();
+    }
 
     @Override
     public void handle(final RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(STOP_MONITORING);
-
-            SiriSubscriber<Document, StopMonitoringParameters> subscriber = StopMonitoringSubscriber.create(context);
             Flowable.fromCallable(() -> {
                 StopMonitoringParameters parameters = ParametersFactory.create(StopMonitoringParameters.class, context);
-                subscriber.configure(configuration, parameters);
+                subscriber.configure(configuration, parameters, context);
                 return parameters;
-            }).flatMap(this::stream).doAfterTerminate(() -> {
-                subscriber.close();
-                log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
-            }).subscribe(subscriber);
+            }).flatMap(parameters -> stream(parameters, context))
+                    .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))
+                    .subscribe(subscriber);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
     }
 
-    private Flux<VehicleJourneyDocument> stream(StopMonitoringParameters parameters) {
-        Monitor monitor = MonitorFactory.start(STOP_MONITORING + "-query");
-        Flux<VehicleJourneyDocument> result = stopPointsRepository.findAllById(parameters.getStopPointRef())
-                .flatMap(vehicleJourneyRepository::findByStopPointRef).sort(AIMED_DEPARTURE_TIME_COMPARATOR);
-        log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
-        return result;
+    private Flux<VehicleJourneyDocument> stream(StopMonitoringParameters parameters, RoutingContext context) {
+
+        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
+
+        Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
+        String etag = getEtag(context);
+        if (StringUtils.isNotEmpty(etag)) {
+            if (StringUtils.isNotEmpty(cache.get(STOPPOINT_REF + etag))) {
+                throw new NotModifiedException();
+            }
+        }
+
+        return repository.findByStopPointRef(parameters.getStopPointRef());
     }
 
 }

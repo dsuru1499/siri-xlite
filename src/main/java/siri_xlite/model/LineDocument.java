@@ -8,6 +8,7 @@ import java.util.Map;
 public class LineDocument extends Document {
 
     public LineDocument() {
+        super();
     }
 
     public LineDocument(String key, Object value) {

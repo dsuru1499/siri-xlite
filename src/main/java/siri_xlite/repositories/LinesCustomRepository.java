@@ -6,9 +6,5 @@ import siri_xlite.model.LineDocument;
 
 public interface LinesCustomRepository<ID> {
 
-    Mono<LineDocument> findById(ID id);
-
-    Flux<LineDocument> findAll();
-
     void clearAll();
 }

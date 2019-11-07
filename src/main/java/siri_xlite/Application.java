@@ -26,7 +26,6 @@ public class Application {
     @Autowired
     private SiriVerticle siriVerticle;
 
-
     @Autowired
     private Initializer initializer;
 

@@ -1,15 +1,20 @@
 package siri_xlite.service.stop_points_discovery;
 
-import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
+import org.infinispan.Cache;
+import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.CollectionSubscriber;
-import siri_xlite.service.common.SiriSubscriber;
 
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+
+import static siri_xlite.repositories.StopPointsRepository.COLLECTION_NAME;
 
 @Slf4j
-public class StopPointsDiscoverySubcriber extends CollectionSubscriber<StopPointsDiscoveryParameters> {
+public class StopPointsDiscoverySubcriber extends CollectionSubscriber<StopPointsDiscoveryParameters>
+        implements Constants {
 
     public static final String STOP_POINT_REF = "stopPointRef";
     public static final String STOP_NAME = "stopName";
@@ -19,12 +24,15 @@ public class StopPointsDiscoverySubcriber extends CollectionSubscriber<StopPoint
     public static final String LATITUDE = "latitude";
     public static final String LINES = "lines";
 
-    public StopPointsDiscoverySubcriber(RoutingContext context) {
-        super(context);
-    }
-
-    public static SiriSubscriber<Document, StopPointsDiscoveryParameters> create(RoutingContext context) {
-        return new StopPointsDiscoverySubcriber(context);
+    @Override
+    public void onComplete() {
+        super.onComplete();
+        String etag = getEtag();
+        if (StringUtils.isNotEmpty(etag)) {
+            Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
+            cache.putForExternalRead(ALL + getEtag(), getEtag(), LIFESPAN, TimeUnit.SECONDS, MAX_IDLE,
+                    TimeUnit.SECONDS);
+        }
     }
 
     @Override

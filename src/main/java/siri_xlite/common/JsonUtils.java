@@ -20,7 +20,7 @@ public interface JsonUtils {
 
     String VERSION = "version";
     String HREF = "href";
-    String ID = "id";
+    String ID = "_id";
 
     JsonFactory factory = new JsonFactory();
 
@@ -38,6 +38,7 @@ public interface JsonUtils {
         try {
             writer.writeEndArray();
             writer.flush();
+            writer.close();
         } catch (IOException e) {
             ExceptionUtils.wrapAndThrow(e);
         }

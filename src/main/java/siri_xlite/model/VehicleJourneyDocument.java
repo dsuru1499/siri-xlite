@@ -5,7 +5,6 @@ import org.bson.Document;
 import java.util.Map;
 
 @org.springframework.data.mongodb.core.mapping.Document("vehicle_journey")
-
 public class VehicleJourneyDocument extends Document {
 
     public VehicleJourneyDocument() {
@@ -20,7 +19,4 @@ public class VehicleJourneyDocument extends Document {
         super(map);
     }
 
-    public VehicleJourneyDocument(Document document) {
-        super(document);
-    }
 }

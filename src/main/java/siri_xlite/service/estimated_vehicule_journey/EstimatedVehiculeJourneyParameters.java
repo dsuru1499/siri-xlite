@@ -12,12 +12,12 @@ public class EstimatedVehiculeJourneyParameters extends DefaultParameters {
 
     public static final String DATED_VEHICLE_JOURNEY_REF = "dated_vehicle_journey_ref";
 
-    private String datedVehicleJourneyRefef;
+    private String datedVehicleJourneyRef;
 
     @Override
     public void configure(RoutingContext context) throws SiriException {
         super.configure(context);
-        setDatedVehicleJourneyRefef(values.get(DATED_VEHICLE_JOURNEY_REF));
+        setDatedVehicleJourneyRef(values.get(DATED_VEHICLE_JOURNEY_REF));
     }
 
     @Override

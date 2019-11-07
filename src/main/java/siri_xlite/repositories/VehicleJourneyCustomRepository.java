@@ -8,9 +8,9 @@ public interface VehicleJourneyCustomRepository<ID> {
 
     Mono<VehicleJourneyDocument> findById(ID id);
 
-    Flux<VehicleJourneyDocument> findByStopPointRef(String id);
+    Flux<VehicleJourneyDocument> findByLineRef(ID id);
 
-    Flux<VehicleJourneyDocument> findByLineRef(String id);
+    Flux<VehicleJourneyDocument> findByStopPointRef(ID id);
 
     void clearAll();
 }

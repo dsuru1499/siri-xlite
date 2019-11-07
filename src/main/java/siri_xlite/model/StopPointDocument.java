@@ -8,6 +8,7 @@ import java.util.Map;
 public class StopPointDocument extends Document {
 
     public StopPointDocument() {
+        super();
     }
 
     public StopPointDocument(String key, Object value) {

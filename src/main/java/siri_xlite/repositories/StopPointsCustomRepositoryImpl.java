@@ -2,7 +2,6 @@ package siri_xlite.repositories;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
-import org.infinispan.Cache;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -11,59 +10,34 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeospatialIndex;
 import org.springframework.data.mongodb.core.index.Index;
-import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import siri_xlite.common.Color;
-import siri_xlite.model.StopPointDocument;
 
 import java.util.Collection;
-import java.util.List;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.aggregation.Fields.field;
 import static org.springframework.data.mongodb.core.aggregation.Fields.from;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
 import static siri_xlite.repositories.StopPointsRepository.COLLECTION_NAME;
 
 @Slf4j
 public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepository<String> {
 
     @Autowired
-    ReactiveMongoTemplate template;
+    private ReactiveMongoTemplate template;
 
     @Autowired
-    EmbeddedCacheManager manager;
-
-    @Override
-    public Mono<StopPointDocument> findById(String id) {
-        Query query = query(where("lineRef").is(id));
-        return template.findOne(query, StopPointDocument.class, COLLECTION_NAME);
-    }
-
-    @Override
-    public Flux<StopPointDocument> findAll() {
-
-        Cache<String, List<StopPointDocument>> cache = manager.getCache(COLLECTION_NAME);
-        List<StopPointDocument> result = cache.get(COLLECTION_NAME);
-        if (result == null) {
-            log.info(Color.RED + "load " + COLLECTION_NAME + "from backend" + Color.NORMAL);
-            result = template.findAll(StopPointDocument.class).collectList().block();
-            cache.putForExternalRead(COLLECTION_NAME, result);
-        }
-
-        return Flux.fromIterable(result);
-    }
+    private EmbeddedCacheManager manager;
 
     @Override
     public void clearAll() {
         manager.getCache(COLLECTION_NAME).clear();
-        template.dropCollection(COLLECTION_NAME)
-                .then(template.createCollection(COLLECTION_NAME))
-                .then(template.indexOps(COLLECTION_NAME).ensureIndex(new Index().unique().on("stopPointRef", Sort.Direction.ASC)))
+        template.dropCollection(COLLECTION_NAME).then(template.createCollection(COLLECTION_NAME))
+                .then(template.indexOps(COLLECTION_NAME)
+                        .ensureIndex(new Index().unique().on("stopPointRef", Sort.Direction.ASC)))
                 .then(template.indexOps(COLLECTION_NAME).ensureIndex(new Index().on("parent", Sort.Direction.ASC)))
-                .then(template.indexOps(COLLECTION_NAME).ensureIndex(new GeospatialIndex("location").typed(GeoSpatialIndexType.GEO_2DSPHERE)))
+                .then(template.indexOps(COLLECTION_NAME)
+                        .ensureIndex(new GeospatialIndex("location").typed(GeoSpatialIndexType.GEO_2DSPHERE)))
                 .block();
     }
 
@@ -71,10 +45,7 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
     public Flux<String> findAllById(String id) {
 
         Aggregation aggregation = newAggregation(match(where("stopPointRef").is(id)),
-                graphLookup(COLLECTION_NAME)
-                        .startWith("$stopPointRef")
-                        .connectFrom("stopPointRef")
-                        .connectTo("parent")
+                graphLookup(COLLECTION_NAME).startWith("$stopPointRef").connectFrom("stopPointRef").connectTo("parent")
                         .as("children"),
                 project(from(field("stopPointRef"), field("children", "$children.stopPointRef"))));
 
