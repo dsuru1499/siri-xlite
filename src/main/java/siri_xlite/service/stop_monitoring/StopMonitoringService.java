@@ -17,16 +17,16 @@ import reactor.core.publisher.Flux;
 import siri_xlite.Configuration;
 import siri_xlite.common.Color;
 import siri_xlite.model.VehicleJourneyDocument;
-import siri_xlite.service.common.Constants;
-import siri_xlite.repositories.Messages;
 import siri_xlite.repositories.NotModifiedException;
 import siri_xlite.repositories.VehicleJourneyRepository;
+import siri_xlite.service.common.Constants;
+import siri_xlite.service.common.Messages;
 import siri_xlite.service.common.ParametersFactory;
 import siri_xlite.service.common.StopMonitoring;
 
 import java.util.ResourceBundle;
 
-import static siri_xlite.repositories.LinesRepository.COLLECTION_NAME;
+import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 import static siri_xlite.service.common.SiriSubscriber.getEtag;
 
 @Slf4j
@@ -35,18 +35,14 @@ public class StopMonitoringService implements StopMonitoring, Constants {
 
     private static final ResourceBundle messages = ResourceBundle
             .getBundle(Messages.class.getPackageName() + ".Messages");
-
-    @Autowired
-    private Configuration configuration;
-
-    @Autowired
-    private VehicleJourneyRepository repository;
-
     @Autowired
     protected EmbeddedCacheManager manager;
-
     @Autowired
     protected StopMonitoringSubscriber subscriber;
+    @Autowired
+    private Configuration configuration;
+    @Autowired
+    private VehicleJourneyRepository repository;
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -72,8 +68,6 @@ public class StopMonitoringService implements StopMonitoring, Constants {
 
     private Flux<VehicleJourneyDocument> stream(StopMonitoringParameters parameters, RoutingContext context) {
 
-        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
-
         Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
         String etag = getEtag(context);
         if (StringUtils.isNotEmpty(etag)) {
@@ -82,6 +76,7 @@ public class StopMonitoringService implements StopMonitoring, Constants {
             }
         }
 
+        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
         return repository.findByStopPointRef(parameters.getStopPointRef());
     }
 

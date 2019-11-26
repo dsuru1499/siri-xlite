@@ -17,16 +17,16 @@ import reactor.core.publisher.Mono;
 import siri_xlite.Configuration;
 import siri_xlite.common.Color;
 import siri_xlite.model.VehicleJourneyDocument;
-import siri_xlite.service.common.Constants;
-import siri_xlite.repositories.Messages;
 import siri_xlite.repositories.NotModifiedException;
 import siri_xlite.repositories.VehicleJourneyRepository;
+import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.EstimatedVehiculeJourney;
+import siri_xlite.service.common.Messages;
 import siri_xlite.service.common.ParametersFactory;
 
 import java.util.ResourceBundle;
 
-import static siri_xlite.repositories.LinesRepository.COLLECTION_NAME;
+import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 import static siri_xlite.service.common.SiriSubscriber.getEtag;
 
 @Slf4j
@@ -35,18 +35,14 @@ public class EstimatedVehiculeJourneyService implements EstimatedVehiculeJourney
 
     private static final ResourceBundle messages = ResourceBundle
             .getBundle(Messages.class.getPackageName() + ".Messages");
-
-    @Autowired
-    private Configuration configuration;
-
-    @Autowired
-    private VehicleJourneyRepository repository;
-
     @Autowired
     protected EmbeddedCacheManager manager;
-
     @Autowired
     protected EstimatedVehiculeJourneySubscriber subscriber;
+    @Autowired
+    private Configuration configuration;
+    @Autowired
+    private VehicleJourneyRepository repository;
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -73,7 +69,6 @@ public class EstimatedVehiculeJourneyService implements EstimatedVehiculeJourney
     }
 
     private Mono<VehicleJourneyDocument> stream(EstimatedVehiculeJourneyParameters parameters, RoutingContext context) {
-        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
 
         Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
         String etag = getEtag(context);
@@ -83,6 +78,7 @@ public class EstimatedVehiculeJourneyService implements EstimatedVehiculeJourney
             }
         }
 
+        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
         return repository.findById(parameters.getDatedVehicleJourneyRef());
     }
 

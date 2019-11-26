@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.infinispan.Cache;
-import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.CollectionSubscriber;
+import siri_xlite.service.common.Constants;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -28,8 +28,7 @@ public class LinesDiscoverySubscriber extends CollectionSubscriber<LinesDiscover
         String etag = getEtag();
         if (StringUtils.isNotEmpty(etag)) {
             Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
-            cache.putForExternalRead(ALL + getEtag(), getEtag(), LIFESPAN, TimeUnit.SECONDS, MAX_IDLE,
-                    TimeUnit.SECONDS);
+            cache.putForExternalRead(ALL + etag, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
         }
     }
 

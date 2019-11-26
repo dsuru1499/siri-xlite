@@ -17,11 +17,11 @@ import reactor.core.publisher.Mono;
 import siri_xlite.Configuration;
 import siri_xlite.common.Color;
 import siri_xlite.model.LineDocument;
-import siri_xlite.service.common.Constants;
 import siri_xlite.repositories.LinesRepository;
-import siri_xlite.repositories.Messages;
 import siri_xlite.repositories.NotModifiedException;
+import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.LinesDiscovery;
+import siri_xlite.service.common.Messages;
 import siri_xlite.service.common.ParametersFactory;
 
 import java.util.ResourceBundle;
@@ -35,18 +35,14 @@ public class LinesDiscoveryService implements LinesDiscovery, Constants {
 
     private static final ResourceBundle messages = ResourceBundle
             .getBundle(Messages.class.getPackageName() + ".Messages");
-
-    @Autowired
-    private Configuration configuration;
-
     @Autowired
     protected LinesRepository repository;
-
     @Autowired
     protected EmbeddedCacheManager manager;
-
     @Autowired
     LinesDiscoverySubscriber subscriber;
+    @Autowired
+    private Configuration configuration;
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -71,7 +67,6 @@ public class LinesDiscoveryService implements LinesDiscovery, Constants {
     }
 
     private Flux<LineDocument> stream(LinesDiscoveryParameters parameters, RoutingContext context) {
-        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
 
         Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
         String etag = getEtag(context);
@@ -81,6 +76,7 @@ public class LinesDiscoveryService implements LinesDiscovery, Constants {
             }
         }
 
+        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
         return repository.findAll();
     }
 

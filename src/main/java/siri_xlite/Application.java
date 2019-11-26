@@ -10,21 +10,19 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import siri_xlite.service.Initializer;
-import siri_xlite.service.SiriVerticle;
+import siri_xlite.service.Verticle;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-// @EnableCaching
 @Slf4j
 public class Application {
 
     @Autowired
-    private SiriVerticle siriVerticle;
+    private Verticle siriVerticle;
 
     @Autowired
     private Initializer initializer;
@@ -36,12 +34,13 @@ public class Application {
 
     @PostConstruct
     private void initialize() {
+        initializer.initialize();
         Vertx vertx = Vertx.vertx();
         vertx.deployVerticle(siriVerticle);
     }
 
     @Bean
-    public EmbeddedCacheManager createCache() {
+    public EmbeddedCacheManager embeddedCacheManager() {
         EmbeddedCacheManager result = null;
         try {
             result = new DefaultCacheManager("infinispan.xml");

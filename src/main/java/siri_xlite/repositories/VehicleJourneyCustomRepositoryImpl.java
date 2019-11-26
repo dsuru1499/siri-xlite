@@ -18,7 +18,6 @@ import siri_xlite.model.VehicleJourneyDocument;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import static org.springframework.data.domain.Sort.Order;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -30,16 +29,6 @@ import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 
 @Slf4j
 public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomRepository<String> {
-
-    public static final int LIFESPAN = 24 * 60 * 60;
-    public static final int MAX_IDLE = 60 * 60;
-    public static final String LINE_REF = "LINE_REF:";
-    public static final String STOPPOINT_REF = "STOPPOINT_REF:";
-
-    public static Comparator<Document> AIMED_DEPARTURE_TIME_COMPARATOR = Comparator
-            .comparing(t -> t.getDate(AIMED_DEPARTURE_TIME));
-
-    private ResourceBundle messages = ResourceBundle.getBundle(this.getClass().getPackageName() + ".Messages");
 
     @Autowired
     private ReactiveMongoTemplate template;
@@ -79,10 +68,11 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
         Monitor monitor = MonitorFactory.start(COLLECTION_NAME);
 
         try {
-            List<String> stopPointRefs = stopPointsRepository.findAllById(id).collectList().block();
-            Query query = query(where("calls.stopPointRef").in(stopPointRefs));
-            query.with(Sort.by(Order.by("originAimedDepartureTime")));
-            return template.find(query, Document.class, COLLECTION_NAME).flatMap(t -> create(t, id));
+            return stopPointsRepository.findAllById(id).collectList().flatMapMany(stopPointRefs -> {
+                Query query = query(where("calls.stopPointRef").in(stopPointRefs));
+                query.with(Sort.by(Order.by("originAimedDepartureTime")));
+                return template.find(query, Document.class, COLLECTION_NAME).flatMap(t -> create(t, id));
+            });
         } finally {
             log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
         }

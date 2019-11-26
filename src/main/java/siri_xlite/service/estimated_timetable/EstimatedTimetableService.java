@@ -17,14 +17,17 @@ import reactor.core.publisher.Flux;
 import siri_xlite.Configuration;
 import siri_xlite.common.Color;
 import siri_xlite.model.VehicleJourneyDocument;
-import siri_xlite.repositories.*;
+import siri_xlite.repositories.NotModifiedException;
+import siri_xlite.repositories.StopPointsRepository;
+import siri_xlite.repositories.VehicleJourneyRepository;
 import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.EstimatedTimetable;
+import siri_xlite.service.common.Messages;
 import siri_xlite.service.common.ParametersFactory;
 
 import java.util.ResourceBundle;
 
-import static siri_xlite.repositories.LinesRepository.COLLECTION_NAME;
+import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 import static siri_xlite.service.common.SiriSubscriber.getEtag;
 
 @Slf4j
@@ -33,21 +36,16 @@ public class EstimatedTimetableService implements EstimatedTimetable, Constants 
 
     private static final ResourceBundle messages = ResourceBundle
             .getBundle(Messages.class.getPackageName() + ".Messages");
-
-    @Autowired
-    private Configuration configuration;
-
-    @Autowired
-    private StopPointsRepository stopPointsRepository;
-
-    @Autowired
-    private VehicleJourneyRepository repository;
-
     @Autowired
     protected EmbeddedCacheManager manager;
-
     @Autowired
     protected EstimatedTimetableSubscriber subscriber;
+    @Autowired
+    private Configuration configuration;
+    @Autowired
+    private StopPointsRepository stopPointsRepository;
+    @Autowired
+    private VehicleJourneyRepository repository;
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -74,7 +72,6 @@ public class EstimatedTimetableService implements EstimatedTimetable, Constants 
     }
 
     private Flux<VehicleJourneyDocument> stream(EstimatedTimetableParameters parameters, RoutingContext context) {
-        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
 
         Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
         String etag = getEtag(context);
@@ -84,6 +81,7 @@ public class EstimatedTimetableService implements EstimatedTimetable, Constants 
             }
         }
 
+        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
         return repository.findByLineRef(parameters.getLineRef());
     }
 

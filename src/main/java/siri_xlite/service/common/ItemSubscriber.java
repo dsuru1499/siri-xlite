@@ -3,7 +3,6 @@ package siri_xlite.service.common;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.reactivex.exceptions.Exceptions;
 import io.vertx.core.http.HttpHeaders;
-import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.reactivestreams.Subscription;

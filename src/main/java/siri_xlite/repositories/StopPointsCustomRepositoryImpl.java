@@ -30,18 +30,6 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
     private EmbeddedCacheManager manager;
 
     @Override
-    public void clearAll() {
-        manager.getCache(COLLECTION_NAME).clear();
-        template.dropCollection(COLLECTION_NAME).then(template.createCollection(COLLECTION_NAME))
-                .then(template.indexOps(COLLECTION_NAME)
-                        .ensureIndex(new Index().unique().on("stopPointRef", Sort.Direction.ASC)))
-                .then(template.indexOps(COLLECTION_NAME).ensureIndex(new Index().on("parent", Sort.Direction.ASC)))
-                .then(template.indexOps(COLLECTION_NAME)
-                        .ensureIndex(new GeospatialIndex("location").typed(GeoSpatialIndexType.GEO_2DSPHERE)))
-                .block();
-    }
-
-    @Override
     public Flux<String> findAllById(String id) {
 
         Aggregation aggregation = newAggregation(match(where("stopPointRef").is(id)),
@@ -54,6 +42,18 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
             result.add(t.getString("stopPointRef"));
             return Flux.fromIterable(result);
         });
+    }
+
+    @Override
+    public void clearAll() {
+        manager.getCache(COLLECTION_NAME).clear();
+        template.dropCollection(COLLECTION_NAME).then(template.createCollection(COLLECTION_NAME))
+                .then(template.indexOps(COLLECTION_NAME)
+                        .ensureIndex(new Index().unique().on("stopPointRef", Sort.Direction.ASC)))
+                .then(template.indexOps(COLLECTION_NAME).ensureIndex(new Index().on("parent", Sort.Direction.ASC)))
+                .then(template.indexOps(COLLECTION_NAME)
+                        .ensureIndex(new GeospatialIndex("location").typed(GeoSpatialIndexType.GEO_2DSPHERE)))
+                .block();
     }
 
 }

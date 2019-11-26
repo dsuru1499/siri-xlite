@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import siri_xlite.marshaller.json.SiriExceptionMarshaller;
 
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public abstract class CollectionSubscriber<P extends DefaultParameters> extends SiriSubscriber<Document, P> {

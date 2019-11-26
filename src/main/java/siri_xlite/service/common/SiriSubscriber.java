@@ -50,6 +50,26 @@ public abstract class SiriSubscriber<T, P extends Parameters> implements Subscri
     @Autowired
     protected EmbeddedCacheManager manager;
 
+    public static final String getEtag(RoutingContext context) {
+        String text = context.request().getHeader(HttpHeaders.IF_NONE_MATCH);
+        String[] noneMatch = (StringUtils.isNotEmpty(text)) ? text.split(",") : ArrayUtils.EMPTY_STRING_ARRAY;
+        String result = (ArrayUtils.isNotEmpty(noneMatch)) ? noneMatch[0].replaceAll("^\"|\"$", "") : null;
+        return result;
+    }
+
+    public static final String getEtag(Document document) {
+        return document.getObjectId(ID).toHexString();
+    }
+
+    public static final String createEtag(List<? extends Document> list) {
+        Optional<? extends Document> result = list.stream().max(COMPARATOR);
+        return createEtag(result.get());
+    }
+
+    public static final String createEtag(Document document) {
+        return (document != null) ? document.getObjectId(ID).toHexString() : null;
+    }
+
     public void configure(Configuration configuration, P parameters, RoutingContext context) {
         this.configuration = configuration;
         this.parameters = parameters;
@@ -93,26 +113,6 @@ public abstract class SiriSubscriber<T, P extends Parameters> implements Subscri
 
     public final boolean noneMatch(Document document) {
         return !StringUtils.equals(getEtag(document), getEtag(context));
-    }
-
-    public static final String getEtag(RoutingContext context) {
-        String text = context.request().getHeader(HttpHeaders.IF_NONE_MATCH);
-        String[] noneMatch = (StringUtils.isNotEmpty(text)) ? text.split(",") : ArrayUtils.EMPTY_STRING_ARRAY;
-        String result = (ArrayUtils.isNotEmpty(noneMatch)) ? noneMatch[0].replaceAll("^\"|\"$", "") : null;
-        return result;
-    }
-
-    public static final String getEtag(Document document) {
-        return document.getObjectId(ID).toHexString();
-    }
-
-    public static final String createEtag(List<? extends Document> list) {
-        Optional<? extends Document> result = list.stream().max(COMPARATOR);
-        return createEtag(result.get());
-    }
-
-    public static final String createEtag(Document document) {
-        return (document != null) ? document.getObjectId(ID).toHexString() : null;
     }
 
 }

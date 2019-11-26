@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.infinispan.Cache;
-import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.CollectionSubscriber;
+import siri_xlite.service.common.Constants;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,7 +19,7 @@ import static siri_xlite.marshaller.json.ServiceInfoGroupMarshaller.OPERATOR_REF
 import static siri_xlite.marshaller.json.SiriMarshaller.INDEX;
 import static siri_xlite.marshaller.json.StopPointInSequenceGroupMarshaller.ORDER;
 import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
-import static siri_xlite.service.SiriVerticle.*;
+import static siri_xlite.service.Verticle.*;
 import static siri_xlite.service.common.EstimatedVehiculeJourney.ESTIMATED_VEHICLE_JOURNEY;
 
 @Slf4j
@@ -31,7 +31,7 @@ public class StopMonitoringSubscriber extends CollectionSubscriber<StopMonitorin
         String etag = getEtag();
         if (StringUtils.isNotEmpty(etag)) {
             Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
-            cache.putForExternalRead(STOPPOINT_REF + getEtag(), getEtag(), LIFESPAN, TimeUnit.SECONDS, MAX_IDLE,
+            cache.putForExternalRead(STOPPOINT_REF + etag, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE,
                     TimeUnit.SECONDS);
         }
     }

@@ -2,6 +2,12 @@ package siri_xlite.service;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 import gtfs.importer.GtfsImporter;
 import gtfs.importer.Index;
 import gtfs.model.*;
@@ -42,7 +48,7 @@ public class Initializer {
     private static final String OUTPUT_DIR = "siri";
     private static final int BULK_SIZE = 1000;
 
-    // private MongoDatabase database;
+    private MongoDatabase database;
 
     @Autowired
     private LinesRepository linesRepository;
@@ -76,8 +82,8 @@ public class Initializer {
             log.error(e.getMessage(), e);
         }
 
-        // MongoClient client = MongoClients.create("mongodb://localhost");
-        // this.database = client.getDatabase("siri");
+        MongoClient client = MongoClients.create("mongodb://localhost");
+        this.database = client.getDatabase("siri");
 
         clear();
         GtfsImporter importer = new GtfsImporter(path.toString());
@@ -99,7 +105,7 @@ public class Initializer {
     }
 
     private void fillVehicleJourney(GtfsImporter importer, SetValuedMap<String, String> lineRefs,
-            SetValuedMap<String, Destination> destinations) {
+                                    SetValuedMap<String, Destination> destinations) {
 
         Monitor monitor = MonitorFactory.start("vehicle_journey");
         Monitor tripMonitor = MonitorFactory.start("trip");
@@ -107,11 +113,12 @@ public class Initializer {
 
         try {
 
-            vehicleJourneyRepository.clearAll();
-
-            // MongoCollection<Document> collection = database.getCollection("vehicle_journey", Document.class);
-            // collection.drop();
-            // collection.createIndex(Indexes.ascending("calls.stopPointRef", "calls.aimedDepartureTime"));
+            MongoCollection<Document> collection = database.getCollection("vehicle_journey", Document.class);
+            collection.drop();
+            collection = database.getCollection("vehicle_journey", Document.class);
+            collection.createIndex(Indexes.ascending("datedVehicleJourneyRef"), new IndexOptions().unique(true));
+            collection.createIndex(Indexes.ascending("calls.stopPointRef"));
+            // vehicleJourneyRepository.clearAll();
 
             List<VehicleJourneyDocument> documents = new ArrayList<>(BULK_SIZE);
 
@@ -216,8 +223,8 @@ public class Initializer {
                     documents.add(builder.build());
 
                     if (documents.size() == BULK_SIZE) {
-                        vehicleJourneyRepository.saveAll(documents).blockLast();
-                        // collection.insertMany(documents);
+                        // vehicleJourneyRepository.saveAll(documents).then().subscribe();
+                        collection.insertMany(documents);
                         documents.clear();
                     }
 
@@ -226,8 +233,8 @@ public class Initializer {
             }
 
             if (documents.size() > 0) {
-                vehicleJourneyRepository.saveAll(documents).blockLast();
-                // collection.insertMany(documents);
+                // vehicleJourneyRepository.saveAll(documents).then().subscribe();
+                collection.insertMany(documents);
             }
 
         } catch (Exception e) {
@@ -250,11 +257,11 @@ public class Initializer {
         Monitor routeMonitor = MonitorFactory.start("route");
 
         try {
-
-            linesRepository.clearAll();
-
-            // MongoCollection<Document> collection = database.getCollection("lines", Document.class);
-            // collection.drop();
+            MongoCollection<Document> collection = database.getCollection("lines", Document.class);
+            collection.drop();
+            collection = database.getCollection("lines", Document.class);
+            collection.createIndex(Indexes.ascending("lineRef"), new IndexOptions().unique(true));
+            // linesRepository.clearAll();
 
             LineBuilder.LineDocumentBuilder builder = LineBuilder.builder();
             DestinationBuilder.DocumentBuilder destination = DestinationBuilder.builder();
@@ -273,8 +280,8 @@ public class Initializer {
                 documents.add(document);
 
                 if (documents.size() == BULK_SIZE) {
-                    linesRepository.saveAll(documents).blockLast();
-                    // collection.insertMany(documents);
+                    // linesRepository.saveAll(documents).then().subscribe();
+                    collection.insertMany(documents);
                     documents.clear();
                 }
 
@@ -282,8 +289,8 @@ public class Initializer {
             }
 
             if (documents.size() > 0) {
-                linesRepository.saveAll(documents).blockLast();
-                // collection.insertMany(documents);
+                // linesRepository.saveAll(documents).then().subscribe();
+                collection.insertMany(documents);
             }
 
         } catch (Exception e) {
@@ -300,11 +307,14 @@ public class Initializer {
         Monitor stopMonitor = MonitorFactory.start("stop");
 
         try {
-            stopPointsRepository.clearAll();
+            MongoCollection<Document> collection = database.getCollection("stoppoints", Document.class);
+            collection.drop();
+            collection = database.getCollection("stoppoints", Document.class);
+            collection.createIndex(Indexes.ascending("stopPointRef"), new IndexOptions().unique(true));
+            collection.createIndex(Indexes.ascending("parent"));
+            collection.createIndex(Indexes.geo2dsphere("location"));
 
-            // MongoCollection<Document> collection = database.getCollection("stoppoints", Document.class);
-            // collection.drop();
-            // collection.createIndex(Indexes.ascending("_parent"));
+            // stopPointsRepository.clearAll();
 
             List<StopPointDocument> documents = new ArrayList<>(BULK_SIZE);
             StopPointBuilder.StopPointDocumentBuilder builder = StopPointBuilder.builder();
@@ -320,8 +330,8 @@ public class Initializer {
 
                 documents.add(document);
                 if (documents.size() == BULK_SIZE) {
-                    stopPointsRepository.saveAll(documents).blockLast();
-                    // collection.insertMany(documents);
+                    // stopPointsRepository.saveAll(documents).then().subscribe();;
+                    collection.insertMany(documents);
                     documents.clear();
                 }
 
@@ -329,8 +339,8 @@ public class Initializer {
             }
 
             if (documents.size() > 0) {
-                stopPointsRepository.saveAll(documents).blockLast();
-                // collection.insertMany(documents);
+                // stopPointsRepository.saveAll(documents).then().subscribe();
+                collection.insertMany(documents);
             }
 
         } catch (Exception e) {
@@ -357,29 +367,29 @@ public class Initializer {
             // if ((now.compareTo(startDate) >= 0) && (now.compareTo(endDate) <=
             // 0)) {
             switch (day) {
-            case MONDAY:
-                result = calendar.getMonday();
-                break;
-            case TUESDAY:
-                result = calendar.getTuesday();
-                break;
-            case WEDNESDAY:
-                result = calendar.getWednesday();
-                break;
-            case THURSDAY:
-                result = calendar.getThursday();
-                break;
-            case FRIDAY:
-                result = calendar.getFriday();
-                break;
-            case SATURDAY:
-                result = calendar.getSaturday();
-                break;
-            case SUNDAY:
-                result = calendar.getSunday();
-                break;
-            default:
-                break;
+                case MONDAY:
+                    result = calendar.getMonday();
+                    break;
+                case TUESDAY:
+                    result = calendar.getTuesday();
+                    break;
+                case WEDNESDAY:
+                    result = calendar.getWednesday();
+                    break;
+                case THURSDAY:
+                    result = calendar.getThursday();
+                    break;
+                case FRIDAY:
+                    result = calendar.getFriday();
+                    break;
+                case SATURDAY:
+                    result = calendar.getSaturday();
+                    break;
+                case SUNDAY:
+                    result = calendar.getSunday();
+                    break;
+                default:
+                    break;
             }
 
             // }

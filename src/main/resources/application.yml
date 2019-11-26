@@ -1,5 +1,5 @@
 siri:
-  port: 8080
+  port: 8443
   version: 2.0:FR-IDF-2.4
   participantRef: default
   producerDomain: default
@@ -15,7 +15,6 @@ spring:
   data:
     mongodb:
       database: siri
-
 
 infinispan:
   embedded:

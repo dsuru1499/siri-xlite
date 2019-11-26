@@ -1,6 +1,8 @@
 package siri_xlite.service;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.net.JksOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.StaticHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,7 @@ import static siri_xlite.service.stop_monitoring.StopMonitoringParameters.STOPPO
 
 @Component
 @Slf4j
-public class SiriVerticle extends AbstractVerticle {
+public class Verticle extends AbstractVerticle {
 
     public static final String APPLICATION = "/siri-xlite";
     public static final String SEP = "/";
@@ -68,7 +70,15 @@ public class SiriVerticle extends AbstractVerticle {
 
         router.route().handler(StaticHandler.create(PUBLIC));
 
-        vertx.createHttpServer().requestHandler(router).listen(configuration.getPort());
+        HttpServerOptions options = new HttpServerOptions()
+                .setUseAlpn(true)
+                .setSsl(true)
+                .setKeyStoreOptions(new JksOptions()
+                        .setPath("/home/user/Projects/siri-xlite/src/main/resources/keystore.jks")
+                        .setPassword("siri-xlite"))
+                ;
+
+        vertx.createHttpServer(options).requestHandler(router).listen(configuration.getPort());
     }
 
 }
