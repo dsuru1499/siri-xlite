@@ -70,13 +70,9 @@ public class Verticle extends AbstractVerticle {
 
         router.route().handler(StaticHandler.create(PUBLIC));
 
-        HttpServerOptions options = new HttpServerOptions()
-                .setUseAlpn(true)
-                .setSsl(true)
-                .setKeyStoreOptions(new JksOptions()
-                        .setPath("/home/user/Projects/siri-xlite/src/main/resources/keystore.jks")
-                        .setPassword("siri-xlite"))
-                ;
+        HttpServerOptions options = new HttpServerOptions().setUseAlpn(true).setSsl(true).setKeyStoreOptions(
+                new JksOptions().setPath("/home/user/Projects/siri-xlite/src/main/resources/keystore.jks")
+                        .setPassword("siri-xlite"));
 
         vertx.createHttpServer(options).requestHandler(router).listen(configuration.getPort());
     }
