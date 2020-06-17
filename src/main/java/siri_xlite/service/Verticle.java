@@ -28,7 +28,6 @@ import static siri_xlite.service.stop_monitoring.StopMonitoringParameters.STOPPO
 import static siri_xlite.service.stop_points_discovery.StopPointsDiscoveryParameters.X_TILE;
 import static siri_xlite.service.stop_points_discovery.StopPointsDiscoveryParameters.Y_TILE;
 
-
 @Component
 @Slf4j
 public class Verticle extends AbstractVerticle {

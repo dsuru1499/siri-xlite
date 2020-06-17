@@ -21,10 +21,8 @@ import java.io.IOException;
 @Slf4j
 class Application {
 
-
     @Autowired
     private Verticle siriVerticle;
-
 
     @Autowired
     private Initializer initializer;
@@ -34,14 +32,12 @@ class Application {
         SpringApplication.run(Application.class, args);
     }
 
-
     @PostConstruct
     private void initialize() {
         // initializer.initialize();
         Vertx vertx = Vertx.vertx();
         vertx.deployVerticle(siriVerticle);
     }
-
 
     @Bean
     public EmbeddedCacheManager embeddedCacheManager() {

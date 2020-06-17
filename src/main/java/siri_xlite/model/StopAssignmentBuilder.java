@@ -9,7 +9,7 @@ class StopAssignmentBuilder {
 
     @Builder
     public static Document create(String aimedQuayRef, String aimedQuayName, String expectedQuayRef,
-                                  String actualQuayRef) {
+            String actualQuayRef) {
 
         Document result = new Document("aimedQuayRef", aimedQuayRef);
         append(result, "aimedQuayName", aimedQuayName);

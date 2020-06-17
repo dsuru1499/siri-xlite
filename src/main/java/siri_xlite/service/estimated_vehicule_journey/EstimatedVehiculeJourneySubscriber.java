@@ -8,7 +8,6 @@ import siri_xlite.service.common.ItemSubscriber;
 
 import java.util.List;
 
-
 @Slf4j
 public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<EstimatedVehiculeJourneyParameters>
         implements Constants {

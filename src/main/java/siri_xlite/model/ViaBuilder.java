@@ -7,7 +7,6 @@ import static siri_xlite.common.DocumentUtils.append;
 
 class ViaBuilder {
 
-
     @Builder
     public static Document create(String placeRef, String placeName) {
 

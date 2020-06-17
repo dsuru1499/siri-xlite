@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class SiriException extends Exception {
 
     private static final long serialVersionUID = 1L;

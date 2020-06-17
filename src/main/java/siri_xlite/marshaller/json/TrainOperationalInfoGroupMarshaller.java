@@ -30,7 +30,8 @@ public class TrainOperationalInfoGroupMarshaller implements Marshaller<Document>
         // set trainNumbers
 
         List<String> trainNumbers = source.get(TRAIN_NUMBERS, List.class);
-        writeArray(writer, TRAIN_NUMBERS, trainNumbers, t -> writeObject(writer, t, trainNumber -> writeField(writer, TRAIN_NUMBER_REF, trainNumber)));
+        writeArray(writer, TRAIN_NUMBERS, trainNumbers,
+                t -> writeObject(writer, t, trainNumber -> writeField(writer, TRAIN_NUMBER_REF, trainNumber)));
 
         // set journeyParts
 

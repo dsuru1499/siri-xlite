@@ -44,7 +44,6 @@ public class LinesDiscoveryService implements LinesDiscovery, Constants {
     @Autowired
     private Configuration configuration;
 
-
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public LinesDiscoverySubscriber linesDiscoverySubscriber() {

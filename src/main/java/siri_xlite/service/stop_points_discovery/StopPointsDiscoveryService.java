@@ -48,7 +48,6 @@ public class StopPointsDiscoveryService implements StopPointsDiscovery, OSMUtils
     @Autowired
     private StopPointsRepository repository;
 
-
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public StopPointsDiscoverySubcriber stopPointsDiscoverySubcriber() {

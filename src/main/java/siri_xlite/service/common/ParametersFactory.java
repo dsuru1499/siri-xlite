@@ -31,7 +31,6 @@ public abstract class ParametersFactory<T> {
         Parameters parameters = factory.create(context);
         parameters.validate();
 
-
         return (T) parameters;
     }
 
