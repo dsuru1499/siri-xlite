@@ -267,11 +267,12 @@ public class Initializer {
             DestinationBuilder.DocumentBuilder destination = DestinationBuilder.builder();
 
             List<LineDocument> documents = new ArrayList<>(BULK_SIZE);
+            Date now = new Date();
 
             for (Route route : importer.getRouteById()) {
                 routeMonitor.start();
-
-                LineDocument document = builder.lineRef(route.getRouteId()).lineName(route.getRouteLongName())
+                LineDocument document = builder.recordedAtTime(now).lineRef(route.getRouteId())
+                        .lineName(route.getRouteLongName())
                         .destinations(destinations.get(route.getRouteId()).stream().map(
                                 t -> destination.destinationRef(t.destinationRef()).placeName(t.placeName()).build())
                                 .collect(Collectors.toList()))
@@ -319,11 +320,14 @@ public class Initializer {
             List<StopPointDocument> documents = new ArrayList<>(BULK_SIZE);
             StopPointBuilder.StopPointDocumentBuilder builder = StopPointBuilder.builder();
             LocationBuilder.DocumentBuilder location = LocationBuilder.builder();
+            Date now = new Date();
+
             for (Stop stop : importer.getStopById()) {
                 stopMonitor.start();
 
-                StopPointDocument document = builder.stopPointRef(stop.getStopId()).parent(stop.getParentStation())
-                        .stopName(stop.getStopName()).lineRefs(lineRefs.get(stop.getStopId()))
+                StopPointDocument document = builder.recordedAtTime(now).stopPointRef(stop.getStopId())
+                        .parent(stop.getParentStation()).stopName(stop.getStopName())
+                        .lineRefs(lineRefs.get(stop.getStopId()))
                         .location(location.longitude(stop.getStopLon().doubleValue())
                                 .latitude(stop.getStopLat().doubleValue()).build())
                         .build();

@@ -1,6 +1,7 @@
 package siri_xlite.service;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.web.Router;
@@ -24,6 +25,8 @@ import static siri_xlite.service.common.StopPointsDiscovery.STOPPOINTS_DISCOVERY
 import static siri_xlite.service.estimated_timetable.EstimatedTimetableParameters.LINE_REF;
 import static siri_xlite.service.estimated_vehicule_journey.EstimatedVehiculeJourneyParameters.DATED_VEHICLE_JOURNEY_REF;
 import static siri_xlite.service.stop_monitoring.StopMonitoringParameters.STOPPOINT_REF;
+import static siri_xlite.service.stop_points_discovery.StopPointsDiscoveryParameters.X_TILE;
+import static siri_xlite.service.stop_points_discovery.StopPointsDiscoveryParameters.Y_TILE;
 
 @Component
 @Slf4j
@@ -62,7 +65,10 @@ public class Verticle extends AbstractVerticle {
         Router router = Router.router(vertx);
         router.get(APPLICATION).handler(defaultService);
         router.get(APPLICATION + SEP + LINES_DISCOVERY).handler(linesDiscovery);
-        router.get(APPLICATION + SEP + STOPPOINTS_DISCOVERY).handler(stopPointsDiscovery);
+        router.route(HttpMethod.GET,
+                APPLICATION + SEP + STOPPOINTS_DISCOVERY + SEP + COLON + X_TILE + SEP + COLON + Y_TILE)
+                .handler(stopPointsDiscovery);
+        router.route(HttpMethod.GET, APPLICATION + SEP + STOPPOINTS_DISCOVERY + SEP).handler(stopPointsDiscovery);
         router.get(APPLICATION + SEP + STOP_MONITORING + SEP + COLON + STOPPOINT_REF).handler(stopMonitoring);
         router.get(APPLICATION + SEP + ESTIMATED_TIMETABLE + SEP + COLON + LINE_REF).handler(estimatedTimetable);
         router.get(APPLICATION + SEP + ESTIMATED_VEHICLE_JOURNEY + SEP + COLON + DATED_VEHICLE_JOURNEY_REF)
@@ -70,9 +76,14 @@ public class Verticle extends AbstractVerticle {
 
         router.route().handler(StaticHandler.create(PUBLIC));
 
-        HttpServerOptions options = new HttpServerOptions().setUseAlpn(true).setSsl(true).setKeyStoreOptions(
-                new JksOptions().setPath("/home/user/Projects/siri-xlite/src/main/resources/keystore.jks")
-                        .setPassword("siri-xlite"));
+        // SelfSignedCertificate certificate = SelfSignedCertificate.create();
+        // HttpServerOptions options = new HttpServerOptions()
+        // .setSsl(true)
+        // .setKeyCertOptions(certificate.keyCertOptions())
+        // .setTrustOptions(certificate.trustOptions());
+
+        HttpServerOptions options = new HttpServerOptions().setUseAlpn(true).setSsl(true)
+                .setKeyStoreOptions(new JksOptions().setPath("siri-xlite.jks").setPassword("siri-xlite"));
 
         vertx.createHttpServer(options).requestHandler(router).listen(configuration.getPort());
     }

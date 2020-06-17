@@ -16,7 +16,6 @@ import siri_xlite.common.Color;
 import siri_xlite.model.VehicleJourneyDocument;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.springframework.data.domain.Sort.Order;
@@ -66,28 +65,29 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
     @Override
     public Flux<VehicleJourneyDocument> findByStopPointRef(String id) {
         Monitor monitor = MonitorFactory.start(COLLECTION_NAME);
-
         try {
-            return stopPointsRepository.findAllById(id).collectList().flatMapMany(stopPointRefs -> {
+            return stopPointsRepository.findStopPointRefs(id).collectList().flatMapMany(stopPointRefs -> {
                 Query query = query(where("calls.stopPointRef").in(stopPointRefs));
                 query.with(Sort.by(Order.by("originAimedDepartureTime")));
-                return template.find(query, Document.class, COLLECTION_NAME).flatMap(t -> create(t, id));
+                return template.find(query, Document.class, COLLECTION_NAME).flatMap(t -> create(t, stopPointRefs));
             });
         } finally {
             log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
         }
     }
 
-    private Flux<VehicleJourneyDocument> create(Document document, String id) {
+    private Flux<VehicleJourneyDocument> create(Document document, List<String> stopPointRefs) {
+
         List<VehicleJourneyDocument> list = new ArrayList<>();
         List<Document> calls = document.get("calls", List.class);
         for (int i = 0; i < calls.size(); i++) {
             Document call = calls.get(i);
-            if (call.getString("stopPointRef").equals(id)) {
+            if (stopPointRefs.contains(call.getString("stopPointRef"))) {
                 VehicleJourneyDocument result = new VehicleJourneyDocument(document);
                 result.put(INDEX, i);
                 result.put(ORDER, call.getInteger(ORDER));
                 result.put(AIMED_DEPARTURE_TIME, call.getDate(AIMED_DEPARTURE_TIME));
+
                 list.add(result);
             }
         }

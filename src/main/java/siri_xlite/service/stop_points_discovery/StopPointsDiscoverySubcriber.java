@@ -25,16 +25,6 @@ public class StopPointsDiscoverySubcriber extends CollectionSubscriber<StopPoint
     public static final String LINES = "lines";
 
     @Override
-    public void onComplete() {
-        super.onComplete();
-        String etag = getEtag();
-        if (StringUtils.isNotEmpty(etag)) {
-            Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
-            cache.putForExternalRead(ALL + etag, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
-        }
-    }
-
-    @Override
     protected void writeItem(Document t) {
         writeObject(writer, t, source -> {
             writeField(writer, STOP_POINT_REF, source.getString(STOP_POINT_REF));

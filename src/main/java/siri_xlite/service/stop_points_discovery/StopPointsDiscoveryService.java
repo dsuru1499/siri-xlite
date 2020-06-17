@@ -11,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.geo.Box;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import siri_xlite.Configuration;
 import siri_xlite.common.Color;
+import siri_xlite.common.OSMUtils;
 import siri_xlite.model.StopPointDocument;
 import siri_xlite.repositories.NotModifiedException;
 import siri_xlite.repositories.StopPointsRepository;
@@ -25,16 +27,18 @@ import siri_xlite.service.common.ParametersFactory;
 import siri_xlite.service.common.StopPointsDiscovery;
 
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 
 import static siri_xlite.repositories.StopPointsRepository.COLLECTION_NAME;
 import static siri_xlite.service.common.SiriSubscriber.getEtag;
 
 @Slf4j
 @Service
-public class StopPointsDiscoveryService implements StopPointsDiscovery, Constants {
+public class StopPointsDiscoveryService implements StopPointsDiscovery, OSMUtils, Constants {
 
     private static final ResourceBundle messages = ResourceBundle
             .getBundle(Messages.class.getPackageName() + ".Messages");
+
     @Autowired
     protected EmbeddedCacheManager manager;
     @Autowired
@@ -60,7 +64,7 @@ public class StopPointsDiscoveryService implements StopPointsDiscovery, Constant
                         context);
                 subscriber.configure(configuration, parameters, context);
                 return parameters;
-            }).flatMapMany(parameters -> stream(parameters, context))
+            }).flatMapMany(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(context))
                     .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))
                     .subscribe(subscriber);
         } catch (Exception e) {
@@ -68,17 +72,31 @@ public class StopPointsDiscoveryService implements StopPointsDiscovery, Constant
         }
     }
 
-    private Flux<StopPointDocument> stream(StopPointsDiscoveryParameters parameters, RoutingContext context) {
+    private void onComplete(RoutingContext context) {
+        String etag = subscriber.getEtag();
+        if (StringUtils.isNotEmpty(etag)) {
+            Cache<String, String> cache = manager.getCache(ETAGS);
+            String uri = context.request().uri();
+            cache.putForExternalRead(uri, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
+        }
+    }
 
-        Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
+    private Flux<StopPointDocument> stream(StopPointsDiscoveryParameters parameters, RoutingContext context) {
+        Cache<String, String> cache = manager.getCache(ETAGS);
         String etag = getEtag(context);
         if (StringUtils.isNotEmpty(etag)) {
-            if (StringUtils.isNotEmpty(cache.get(ALL + etag))) {
+            String uri = context.request().uri();
+            String cached = cache.get(uri);
+            if (StringUtils.equals(cached, etag)) {
                 throw new NotModifiedException();
             }
         }
 
         log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
+        if (parameters.getXtile() != null && parameters.getYtile() != null) {
+            Box box = location(parameters.getXtile(), parameters.getYtile());
+            return repository.findAllByLocation(box);
+        }
         return repository.findAll();
     }
 

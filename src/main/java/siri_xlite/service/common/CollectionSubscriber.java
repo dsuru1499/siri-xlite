@@ -52,7 +52,7 @@ public abstract class CollectionSubscriber<P extends DefaultParameters> extends 
         }
     }
 
-    protected String getEtag() {
+    public String getEtag() {
         return createEtag(current);
     }
 

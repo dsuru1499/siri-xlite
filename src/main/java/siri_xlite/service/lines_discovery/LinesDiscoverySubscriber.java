@@ -1,16 +1,11 @@
 package siri_xlite.service.lines_discovery;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
-import org.infinispan.Cache;
 import siri_xlite.service.common.CollectionSubscriber;
 import siri_xlite.service.common.Constants;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static siri_xlite.repositories.LinesRepository.COLLECTION_NAME;
 
 @Slf4j
 public class LinesDiscoverySubscriber extends CollectionSubscriber<LinesDiscoveryParameters> implements Constants {
@@ -21,16 +16,6 @@ public class LinesDiscoverySubscriber extends CollectionSubscriber<LinesDiscover
     public static final String MONITORED = "monitored";
     public static final String DESTINATION_REF = "destinationRef";
     public static final String PLACE_NAME = "placeName";
-
-    @Override
-    public void onComplete() {
-        super.onComplete();
-        String etag = getEtag();
-        if (StringUtils.isNotEmpty(etag)) {
-            Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
-            cache.putForExternalRead(ALL + etag, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
-        }
-    }
 
     @Override
     protected void writeItem(Document t) {

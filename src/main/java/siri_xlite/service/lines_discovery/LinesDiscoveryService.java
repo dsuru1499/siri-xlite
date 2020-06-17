@@ -25,8 +25,8 @@ import siri_xlite.service.common.Messages;
 import siri_xlite.service.common.ParametersFactory;
 
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 
-import static siri_xlite.repositories.LinesRepository.COLLECTION_NAME;
 import static siri_xlite.service.common.SiriSubscriber.getEtag;
 
 @Slf4j
@@ -58,7 +58,7 @@ public class LinesDiscoveryService implements LinesDiscovery, Constants {
                 LinesDiscoveryParameters parameters = ParametersFactory.create(LinesDiscoveryParameters.class, context);
                 subscriber.configure(configuration, parameters, context);
                 return parameters;
-            }).flatMapMany(parameters -> stream(parameters, context))
+            }).flatMapMany(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(context))
                     .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))
                     .subscribe(subscriber);
         } catch (Exception e) {
@@ -66,17 +66,28 @@ public class LinesDiscoveryService implements LinesDiscovery, Constants {
         }
     }
 
-    private Flux<LineDocument> stream(LinesDiscoveryParameters parameters, RoutingContext context) {
+    private void onComplete(RoutingContext context) {
+        String etag = subscriber.getEtag();
+        if (StringUtils.isNotEmpty(etag)) {
+            Cache<String, String> cache = manager.getCache(ETAGS);
+            String uri = context.request().uri();
+            ;
+            cache.putForExternalRead(uri, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
+        }
+    }
 
-        Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
+    private Flux<LineDocument> stream(LinesDiscoveryParameters parameters, RoutingContext context) {
+        Cache<String, String> cache = manager.getCache(ETAGS);
         String etag = getEtag(context);
         if (StringUtils.isNotEmpty(etag)) {
-            if (StringUtils.isNotEmpty(cache.get(ALL + etag))) {
+            String uri = context.request().uri();
+            String cached = cache.get(uri);
+            if (StringUtils.equals(cached, etag)) {
                 throw new NotModifiedException();
             }
         }
 
-        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
+        log.info(messages.getString(LOAD_FROM_BACKEND), ETAGS, "");
         return repository.findAll();
     }
 

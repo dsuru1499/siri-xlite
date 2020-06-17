@@ -15,16 +15,13 @@ import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import siri_xlite.Configuration;
-import siri_xlite.common.HttpStatus;
 import siri_xlite.common.JsonUtils;
 import siri_xlite.marshaller.json.SiriExceptionMarshaller;
 import siri_xlite.repositories.NotModifiedException;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.net.HttpURLConnection;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -34,9 +31,10 @@ public abstract class SiriSubscriber<T, P extends Parameters> implements Subscri
     public static final String S_MAX_AGE = "s-maxage=30";
     public static final String PROXY_REVALIDATE = "proxy-revalidate";
     public static final String PUBLIC = "public";
+    public static final String RECCORDED_AT_TIME = "recordedAtTime";
 
     public static final Comparator<Document> COMPARATOR = Comparator.comparing(t -> {
-        return t.getObjectId(ID).getTimestamp();
+        return t.getDate(RECCORDED_AT_TIME).getTime();
     });
 
     protected RoutingContext context;
@@ -67,7 +65,9 @@ public abstract class SiriSubscriber<T, P extends Parameters> implements Subscri
     }
 
     public static final String createEtag(Document document) {
-        return (document != null) ? document.getObjectId(ID).toHexString() : null;
+        Date recordedAtTime = document.getDate(RECCORDED_AT_TIME);
+        return (document != null) ? String.valueOf(recordedAtTime.getTime()) : null;
+        // return (document != null) ? document.getObjectId(ID).toHexString() : null;
     }
 
     public void configure(Configuration configuration, P parameters, RoutingContext context) {
@@ -93,7 +93,8 @@ public abstract class SiriSubscriber<T, P extends Parameters> implements Subscri
                 this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .putHeader(HttpHeaders.CACHE_CONTROL,
                                 Arrays.asList(PUBLIC, MAX_AGE, S_MAX_AGE, PROXY_REVALIDATE))
-                        .putHeader(HttpHeaders.ETAG, getEtag(context)).setStatusCode(HttpStatus.NOT_MODIFIED).end();
+                        .putHeader(HttpHeaders.ETAG, getEtag(context))
+                        .setStatusCode(HttpURLConnection.HTTP_NOT_MODIFIED).end();
             } else if (t instanceof SiriException) {
                 SiriExceptionMarshaller.getInstance().write(writer, (SiriException) t);
                 writer.close();

@@ -34,7 +34,7 @@ public class Application {
 
     @PostConstruct
     private void initialize() {
-        initializer.initialize();
+        // initializer.initialize();
         Vertx vertx = Vertx.vertx();
         vertx.deployVerticle(siriVerticle);
     }

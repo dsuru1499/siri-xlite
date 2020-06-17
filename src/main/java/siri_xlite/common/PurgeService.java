@@ -17,7 +17,7 @@ public class PurgeService {
     private static HttpClient client = HttpClient.newHttpClient();
     private static HttpRequest.Builder builder = HttpRequest.newBuilder();
 
-    boolean purge(String uri) {
+    public boolean purge(String uri) {
         boolean result = false;
 
         try {

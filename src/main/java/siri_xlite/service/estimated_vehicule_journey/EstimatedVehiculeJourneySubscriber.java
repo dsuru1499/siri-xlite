@@ -23,16 +23,6 @@ public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<Estimated
     public static final String CALLS = "calls";
 
     @Override
-    public void onComplete() {
-        super.onComplete();
-        String etag = getEtag();
-        if (StringUtils.isNotEmpty(etag)) {
-            Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
-            cache.putForExternalRead(etag, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
-        }
-    }
-
-    @Override
     protected void writeItem(Document t) {
         writeObject(writer, t, source -> {
             LineIdentityGroupMarshaller.getInstance().write(writer, source);

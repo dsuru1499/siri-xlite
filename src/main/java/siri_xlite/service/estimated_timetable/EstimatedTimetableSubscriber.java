@@ -24,16 +24,6 @@ public class EstimatedTimetableSubscriber extends CollectionSubscriber<Estimated
         implements Constants {
 
     @Override
-    public void onComplete() {
-        super.onComplete();
-        String etag = getEtag();
-        if (StringUtils.isNotEmpty(etag)) {
-            Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
-            cache.putForExternalRead(LINE_REF + etag, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
-        }
-    }
-
-    @Override
     protected void writeItem(Document t) {
         writeObject(writer, t, source -> {
             HttpServerRequest request = context.request();

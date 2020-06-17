@@ -26,17 +26,6 @@ import static siri_xlite.service.common.EstimatedVehiculeJourney.ESTIMATED_VEHIC
 public class StopMonitoringSubscriber extends CollectionSubscriber<StopMonitoringParameters> implements Constants {
 
     @Override
-    public void onComplete() {
-        super.onComplete();
-        String etag = getEtag();
-        if (StringUtils.isNotEmpty(etag)) {
-            Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
-            cache.putForExternalRead(STOPPOINT_REF + etag, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE,
-                    TimeUnit.SECONDS);
-        }
-    }
-
-    @Override
     protected void writeItem(Document t) {
         writeObject(writer, t, source -> {
             HttpServerRequest request = context.request();

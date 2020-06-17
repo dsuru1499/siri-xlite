@@ -5,12 +5,17 @@ import org.bson.Document;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Box;
+import org.springframework.data.geo.Point;
+import org.springframework.data.geo.Shape;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeospatialIndex;
 import org.springframework.data.mongodb.core.index.Index;
+import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Flux;
+import siri_xlite.model.StopPointDocument;
 
 import java.util.Collection;
 
@@ -18,6 +23,7 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.aggregation.Fields.field;
 import static org.springframework.data.mongodb.core.aggregation.Fields.from;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
+import static org.springframework.data.mongodb.core.query.Query.query;
 import static siri_xlite.repositories.StopPointsRepository.COLLECTION_NAME;
 
 @Slf4j
@@ -30,7 +36,7 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
     private EmbeddedCacheManager manager;
 
     @Override
-    public Flux<String> findAllById(String id) {
+    public Flux<String> findStopPointRefs(String id) {
 
         Aggregation aggregation = newAggregation(match(where("stopPointRef").is(id)),
                 graphLookup(COLLECTION_NAME).startWith("$stopPointRef").connectFrom("stopPointRef").connectTo("parent")
@@ -42,6 +48,12 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
             result.add(t.getString("stopPointRef"));
             return Flux.fromIterable(result);
         });
+    }
+
+    @Override
+    public Flux<StopPointDocument> findAllByLocation(Shape shape) {
+        Query query = query(where("location").within(shape));
+        return template.find(query, StopPointDocument.class, COLLECTION_NAME);
     }
 
     @Override

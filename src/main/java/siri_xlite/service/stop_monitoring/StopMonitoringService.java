@@ -25,6 +25,7 @@ import siri_xlite.service.common.ParametersFactory;
 import siri_xlite.service.common.StopMonitoring;
 
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 
 import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 import static siri_xlite.service.common.SiriSubscriber.getEtag;
@@ -58,7 +59,7 @@ public class StopMonitoringService implements StopMonitoring, Constants {
                 StopMonitoringParameters parameters = ParametersFactory.create(StopMonitoringParameters.class, context);
                 subscriber.configure(configuration, parameters, context);
                 return parameters;
-            }).flatMap(parameters -> stream(parameters, context))
+            }).flatMap(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(context))
                     .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))
                     .subscribe(subscriber);
         } catch (Exception e) {
@@ -66,12 +67,23 @@ public class StopMonitoringService implements StopMonitoring, Constants {
         }
     }
 
-    private Flux<VehicleJourneyDocument> stream(StopMonitoringParameters parameters, RoutingContext context) {
+    private void onComplete(RoutingContext context) {
+        String etag = subscriber.getEtag();
+        if (StringUtils.isNotEmpty(etag)) {
+            Cache<String, String> cache = manager.getCache(ETAGS);
+            String uri = context.request().uri();
+            ;
+            cache.putForExternalRead(uri, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
+        }
+    }
 
-        Cache<String, String> cache = manager.getCache(COLLECTION_NAME);
+    private Flux<VehicleJourneyDocument> stream(StopMonitoringParameters parameters, RoutingContext context) {
+        Cache<String, String> cache = manager.getCache(ETAGS);
         String etag = getEtag(context);
         if (StringUtils.isNotEmpty(etag)) {
-            if (StringUtils.isNotEmpty(cache.get(STOPPOINT_REF + etag))) {
+            String uri = context.request().uri();
+            String cached = cache.get(uri);
+            if (StringUtils.equals(cached, etag)) {
                 throw new NotModifiedException();
             }
         }

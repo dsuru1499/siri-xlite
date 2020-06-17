@@ -57,7 +57,7 @@ public abstract class ItemSubscriber<P extends DefaultParameters> extends SiriSu
         }
     }
 
-    protected String getEtag() {
+    public String getEtag() {
         return createEtag(current);
     }
 

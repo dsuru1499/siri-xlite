@@ -5,11 +5,7 @@
         xmlns="urn:infinispan:config:9.4">
     <cache-container>
         <transport cluster="siri"/>
-        <invalidation-cache name="lines" mode="SYNC">
-        </invalidation-cache>
-        <invalidation-cache name="stoppoints" mode="SYNC">
-        </invalidation-cache>
-        <invalidation-cache name="vehicle_journey" mode="SYNC">
+        <invalidation-cache name="etags" mode="SYNC">
         </invalidation-cache>
     </cache-container>
 </infinispan>
