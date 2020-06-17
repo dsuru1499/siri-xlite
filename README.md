@@ -1,12 +1,16 @@
 # siri-xlite
 ## Service lines discovery
     /siri-xlite/lines-discovery
-![50% center](./images/ld.png)
+    
+### ex: https://localhost:8443/siri-xlite/lines-discovery    
+![](./images/ld.png)
 
 ## Service stoppoints discovery
     /siri-xlite/stoppoints-discovery
         
     /siri-xlite/stoppoints-discovery/[xtile]/[ytile]
+    
+### ex: https://localhost:8443/siri-xlite/stoppoints-discovery/33194/22549
 ![](./images/sd.png)
 
 ### Pseudocode longitude/latitude -> xtile/ytile
@@ -23,12 +27,16 @@
 
 ## Service estimated timetable
     /siri-xlite/estimated-timetable/[lineRef]
+### ex: https://localhost:8443/siri-xlite/estimated-timetable/067167006:G
 ![](./images/et.png)
 
 ## Service stop monitoring
     /siri-xlite/stop-monitoring/[stopPointRef]
+    
+### ex:  https://localhost:8443/siri-xlite/stop-monitoring/StopArea:59:3893358
 ![](./images/sm.png)
 
 ## Service estimated vehicle journey
     /siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]
+### ex:  https://localhost:8443/siri-xlite/estimated-vehicle-journey/107707296-1_447664
 ![](./images/evj.png)
