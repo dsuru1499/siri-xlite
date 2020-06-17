@@ -9,20 +9,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+
 @Slf4j
 public class MonitorSubscriber<T> implements Subscriber<T> {
 
-    private String label;
-    private Subscriber<T> subscriber;
+    private final String label;
+    private final Subscriber<T> subscriber;
     private Monitor monitor;
 
-    public MonitorSubscriber(String label, Consumer<? super T> onNext, Consumer<? super Throwable> onError,
-            Action onComplete, Consumer<? super Subscription> onSubscribe) {
+    private MonitorSubscriber(String label, Consumer<? super T> onNext, Consumer<? super Throwable> onError,
+                              Action onComplete, Consumer<? super Subscription> onSubscribe) {
         this.label = label;
-        this.subscriber = new LambdaSubscriber<T>(onNext, onError, onComplete, onSubscribe);
+        this.subscriber = new LambdaSubscriber<>(onNext, onError, onComplete, onSubscribe);
     }
 
-    public MonitorSubscriber(String label, Subscriber<T> subscriber) {
+    private MonitorSubscriber(String label, Subscriber<T> subscriber) {
         this.label = label;
         this.subscriber = subscriber;
     }
@@ -32,13 +33,13 @@ public class MonitorSubscriber<T> implements Subscriber<T> {
     }
 
     public static <T> MonitorSubscriber<T> create(String label, Consumer<? super T> onNext,
-            Consumer<? super Throwable> onError) {
+                                                  Consumer<? super Throwable> onError) {
         return MonitorSubscriber.create(label, onNext, onError, null, null);
     }
 
-    public static <T> MonitorSubscriber<T> create(String label, Consumer<? super T> onNext,
-            Consumer<? super Throwable> onError, Action onComplete, Consumer<? super Subscription> onSubscribe) {
-        return new MonitorSubscriber<T>(label, onNext, onError, onComplete, onSubscribe);
+    private static <T> MonitorSubscriber<T> create(String label, Consumer<? super T> onNext,
+                                                   Consumer<? super Throwable> onError, Action onComplete, Consumer<? super Subscription> onSubscribe) {
+        return new MonitorSubscriber<>(label, onNext, onError, onComplete, onSubscribe);
     }
 
     @Override
@@ -73,7 +74,7 @@ public class MonitorSubscriber<T> implements Subscriber<T> {
         }
     }
 
-    protected void stop() {
+    private void stop() {
         log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
     }
 }

@@ -7,6 +7,6 @@ public interface Constants {
     int MAX_IDLE = 60 * 60;
     String ETAGS = "etags";
     String LINE_REF = "LINE_REF:";
-    String STOPPOINT_REF = "STOPPOINT_REF:";
+    // String STOPPOINT_REF = "STOPPOINT_REF:";
 
 }

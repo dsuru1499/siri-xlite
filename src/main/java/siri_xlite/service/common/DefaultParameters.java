@@ -19,7 +19,7 @@ public abstract class DefaultParameters implements Parameters {
 
     private String messageIdentifier;
 
-    public DefaultParameters() {
+    protected DefaultParameters() {
     }
 
     @Override
@@ -31,6 +31,12 @@ public abstract class DefaultParameters implements Parameters {
 
     @Override
     public void validate() throws SiriException {
+        if (now == null) {
+            throw SiriException.createInvalidDataReferencesError();
+        }
+        if (messageIdentifier == null) {
+            throw SiriException.createInvalidDataReferencesError("messageIdentifier");
+        }
     }
 
     protected Integer intValue(String name) {

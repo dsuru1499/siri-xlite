@@ -9,9 +9,9 @@ import java.util.List;
 public class ServiceInfoGroupMarshaller implements Marshaller<Document> {
 
     public static final String OPERATOR_REF = "operatorRef";
-    public static final String PRODUCT_CATEGORY_REF = "productCategoryRef";
-    public static final String SERVICE_FEATURE_REFS = "serviceFeatureRefs";
-    public static final String VEHICLE_FEATURE_REFS = "vehicleFeatureRefs";
+    private static final String PRODUCT_CATEGORY_REF = "productCategoryRef";
+    private static final String SERVICE_FEATURE_REFS = "serviceFeatureRefs";
+    private static final String VEHICLE_FEATURE_REFS = "vehicleFeatureRefs";
     @Getter
     private static final Marshaller<Document> instance = new ServiceInfoGroupMarshaller();
 
@@ -25,9 +25,11 @@ public class ServiceInfoGroupMarshaller implements Marshaller<Document> {
         writeField(writer, PRODUCT_CATEGORY_REF, source.getString(PRODUCT_CATEGORY_REF));
 
         // set serviceFeatureRef
+
         writeArray(writer, SERVICE_FEATURE_REFS, source.get(SERVICE_FEATURE_REFS, List.class));
 
         // set vehicleFeatureRef
+
         writeArray(writer, VEHICLE_FEATURE_REFS, source.get(VEHICLE_FEATURE_REFS, List.class));
 
     }

@@ -5,7 +5,7 @@
         xmlns="urn:infinispan:config:9.4">
     <cache-container>
         <transport cluster="siri"/>
-        <invalidation-cache name="etags" mode="SYNC">
+        <invalidation-cache name="etags" >
         </invalidation-cache>
     </cache-container>
 </infinispan>

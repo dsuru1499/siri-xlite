@@ -7,8 +7,8 @@ import uk.org.siri.siri.FirstOrLastJourneyEnumeration;
 
 public class DatedServiceInfoGroupMarshaller implements Marshaller<Document> {
 
-    public static final String DESTINATION_DISPLAY = "destinationDisplay";
-    public static final String FIRST_OR_LAST_JOURNEY = "firstOrLastJourney";
+    private static final String DESTINATION_DISPLAY = "destinationDisplay";
+    private static final String FIRST_OR_LAST_JOURNEY = "firstOrLastJourney";
     @Getter
     private static final Marshaller<Document> instance = new DatedServiceInfoGroupMarshaller();
 

@@ -1,6 +1,6 @@
 package siri_xlite.repositories;
 
-public interface LinesCustomRepository<ID> {
+interface LinesCustomRepository<ID> {
 
     void clearAll();
 }

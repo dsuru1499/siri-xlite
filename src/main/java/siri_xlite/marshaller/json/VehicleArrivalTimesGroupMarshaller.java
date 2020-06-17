@@ -6,9 +6,9 @@ import org.bson.Document;
 
 public class VehicleArrivalTimesGroupMarshaller implements Marshaller<Document> {
 
-    public static final String AIMED_ARRIVAL_TIME = "aimedArrivalTime";
-    public static final String ACTUAL_ARRIVAL_TIME = "actualArrivalTime";
-    public static final String EXPECTED_ARRIVAL_TIME = "expectedArrivalTime";
+    private static final String AIMED_ARRIVAL_TIME = "aimedArrivalTime";
+    private static final String ACTUAL_ARRIVAL_TIME = "actualArrivalTime";
+    private static final String EXPECTED_ARRIVAL_TIME = "expectedArrivalTime";
     @Getter
     private static final Marshaller<Document> instance = new VehicleArrivalTimesGroupMarshaller();
 

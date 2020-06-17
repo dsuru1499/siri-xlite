@@ -5,7 +5,7 @@ import org.bson.Document;
 
 import static siri_xlite.common.DocumentUtils.append;
 
-public class JourneyPartBuilder {
+class JourneyPartBuilder {
 
     @Builder
     public static Document create(String journeyPartRef, String trainNumberRef) {

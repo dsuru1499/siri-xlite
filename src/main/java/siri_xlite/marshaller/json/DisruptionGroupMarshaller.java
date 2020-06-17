@@ -8,8 +8,8 @@ import java.util.List;
 
 public class DisruptionGroupMarshaller implements Marshaller<Document> {
 
-    public static final String SITUATION_REFS = "situationRefs";
-    public static final String SITUATION_SIMPLE_REF = "situationSimpleRef";
+    private static final String SITUATION_REFS = "situationRefs";
+    private static final String SITUATION_SIMPLE_REF = "situationSimpleRef";
     @Getter
     private static final Marshaller<Document> instance = new DisruptionGroupMarshaller();
 
@@ -20,6 +20,7 @@ public class DisruptionGroupMarshaller implements Marshaller<Document> {
         // facilityChangeElement :[FacilityChange];
 
         // set situationRef
+
         List<String> situationRefs = source.get(SITUATION_REFS, List.class);
         writeArray(writer, SITUATION_REFS, situationRefs,
                 t -> writeObject(writer, t, situationRef -> writeField(writer, SITUATION_SIMPLE_REF, situationRef)));

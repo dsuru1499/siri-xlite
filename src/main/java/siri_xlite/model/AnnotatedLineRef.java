@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @Accessors(fluent = true)
 @Document("lines")
-public class AnnotatedLineRef {
+class AnnotatedLineRef {
     private String lineRef;
     private String lineName;
     private List<Destination> destinations;

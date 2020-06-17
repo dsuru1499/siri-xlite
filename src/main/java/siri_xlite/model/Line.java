@@ -10,7 +10,7 @@ import java.util.List;
 @Value
 @Accessors(fluent = true)
 @Builder
-public class Line {
+class Line {
     private String lineRef;
     private String lineName;
     @Singular

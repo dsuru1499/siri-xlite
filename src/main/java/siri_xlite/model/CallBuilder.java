@@ -10,15 +10,16 @@ import static siri_xlite.common.DocumentUtils.append;
 
 public class CallBuilder {
 
+
     @Builder
     public static Document create(Boolean extraCall, Boolean cancellation, String stopPointRef, Integer order,
-            String stopPointName, String originDisplay, String destinationDisplay, List<String> situationRefs,
-            Date aimedArrivalTime, Date actualDepartureTime, Date expectedArrivalTime, Integer arrivalStatus,
-            String arrivalProximityText, String arrivalPlatformName, Date aimedDepartureTime,
-            Date expectedDepartureTime, Date actualArrivalTime, Integer departureStatus, String departurePlatformName,
-            Integer departureBoardingActivity, Long aimedHeadwayInterval, Long expectedHeadwayInterval,
-            Long distanceFromStop, Long numberOfStopsAway, Boolean vehicleAtStop, Boolean platformTraversal,
-            List<Document> targetedInterchanges) {
+                                  String stopPointName, String originDisplay, String destinationDisplay, List<String> situationRefs,
+                                  Date aimedArrivalTime, Date actualDepartureTime, Date expectedArrivalTime, Integer arrivalStatus,
+                                  String arrivalProximityText, String arrivalPlatformName, Date aimedDepartureTime,
+                                  Date expectedDepartureTime, Date actualArrivalTime, Integer departureStatus, String departurePlatformName,
+                                  Integer departureBoardingActivity, Long aimedHeadwayInterval, Long expectedHeadwayInterval,
+                                  Long distanceFromStop, Long numberOfStopsAway, Boolean vehicleAtStop, Boolean platformTraversal,
+                                  List<Document> targetedInterchanges) {
 
         Document result = new Document();
         append(result, "extraCall", extraCall);

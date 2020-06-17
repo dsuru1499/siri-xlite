@@ -12,7 +12,7 @@ import gtfs.importer.GtfsImporter;
 import gtfs.importer.Index;
 import gtfs.model.*;
 import gtfs.model.Stop.LocationType;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.SetValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.apache.commons.compress.utils.IOUtils;
@@ -40,7 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Log4j2
+@Slf4j
 @Service
 public class Initializer {
     private static final String SEP = "-";
@@ -50,18 +50,21 @@ public class Initializer {
 
     private MongoDatabase database;
 
+
     @Autowired
     private LinesRepository linesRepository;
 
+
     @Autowired
     private StopPointsRepository stopPointsRepository;
+
 
     @Autowired
     private VehicleJourneyRepository vehicleJourneyRepository;
 
     // @PostConstruct
     // @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Paris")
-    public boolean initialize() {
+    boolean initialize() {
 
         Monitor monitor = MonitorFactory.start();
         log.info(Color.YELLOW + "[DSU] initialize model (~ 1mn)" + Color.NORMAL);
@@ -85,7 +88,6 @@ public class Initializer {
         MongoClient client = MongoClients.create("mongodb://localhost");
         this.database = client.getDatabase("siri");
 
-        clear();
         GtfsImporter importer = new GtfsImporter(path.toString());
         SetValuedMap<String, Destination> destinations = new HashSetValuedHashMap<>();
         SetValuedMap<String, String> lineRefs = new HashSetValuedHashMap<>();
@@ -96,16 +98,12 @@ public class Initializer {
         importer.dispose();
         log.info(Color.YELLOW + "[DSU] model initialized : " + monitor.stop() + Color.NORMAL);
 
-        return true;
-
-    }
-
-    private void clear() {
+        return Boolean.TRUE;
 
     }
 
     private void fillVehicleJourney(GtfsImporter importer, SetValuedMap<String, String> lineRefs,
-            SetValuedMap<String, Destination> destinations) {
+                                    SetValuedMap<String, Destination> destinations) {
 
         Monitor monitor = MonitorFactory.start("vehicle_journey");
         Monitor tripMonitor = MonitorFactory.start("trip");
@@ -137,8 +135,6 @@ public class Initializer {
                 Index<Agency> agencies = importer.getAgencyById();
                 Agency agency = agencies.getValue(route.getAgencyId());
                 Index<Trip> trips = importer.getTripByRoute();
-
-                Iterator<Trip> tripIterator = trips.values(route.getRouteId()).iterator();
 
                 for (Trip trip : trips.values(route.getRouteId())) {
 
@@ -355,6 +351,7 @@ public class Initializer {
         }
     }
 
+
     private boolean filterByCalendar(Calendar calendar, CalendarDate calendarDate) {
         boolean result = false;
 
@@ -371,29 +368,29 @@ public class Initializer {
             // if ((now.compareTo(startDate) >= 0) && (now.compareTo(endDate) <=
             // 0)) {
             switch (day) {
-            case MONDAY:
-                result = calendar.getMonday();
-                break;
-            case TUESDAY:
-                result = calendar.getTuesday();
-                break;
-            case WEDNESDAY:
-                result = calendar.getWednesday();
-                break;
-            case THURSDAY:
-                result = calendar.getThursday();
-                break;
-            case FRIDAY:
-                result = calendar.getFriday();
-                break;
-            case SATURDAY:
-                result = calendar.getSaturday();
-                break;
-            case SUNDAY:
-                result = calendar.getSunday();
-                break;
-            default:
-                break;
+                case MONDAY:
+                    result = calendar.getMonday();
+                    break;
+                case TUESDAY:
+                    result = calendar.getTuesday();
+                    break;
+                case WEDNESDAY:
+                    result = calendar.getWednesday();
+                    break;
+                case THURSDAY:
+                    result = calendar.getThursday();
+                    break;
+                case FRIDAY:
+                    result = calendar.getFriday();
+                    break;
+                case SATURDAY:
+                    result = calendar.getSaturday();
+                    break;
+                case SUNDAY:
+                    result = calendar.getSunday();
+                    break;
+                default:
+                    break;
             }
 
             // }

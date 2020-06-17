@@ -7,12 +7,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class SiriException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
     @Getter
-    private ERROR_CODE code;
+    private final ERROR_CODE code;
 
     @Getter
     private Map<String, Object> values;
@@ -21,16 +22,16 @@ public class SiriException extends Exception {
         this(ERROR_CODE.OtherError);
     }
 
-    public SiriException(ERROR_CODE code) {
+    private SiriException(ERROR_CODE code) {
         this(code, code.name(), null);
     }
 
-    public SiriException(ERROR_CODE code, String description) {
+    private SiriException(ERROR_CODE code, String description) {
         super(description);
         this.code = code;
     }
 
-    public SiriException(ERROR_CODE code, String description, Map<String, Object> values) {
+    private SiriException(ERROR_CODE code, String description, Map<String, Object> values) {
         super(description);
         this.code = code;
         this.values = values;
@@ -40,42 +41,42 @@ public class SiriException extends Exception {
         this(ERROR_CODE.OtherError, cause);
     }
 
-    public SiriException(ERROR_CODE code, Throwable cause) {
+    private SiriException(ERROR_CODE code, Throwable cause) {
         this(code, ExceptionUtils.getMessage(cause), null, cause);
     }
 
-    public SiriException(ERROR_CODE code, String description, Map<String, Object> values, Throwable cause) {
+    private SiriException(ERROR_CODE code, String description, Map<String, Object> values, Throwable cause) {
         super(description, cause);
         this.code = code;
         this.values = values;
     }
 
     public static SiriException createUnapprovedKeyAccessError(String value) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("Key", value);
         return new SiriException(ERROR_CODE.UnapprovedKeyAccessError, "Unapproved Key Access Error", map);
     }
 
     public static SiriException createUnknownParticipantError(String value) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("ParticipantRef", value);
         return new SiriException(ERROR_CODE.UnknownParticipantError, "Unknown Participant Error", map);
     }
 
     public static SiriException createUnknownEndpointError(String value) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("Endpoint", value);
         return new SiriException(ERROR_CODE.UnknownEndpointError, "Unknown Endpoint Error", map);
     }
 
     public static SiriException createEndpointDeniedAccessError(String value) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("Endpoint", value);
         return new SiriException(ERROR_CODE.EndpointDeniedAccessError, "Endpoint Denied Access Error", map);
     }
 
     public static SiriException createEndpointNotAvailableAccessError(String value) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("Endpoint", value);
         return new SiriException(ERROR_CODE.EndpointNotAvailableAccessError, "Endpoint Not Available Access Error",
                 map);
@@ -86,7 +87,7 @@ public class SiriException extends Exception {
     }
 
     public static SiriException createCapabilityNotSupportedError(String value) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("CapabilityRef", value);
         return new SiriException(ERROR_CODE.CapabilityNotSupportedError, "Capability Not Supported Error", map);
     }
@@ -96,7 +97,7 @@ public class SiriException extends Exception {
     }
 
     public static SiriException createInvalidDataReferencesError(String... values) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("InvalidRef", Arrays.asList(values));
         return new SiriException(ERROR_CODE.InvalidDataReferencesError, "Invalid Data References Error", map);
     }
@@ -110,13 +111,13 @@ public class SiriException extends Exception {
     }
 
     public static SiriException createParametersIgnoredError(String... values) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("ParameterName", Arrays.asList(values));
         return new SiriException(ERROR_CODE.ParametersIgnoredError, "Parameters Ignored Error", map);
     }
 
     public static SiriException createUnknownExtensionsError(String... values) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("ExtensionName", Arrays.asList(values));
         return new SiriException(ERROR_CODE.UnknownExtensionsError, "Unknown Extensions Error", map);
     }
@@ -129,7 +130,7 @@ public class SiriException extends Exception {
         return new SiriException(ERROR_CODE.OtherError, e);
     }
 
-    public static enum ERROR_CODE {
+    public enum ERROR_CODE {
         UnapprovedKeyAccessError, UnknownParticipantError, UnknownEndpointError, EndpointDeniedAccessError, EndpointNotAvailableAccessError, ServiceNotAvailableError, CapabilityNotSupportedError, AccessNotAllowedError, InvalidDataReferencesError, BeyondDataHorizon, NoInfoForTopicError, ParametersIgnoredError, UnknownExtensionsError, AllowedResourceUsageExceededError, OtherError
     }
 

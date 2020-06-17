@@ -74,7 +74,6 @@ public class EstimatedVehiculeJourneyService implements EstimatedVehiculeJourney
         if (StringUtils.isNotEmpty(etag)) {
             Cache<String, String> cache = manager.getCache(ETAGS);
             String uri = context.request().uri();
-            ;
             cache.putForExternalRead(uri, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
         }
     }

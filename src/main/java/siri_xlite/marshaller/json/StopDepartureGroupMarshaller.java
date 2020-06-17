@@ -7,11 +7,11 @@ import uk.org.siri.siri.CallStatusEnumeration;
 
 public class StopDepartureGroupMarshaller implements Marshaller<Document> {
 
-    public static final String AIMED_DEPARTURE_TIME = "aimedDepartureTime";
-    public static final String ACTUAL_DEPARTURE_TIME = "actualDepartureTime";
-    public static final String EXPECTED_DEPARTURE_TIME = "expectedDepartureTime";
-    public static final String DEPARTURE_STATUS = "departureStatus";
-    public static final String DEPARTURE_PLATFORM_NAME = "departurePlatformName";
+    private static final String AIMED_DEPARTURE_TIME = "aimedDepartureTime";
+    private static final String ACTUAL_DEPARTURE_TIME = "actualDepartureTime";
+    private static final String EXPECTED_DEPARTURE_TIME = "expectedDepartureTime";
+    private static final String DEPARTURE_STATUS = "departureStatus";
+    private static final String DEPARTURE_PLATFORM_NAME = "departurePlatformName";
     @Getter
     private static final Marshaller<Document> instance = new StopDepartureGroupMarshaller();
 

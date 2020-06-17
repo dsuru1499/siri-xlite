@@ -5,8 +5,6 @@ import org.bson.Document;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.geo.Box;
-import org.springframework.data.geo.Point;
 import org.springframework.data.geo.Shape;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -44,6 +42,7 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
                 project(from(field("stopPointRef"), field("children", "$children.stopPointRef"))));
 
         return template.aggregate(aggregation, COLLECTION_NAME, Document.class).flatMap((Document t) -> {
+
             Collection<String> result = (Collection<String>) t.get("children");
             result.add(t.getString("stopPointRef"));
             return Flux.fromIterable(result);

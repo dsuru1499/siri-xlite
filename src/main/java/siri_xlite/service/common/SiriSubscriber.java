@@ -21,58 +21,54 @@ import siri_xlite.repositories.NotModifiedException;
 
 import java.io.ByteArrayOutputStream;
 import java.net.HttpURLConnection;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public abstract class SiriSubscriber<T, P extends Parameters> implements Subscriber<T>, JsonUtils {
 
-    public static final String MAX_AGE = "max-age=3";
-    public static final String S_MAX_AGE = "s-maxage=30";
-    public static final String PROXY_REVALIDATE = "proxy-revalidate";
-    public static final String PUBLIC = "public";
-    public static final String RECCORDED_AT_TIME = "recordedAtTime";
+    static final String MAX_AGE = "max-age=3";
+    static final String S_MAX_AGE = "s-maxage=30";
+    static final String PROXY_REVALIDATE = "proxy-revalidate";
+    static final String PUBLIC = "public";
+    private static final String RECCORDED_AT_TIME = "recordedAtTime";
 
-    public static final Comparator<Document> COMPARATOR = Comparator.comparing(t -> {
-        return t.getDate(RECCORDED_AT_TIME).getTime();
-    });
+    static final Comparator<Document> COMPARATOR = Comparator.comparing(t -> t.getDate(RECCORDED_AT_TIME).getTime());
 
     protected RoutingContext context;
-    protected Configuration configuration;
-    protected P parameters;
-    protected ByteArrayOutputStream out;
     protected JsonGenerator writer;
-    protected Document current;
-    protected AtomicInteger count;
-
     @Autowired
     protected EmbeddedCacheManager manager;
+    Configuration configuration;
+    ByteArrayOutputStream out;
+    Document current;
+    AtomicInteger count;
 
-    public static final String getEtag(RoutingContext context) {
+    public static String getEtag(RoutingContext context) {
         String text = context.request().getHeader(HttpHeaders.IF_NONE_MATCH);
         String[] noneMatch = (StringUtils.isNotEmpty(text)) ? text.split(",") : ArrayUtils.EMPTY_STRING_ARRAY;
-        String result = (ArrayUtils.isNotEmpty(noneMatch)) ? noneMatch[0].replaceAll("^\"|\"$", "") : null;
-        return result;
+        return (ArrayUtils.isNotEmpty(noneMatch)) ? noneMatch[0].replaceAll("^\"|\"$", "") : null;
     }
 
-    public static final String getEtag(Document document) {
+    private static String getEtag(Document document) {
         return document.getObjectId(ID).toHexString();
     }
 
-    public static final String createEtag(List<? extends Document> list) {
+    public static String createEtag(List<? extends Document> list) {
         Optional<? extends Document> result = list.stream().max(COMPARATOR);
-        return createEtag(result.get());
+        return result.map(SiriSubscriber::createEtag).orElse(null);
     }
 
-    public static final String createEtag(Document document) {
-        Date recordedAtTime = document.getDate(RECCORDED_AT_TIME);
-        return (document != null) ? String.valueOf(recordedAtTime.getTime()) : null;
+    static String createEtag(Document document) {
+        return (document != null) ? String.valueOf(document.getDate(RECCORDED_AT_TIME).getTime()) : null;
         // return (document != null) ? document.getObjectId(ID).toHexString() : null;
     }
 
     public void configure(Configuration configuration, P parameters, RoutingContext context) {
         this.configuration = configuration;
-        this.parameters = parameters;
         this.context = context;
         this.out = new ByteArrayOutputStream(1024);
         this.writer = createJsonWriter(out);
@@ -100,7 +96,7 @@ public abstract class SiriSubscriber<T, P extends Parameters> implements Subscri
                 writer.close();
                 this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .setStatusCode(HttpResponseStatus.BAD_REQUEST.code()).end(out.toString());
-            } else if (t instanceof Throwable) {
+            } else if (t != null) {
                 SiriExceptionMarshaller.getInstance().write(writer, SiriException.createOtherError(t));
                 writer.close();
                 this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

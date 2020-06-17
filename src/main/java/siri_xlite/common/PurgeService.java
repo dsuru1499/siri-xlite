@@ -14,8 +14,8 @@ import java.time.Duration;
 public class PurgeService {
 
     private static final String PURGE = "PURGE";
-    private static HttpClient client = HttpClient.newHttpClient();
-    private static HttpRequest.Builder builder = HttpRequest.newBuilder();
+    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final HttpRequest.Builder builder = HttpRequest.newBuilder();
 
     public boolean purge(String uri) {
         boolean result = false;

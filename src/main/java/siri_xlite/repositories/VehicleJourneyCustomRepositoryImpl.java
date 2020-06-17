@@ -79,6 +79,7 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
     private Flux<VehicleJourneyDocument> create(Document document, List<String> stopPointRefs) {
 
         List<VehicleJourneyDocument> list = new ArrayList<>();
+
         List<Document> calls = document.get("calls", List.class);
         for (int i = 0; i < calls.size(); i++) {
             Document call = calls.get(i);

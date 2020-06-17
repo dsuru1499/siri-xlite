@@ -25,7 +25,7 @@ public class SiriStructureFactory {
         return createXMLGregorianCalendar(DateTimeUtils.toLocalDateTime(date));
     }
 
-    public static String createXMLGregorianCalendar(LocalDateTime dateTime) {
+    private static String createXMLGregorianCalendar(LocalDateTime dateTime) {
         return dateTime.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 

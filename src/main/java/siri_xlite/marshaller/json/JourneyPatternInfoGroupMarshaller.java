@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 
 public class JourneyPatternInfoGroupMarshaller implements Marshaller<Document> {
 
-    public static final String JOURNEY_PATTERN_REF = "journeyPatternRef";
-    public static final String JOURNEY_PATTERN_NAME = "journeyPatternName";
-    public static final String VEHICLE_MODES = "vehicleModes";
     public static final String ROUTE_REF = "routeRef";
-    public static final String PUBLISHED_LINE_NAME = "publishedLineName";
-    public static final String DIRECTION_NAME = "directionName";
+    private static final String JOURNEY_PATTERN_REF = "journeyPatternRef";
+    private static final String JOURNEY_PATTERN_NAME = "journeyPatternName";
+    private static final String VEHICLE_MODES = "vehicleModes";
+    private static final String PUBLISHED_LINE_NAME = "publishedLineName";
+    private static final String DIRECTION_NAME = "directionName";
     @Getter
     private static final Marshaller<Document> instance = new JourneyPatternInfoGroupMarshaller();
 
@@ -30,6 +30,7 @@ public class JourneyPatternInfoGroupMarshaller implements Marshaller<Document> {
         writeField(writer, JOURNEY_PATTERN_NAME, source.getString(JOURNEY_PATTERN_NAME));
 
         // set vehicleMode
+
         List<Integer> values = source.get(VEHICLE_MODES, List.class);
         if (CollectionUtils.isNotEmpty(values)) {
             String text = values.stream().map(t -> VehicleModesEnumeration.values()[t].name())

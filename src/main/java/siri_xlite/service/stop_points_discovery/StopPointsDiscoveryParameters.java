@@ -24,9 +24,4 @@ public class StopPointsDiscoveryParameters extends DefaultParameters {
         setYtile(intValue((Y_TILE)));
     }
 
-    @Override
-    public void validate() throws SiriException {
-        super.validate();
-    }
-
 }

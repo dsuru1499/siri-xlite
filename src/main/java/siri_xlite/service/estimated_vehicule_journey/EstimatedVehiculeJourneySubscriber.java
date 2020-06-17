@@ -1,26 +1,22 @@
 package siri_xlite.service.estimated_vehicule_journey;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
-import org.infinispan.Cache;
 import siri_xlite.marshaller.json.*;
 import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.ItemSubscriber;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 
 @Slf4j
 public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<EstimatedVehiculeJourneyParameters>
         implements Constants {
 
-    public static final String EXTRA_CALL = "extraCall";
-    public static final String CANCELLATION = "cancellation";
-    public static final String ESTIMATED_CALLS = "estimatedCalls";
-    public static final String CALLS = "calls";
+    private static final String EXTRA_CALL = "extraCall";
+    private static final String CANCELLATION = "cancellation";
+    private static final String ESTIMATED_CALLS = "estimatedCalls";
+    private static final String CALLS = "calls";
 
     @Override
     protected void writeItem(Document t) {
@@ -37,6 +33,7 @@ public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<Estimated
             TrainOperationalInfoGroupMarshaller.getInstance().write(writer, source);
 
             // EstimatedCalls calls
+
             writeArray(writer, ESTIMATED_CALLS, source.get(CALLS, List.class), this::writeEstimatedCall);
         });
     }

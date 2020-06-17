@@ -5,7 +5,8 @@ import org.bson.Document;
 
 import static siri_xlite.common.DocumentUtils.append;
 
-public class ViaBuilder {
+class ViaBuilder {
+
 
     @Builder
     public static Document create(String placeRef, String placeName) {

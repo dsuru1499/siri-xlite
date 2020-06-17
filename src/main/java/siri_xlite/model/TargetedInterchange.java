@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Value
 @Accessors(fluent = true)
 @Builder
-public final class TargetedInterchange {
+final class TargetedInterchange {
     private String interchangeCode;
     private String distributorVehicleJourneyRef;
     // distributorConnectionLinkRef ;

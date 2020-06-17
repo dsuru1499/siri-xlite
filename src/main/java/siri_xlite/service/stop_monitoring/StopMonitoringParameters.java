@@ -26,9 +26,4 @@ public class StopMonitoringParameters extends DefaultParameters {
         setStopPointRef(values.get(STOPPOINT_REF));
     }
 
-    @Override
-    public void validate() throws SiriException {
-        super.validate();
-    }
-
 }

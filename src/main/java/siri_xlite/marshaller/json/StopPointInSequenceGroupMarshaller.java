@@ -5,9 +5,9 @@ import lombok.Getter;
 import org.bson.Document;
 
 public class StopPointInSequenceGroupMarshaller implements Marshaller<Document> {
-    public static final String STOP_POINT_REF = "stopPointRef";
     public static final String ORDER = "order";
-    public static final String STOP_POINT_NAME = "stopPointName";
+    private static final String STOP_POINT_REF = "stopPointRef";
+    private static final String STOP_POINT_NAME = "stopPointName";
     @Getter
     private static final Marshaller<Document> instance = new StopPointInSequenceGroupMarshaller();
 

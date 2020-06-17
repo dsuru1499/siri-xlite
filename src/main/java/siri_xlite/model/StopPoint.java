@@ -9,7 +9,7 @@ import java.util.List;
 @Value
 @Accessors(fluent = true)
 @Builder
-public final class StopPoint {
+final class StopPoint {
     // timingPoint :bool;
     // monitored :bool;
     private String stopPointRef;

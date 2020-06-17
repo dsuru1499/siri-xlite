@@ -5,12 +5,12 @@ import org.bson.Document;
 
 import static siri_xlite.common.DocumentUtils.append;
 
-public class TargetedInterchangeBuilder {
+class TargetedInterchangeBuilder {
 
     @Builder
     public static Document create(String interchangeCode, String distributorVehicleJourneyRef,
-            DistributorConnectionLink distributorConnectionLink, Boolean staySeated, Boolean guaranteed,
-            Long maximumWaitTime) {
+                                  DistributorConnectionLink distributorConnectionLink, Boolean staySeated, Boolean guaranteed,
+                                  Long maximumWaitTime) {
 
         Document result = new Document("interchangeCode", interchangeCode);
         append(result, "distributorVehicleJourneyRef", distributorVehicleJourneyRef);

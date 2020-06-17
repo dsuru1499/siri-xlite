@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Value
 @Accessors(fluent = true)
 @Builder
-public final class DistributorConnectionLink {
+final class DistributorConnectionLink {
     private String connectionLinkCode;
     private String stopPointRef;
     private String stopPointName;

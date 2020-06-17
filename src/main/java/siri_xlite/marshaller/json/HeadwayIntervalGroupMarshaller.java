@@ -7,8 +7,8 @@ import siri_xlite.service.common.SiriStructureFactory;
 
 public class HeadwayIntervalGroupMarshaller implements Marshaller<Document> {
 
-    public static final String AIMED_HEADWAY_INTERVAL = "aimedHeadwayInterval";
-    public static final String EXPECTED_HEADWAY_INTERVAL = "expectedHeadwayInterval";
+    private static final String AIMED_HEADWAY_INTERVAL = "aimedHeadwayInterval";
+    private static final String EXPECTED_HEADWAY_INTERVAL = "expectedHeadwayInterval";
     @Getter
     private static final Marshaller<Document> instance = new HeadwayIntervalGroupMarshaller();
 

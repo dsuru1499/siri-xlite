@@ -7,9 +7,9 @@ import uk.org.siri.siri.CallStatusEnumeration;
 
 public class MonitoredStopDepartureStatusGroupMarshaller implements Marshaller<Document> {
 
-    public static final String DEPARTURE_STATUS = "departureStatus";
-    public static final String DEPARTURE_PLATFORM_NAME = "departurePlatformName";
-    public static final String DEPARTURE_BOARDING_ACTIVITY = "departureBoardingActivity";
+    private static final String DEPARTURE_STATUS = "departureStatus";
+    private static final String DEPARTURE_PLATFORM_NAME = "departurePlatformName";
+    private static final String DEPARTURE_BOARDING_ACTIVITY = "departureBoardingActivity";
     @Getter
     private static final Marshaller<Document> instance = new MonitoredStopDepartureStatusGroupMarshaller();
 

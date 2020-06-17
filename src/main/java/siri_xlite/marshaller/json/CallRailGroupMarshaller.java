@@ -6,7 +6,7 @@ import org.bson.Document;
 
 public class CallRailGroupMarshaller implements Marshaller<Document> {
 
-    public static final String PLATFORM_TRAVERSAL = "platformTraversal";
+    private static final String PLATFORM_TRAVERSAL = "platformTraversal";
     @Getter
     private static final Marshaller<Document> instance = new CallRailGroupMarshaller();
 

@@ -7,8 +7,8 @@ import org.bson.Document;
 public class EstimatedTimetableAlterationGroupMarshaller implements Marshaller<Document> {
 
     public static final String DATED_VEHICLE_JOURNEY_REF = "datedVehicleJourneyRef";
-    public static final String EXTRA_JOURNEY = "extraJourney";
-    public static final String CANCELLATION = "cancellation";
+    private static final String EXTRA_JOURNEY = "extraJourney";
+    private static final String CANCELLATION = "cancellation";
     @Getter
     private static final Marshaller<Document> instance = new EstimatedTimetableAlterationGroupMarshaller();
 

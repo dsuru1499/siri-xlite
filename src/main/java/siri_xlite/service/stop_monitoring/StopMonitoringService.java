@@ -37,9 +37,9 @@ public class StopMonitoringService implements StopMonitoring, Constants {
     private static final ResourceBundle messages = ResourceBundle
             .getBundle(Messages.class.getPackageName() + ".Messages");
     @Autowired
-    protected EmbeddedCacheManager manager;
+    private EmbeddedCacheManager manager;
     @Autowired
-    protected StopMonitoringSubscriber subscriber;
+    private StopMonitoringSubscriber subscriber;
     @Autowired
     private Configuration configuration;
     @Autowired
@@ -72,7 +72,6 @@ public class StopMonitoringService implements StopMonitoring, Constants {
         if (StringUtils.isNotEmpty(etag)) {
             Cache<String, String> cache = manager.getCache(ETAGS);
             String uri = context.request().uri();
-            ;
             cache.putForExternalRead(uri, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
         }
     }

@@ -8,7 +8,6 @@ import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class HttpUtils {
@@ -20,11 +19,9 @@ public class HttpUtils {
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
-    public static void printHeader(HttpResponse<String> response) throws Exception {
+    public static void printHeader(HttpResponse<String> response) {
         HttpHeaders headers = response.headers();
-        headers.map().forEach((key, values) -> {
-            System.out.println(String.format("%s: %s", key, values));
-        });
+        headers.map().forEach((key, values) -> System.out.println(String.format("%s: %s", key, values)));
     }
 
     public static void prettyPrint(HttpResponse<String> response) throws Exception {

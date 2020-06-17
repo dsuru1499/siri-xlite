@@ -8,16 +8,16 @@ import uk.org.siri.siri.OccupancyEnumeration;
 
 public class JourneyProgressGroupMarshaller implements Marshaller<Document> {
 
-    public static final String MONITORED = "monitored";
-    public static final String MONITORING_ERROR = "monitoringError";
-    public static final String IN_CONGESTION = "inCongestion";
-    public static final String IN_PANIC = "inPanic";
-    public static final String LONGITUDE = "longitude";
-    public static final String LATITUDE = "latitude";
-    public static final String VEHICLE_LOCATION = "vehicleLocation";
-    public static final String BEARING = "bearing";
-    public static final String OCCUPANCY = "occupancy";
-    public static final String DELAY = "delay";
+    private static final String MONITORED = "monitored";
+    private static final String MONITORING_ERROR = "monitoringError";
+    private static final String IN_CONGESTION = "inCongestion";
+    private static final String IN_PANIC = "inPanic";
+    private static final String LONGITUDE = "longitude";
+    private static final String LATITUDE = "latitude";
+    private static final String VEHICLE_LOCATION = "vehicleLocation";
+    private static final String BEARING = "bearing";
+    private static final String OCCUPANCY = "occupancy";
+    private static final String DELAY = "delay";
     @Getter
     private static final Marshaller<Document> instance = new JourneyProgressGroupMarshaller();
 

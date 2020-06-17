@@ -10,13 +10,12 @@ import java.util.Map;
 @Slf4j
 public abstract class ParametersFactory<T> {
 
-    private static Map<Class<? extends Parameters>, ParametersFactory<?>> _factories = new HashMap<>();
+    private static final Map<Class<? extends Parameters>, ParametersFactory<?>> _factories = new HashMap<>();
 
     public static <T> void register(Class<? extends Parameters> clazz, ParametersFactory<T> factory) {
         _factories.put(clazz, factory);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> T create(Class<? extends Parameters> clazz, RoutingContext context) throws Exception {
         ParametersFactory<?> factory = _factories.get(clazz);
         if (factory == null) {
@@ -31,6 +30,7 @@ public abstract class ParametersFactory<T> {
 
         Parameters parameters = factory.create(context);
         parameters.validate();
+
 
         return (T) parameters;
     }

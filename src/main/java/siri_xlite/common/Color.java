@@ -1,5 +1,6 @@
 package siri_xlite.common;
 
+
 public interface Color {
     String BLACK = (char) 27 + "[1;30m";
     String RED = (char) 27 + "[1;31m";

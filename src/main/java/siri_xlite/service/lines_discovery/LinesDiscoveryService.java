@@ -36,13 +36,14 @@ public class LinesDiscoveryService implements LinesDiscovery, Constants {
     private static final ResourceBundle messages = ResourceBundle
             .getBundle(Messages.class.getPackageName() + ".Messages");
     @Autowired
-    protected LinesRepository repository;
+    private LinesRepository repository;
     @Autowired
-    protected EmbeddedCacheManager manager;
+    private EmbeddedCacheManager manager;
     @Autowired
-    LinesDiscoverySubscriber subscriber;
+    private LinesDiscoverySubscriber subscriber;
     @Autowired
     private Configuration configuration;
+
 
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -67,22 +68,21 @@ public class LinesDiscoveryService implements LinesDiscovery, Constants {
     }
 
     private void onComplete(RoutingContext context) {
-        String etag = subscriber.getEtag();
-        if (StringUtils.isNotEmpty(etag)) {
+        String eTag = subscriber.getEtag();
+        if (StringUtils.isNotEmpty(eTag)) {
             Cache<String, String> cache = manager.getCache(ETAGS);
             String uri = context.request().uri();
-            ;
-            cache.putForExternalRead(uri, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
+            cache.putForExternalRead(uri, eTag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
         }
     }
 
     private Flux<LineDocument> stream(LinesDiscoveryParameters parameters, RoutingContext context) {
         Cache<String, String> cache = manager.getCache(ETAGS);
-        String etag = getEtag(context);
-        if (StringUtils.isNotEmpty(etag)) {
+        String eTag = getEtag(context);
+        if (StringUtils.isNotEmpty(eTag)) {
             String uri = context.request().uri();
             String cached = cache.get(uri);
-            if (StringUtils.equals(cached, etag)) {
+            if (StringUtils.equals(cached, eTag)) {
                 throw new NotModifiedException();
             }
         }

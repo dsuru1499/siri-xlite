@@ -20,9 +20,4 @@ public class EstimatedTimetableParameters extends DefaultParameters {
         setLineRef(values.get(LINE_REF));
     }
 
-    @Override
-    public void validate() throws SiriException {
-        super.validate();
-    }
-
 }

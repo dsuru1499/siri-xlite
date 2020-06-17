@@ -6,7 +6,7 @@ import static siri_xlite.common.DocumentUtils.append;
 
 public class DestinationBuilder {
 
-    public static Document create(String destinationRef, String placeName) {
+    private static Document create(String destinationRef, String placeName) {
 
         Document result = new Document("_id", destinationRef);
         append(result, "destinationRef", destinationRef);

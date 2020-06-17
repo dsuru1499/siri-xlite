@@ -18,7 +18,6 @@ import siri_xlite.Configuration;
 import siri_xlite.common.Color;
 import siri_xlite.model.VehicleJourneyDocument;
 import siri_xlite.repositories.NotModifiedException;
-import siri_xlite.repositories.StopPointsRepository;
 import siri_xlite.repositories.VehicleJourneyRepository;
 import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.EstimatedTimetable;

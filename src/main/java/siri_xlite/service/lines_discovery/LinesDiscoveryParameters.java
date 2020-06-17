@@ -15,9 +15,4 @@ public class LinesDiscoveryParameters extends DefaultParameters {
         super.configure(context);
     }
 
-    @Override
-    public void validate() throws SiriException {
-        super.validate();
-    }
-
 }

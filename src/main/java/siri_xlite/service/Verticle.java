@@ -28,6 +28,7 @@ import static siri_xlite.service.stop_monitoring.StopMonitoringParameters.STOPPO
 import static siri_xlite.service.stop_points_discovery.StopPointsDiscoveryParameters.X_TILE;
 import static siri_xlite.service.stop_points_discovery.StopPointsDiscoveryParameters.Y_TILE;
 
+
 @Component
 @Slf4j
 public class Verticle extends AbstractVerticle {
@@ -35,7 +36,7 @@ public class Verticle extends AbstractVerticle {
     public static final String APPLICATION = "/siri-xlite";
     public static final String SEP = "/";
     public static final String COLON = ":";
-    public static final String PUBLIC = "public";
+    private static final String PUBLIC = "public";
 
     @Autowired
     Configuration configuration;

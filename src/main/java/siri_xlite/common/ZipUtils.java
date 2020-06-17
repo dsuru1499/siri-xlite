@@ -15,13 +15,13 @@ public abstract class ZipUtils {
         log.info("[DSU] unzip archive : " + archive + " to " + outputDir);
 
         ZipFile zipfile = new ZipFile(archive);
-        for (Enumeration<? extends ZipEntry> e = zipfile.entries(); e.hasMoreElements();) {
-            ZipEntry entry = (ZipEntry) e.nextElement();
+        for (Enumeration<? extends ZipEntry> e = zipfile.entries(); e.hasMoreElements(); ) {
+            ZipEntry entry = e.nextElement();
             unzipEntry(zipfile, entry, outputDir);
         }
     }
 
-    public static void unzipEntry(ZipFile zipfile, ZipEntry entry, File outputDir) throws IOException {
+    private static void unzipEntry(ZipFile zipfile, ZipEntry entry, File outputDir) throws IOException {
 
         log.info("[DSU] unzip entry : " + entry);
 
@@ -35,18 +35,12 @@ public abstract class ZipUtils {
             createDir(outputFile.getParentFile());
         }
 
-        BufferedInputStream in = new BufferedInputStream(zipfile.getInputStream(entry));
-        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile));
-
-        try {
+        try (BufferedInputStream in = new BufferedInputStream(zipfile.getInputStream(entry)); BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile))) {
             IOUtils.copy(in, out);
-        } finally {
-            out.close();
-            in.close();
         }
     }
 
-    public static void createDir(File dir) throws IOException {
+    private static void createDir(File dir) throws IOException {
         if (!dir.mkdirs())
             throw new IOException("Can not create dir " + dir);
     }

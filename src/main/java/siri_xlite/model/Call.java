@@ -11,7 +11,7 @@ import java.util.List;
 @Value
 @Accessors(fluent = true)
 @Builder
-public final class Call {
+final class Call {
     // EstimatedCallStructure
     private Boolean extraCall;
     private Boolean cancellation;

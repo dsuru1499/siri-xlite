@@ -6,7 +6,7 @@ import org.bson.Document;
 
 public class CallRealtimeGroupMarshaller implements Marshaller<Document> {
 
-    public static final String VEHICLE_AT_STOP = "vehicleAtStop";
+    private static final String VEHICLE_AT_STOP = "vehicleAtStop";
     @Getter
     private static final Marshaller<Document> instance = new CallRealtimeGroupMarshaller();
 

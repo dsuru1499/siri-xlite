@@ -8,8 +8,8 @@ import java.util.List;
 
 public class JourneyInfoGroupMarshaller implements Marshaller<Document> {
 
-    public static final String VEHICLE_JOURNEY_NAME = "vehicleJourneyName";
-    public static final String JOURNEY_NOTE = "journeyNote";
+    private static final String VEHICLE_JOURNEY_NAME = "vehicleJourneyName";
+    private static final String JOURNEY_NOTE = "journeyNote";
     @Getter
     private static final Marshaller<Document> instance = new JourneyInfoGroupMarshaller();
 
@@ -20,6 +20,7 @@ public class JourneyInfoGroupMarshaller implements Marshaller<Document> {
         writeField(writer, VEHICLE_JOURNEY_NAME, source.getString(VEHICLE_JOURNEY_NAME));
 
         // set journeyNote
+
         writeArray(writer, JOURNEY_NOTE, source.get(JOURNEY_NOTE, List.class));
 
         // publicContact :SimpleContact;

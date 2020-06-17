@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @Builder
-public final class Location {
+final class Location {
     private Double longitude;
     private Double latitude;
     // coordinates :string;

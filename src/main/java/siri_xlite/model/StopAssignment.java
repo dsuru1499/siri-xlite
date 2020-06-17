@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(fluent = true)
 @Builder
-public final class StopAssignment {
+final class StopAssignment {
     private String aimedQuayRef;
     private String aimedQuayName;
     private String expectedQuayRef;

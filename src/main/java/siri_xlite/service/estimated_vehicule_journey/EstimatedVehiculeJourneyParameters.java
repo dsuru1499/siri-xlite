@@ -20,9 +20,4 @@ public class EstimatedVehiculeJourneyParameters extends DefaultParameters {
         setDatedVehicleJourneyRef(values.get(DATED_VEHICLE_JOURNEY_REF));
     }
 
-    @Override
-    public void validate() throws SiriException {
-        super.validate();
-    }
-
 }

@@ -15,8 +15,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public abstract class ItemSubscriber<P extends DefaultParameters> extends SiriSubscriber<Document, P> {
 
+    private final AtomicInteger count = new AtomicInteger();
     private Document current;
-    private AtomicInteger count = new AtomicInteger();
 
     @Override
     public void onSubscribe(Subscription s) {

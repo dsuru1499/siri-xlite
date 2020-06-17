@@ -19,10 +19,12 @@ import java.io.IOException;
 @SpringBootApplication
 @EnableAutoConfiguration
 @Slf4j
-public class Application {
+class Application {
+
 
     @Autowired
     private Verticle siriVerticle;
+
 
     @Autowired
     private Initializer initializer;
@@ -32,12 +34,14 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
+
     @PostConstruct
     private void initialize() {
         // initializer.initialize();
         Vertx vertx = Vertx.vertx();
         vertx.deployVerticle(siriVerticle);
     }
+
 
     @Bean
     public EmbeddedCacheManager embeddedCacheManager() {

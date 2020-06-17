@@ -10,12 +10,12 @@ import java.util.List;
 @Slf4j
 public class LinesDiscoverySubscriber extends CollectionSubscriber<LinesDiscoveryParameters> implements Constants {
 
-    public static final String DESTINATIONS = "destinations";
-    public static final String LINE_REF = "lineRef";
-    public static final String LINE_NAME = "lineName";
-    public static final String MONITORED = "monitored";
-    public static final String DESTINATION_REF = "destinationRef";
-    public static final String PLACE_NAME = "placeName";
+    private static final String DESTINATIONS = "destinations";
+    private static final String LINE_REF = "lineRef";
+    private static final String LINE_NAME = "lineName";
+    private static final String MONITORED = "monitored";
+    private static final String DESTINATION_REF = "destinationRef";
+    private static final String PLACE_NAME = "placeName";
 
     @Override
     protected void writeItem(Document t) {
