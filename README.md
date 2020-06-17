@@ -17,7 +17,7 @@
     lat_rad = arctan(sinh(π * (1 - 2 * ytile / n)))
     lat_deg = lat_rad * 180.0 / π
     
-![center](images/ld.png)
+![stoppoints-discovery](/images/ld.png)
 ## Service estimated timetable
     /siri-xlite/estimated-timetable/[lineRef]
 ## Service stop monitoring
