@@ -1,7 +1,7 @@
 # siri-xlite
 ## Service lines discovery
     /siri-xlite/lines-discovery
-![](./images/ld.png)
+![50% center](./images/ld.png)
 
 ## Service stoppoints discovery
     /siri-xlite/stoppoints-discovery
