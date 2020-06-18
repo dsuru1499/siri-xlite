@@ -5,7 +5,7 @@ import org.bson.Document;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.geo.Shape;
+import org.springframework.data.geo.Polygon;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
@@ -15,7 +15,11 @@ import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Flux;
 import siri_xlite.model.StopPointDocument;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.StreamSupport;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.aggregation.Fields.field;
@@ -50,10 +54,33 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
     }
 
     @Override
-    public Flux<StopPointDocument> findAllByLocation(Shape shape) {
-        Query query = query(where("location").within(shape));
+    public Flux<StopPointDocument> findAllByLocation(Polygon polygon) {
+        List coordinates = StreamSupport.stream(polygon.spliterator(), true)
+                .collect(Collector.of(ArrayList::new, (left, right) -> {
+                            List<Double> value = new ArrayList<Double>(2);
+                            value.add(right.getX());
+                            value.add(right.getY());
+                            left.add(value);
+                        },
+                        (left, right) -> {
+                            left.addAll(right);
+                            return left;
+                        },
+                        list -> {
+                            List result = new ArrayList();
+                            result.add(list);
+                            return result;
+                        }
+                ));
+
+        Document $geometry = new Document().append("type", "Polygon").append("coordinates", coordinates);
+        Document $geoWithin = new Document("$geometry", $geometry);
+        Document location = new Document("$geoWithin", $geoWithin);
+
+        Query query = query(where("location").is(location));
         return template.find(query, StopPointDocument.class, COLLECTION_NAME);
     }
+
 
     @Override
     public void clearAll() {

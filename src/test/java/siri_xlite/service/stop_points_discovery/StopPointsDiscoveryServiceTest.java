@@ -26,7 +26,7 @@ class StopPointsDiscoveryServiceTest {
 
     @Test
     void stopPointsDiscoveryByLocation() throws Exception {
-        HttpResponse<String> response = get("https://localhost:8443/siri-xlite/stoppoints-discovery/33194/22549");
+        HttpResponse<String> response = get("https://localhost:8443/siri-xlite/stoppoints-discovery/16598/11273");
         printHeader(response);
         prettyPrint(response);
 

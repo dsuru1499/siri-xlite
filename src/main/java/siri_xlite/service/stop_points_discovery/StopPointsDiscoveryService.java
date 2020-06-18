@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
-import org.springframework.data.geo.Box;
+import org.springframework.data.geo.Polygon;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -34,7 +34,7 @@ import static siri_xlite.service.common.SiriSubscriber.getEtag;
 
 @Slf4j
 @Service
-public class StopPointsDiscoveryService implements StopPointsDiscovery, OSMUtils, Constants {
+public class StopPointsDiscoveryService implements StopPointsDiscovery, Constants {
 
     private static final ResourceBundle messages = ResourceBundle
             .getBundle(Messages.class.getPackageName() + ".Messages");
@@ -94,8 +94,8 @@ public class StopPointsDiscoveryService implements StopPointsDiscovery, OSMUtils
 
         log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
         if (parameters.getXtile() != null && parameters.getYtile() != null) {
-            Box box = location(parameters.getXtile(), parameters.getYtile());
-            return repository.findAllByLocation(box);
+            Polygon polygon = OSMUtils.location(parameters.getXtile(), parameters.getYtile());
+            return repository.findAllByLocation(polygon);
         }
         return repository.findAll();
     }

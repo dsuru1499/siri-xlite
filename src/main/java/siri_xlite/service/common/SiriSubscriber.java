@@ -64,7 +64,6 @@ public abstract class SiriSubscriber<T, P extends Parameters> implements Subscri
 
     static String createEtag(Document document) {
         return (document != null) ? String.valueOf(document.getDate(RECCORDED_AT_TIME).getTime()) : null;
-        // return (document != null) ? document.getObjectId(ID).toHexString() : null;
     }
 
     public void configure(Configuration configuration, P parameters, RoutingContext context) {
