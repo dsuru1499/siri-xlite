@@ -214,3 +214,8 @@ Ce service renvoi la course référencée par les services estimated-timetable e
 SiriException OtherError
 
 ![](./images/err.png)
+
+## TODO: 
+* service connection-monitoring de gestion des correspondances.
+* service situation-exchange de gestion des perturbations.
+* service vehicle-monitoring ??
