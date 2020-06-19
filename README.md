@@ -40,7 +40,7 @@ Les services LineDiscovery et StoppointsDiscovery sont redondant avec la definit
 
 Il serait plus intéressant  de publier l'offre de transport sous forme de ressources REST (HATEOS) NEPTUNE ou NETEX relier par des hyperlien (XPointer/Xlink).
 Le remplacement des identifiants d'objet spécifique à un profile locale par un hyperlien (Xlink/Xpointer) permetterait une plus grande intéropabilité des systemes.
- 
+
 
 ## Architecture
 ![](./images/siri-xlite.png)
