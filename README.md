@@ -58,7 +58,7 @@ Elle est constitué des composants logiciels suivant:
 * API Rest (HATEOAS) implémentant les services SIRI LineDiscovery, StoppointsDiscovery, 
 StopMonitoring, EstimatedTimetable, VehicleMonitoring (voir ci-dessous)
 
-## Service Siri Xlite
+## Services Siri Xlite
 ### Service lines discovery
 Ce service renvoi la liste des lignes définie dans l'offre de transport.
 
