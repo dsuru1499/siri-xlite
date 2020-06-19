@@ -87,8 +87,9 @@ Ce service renvoi la liste des points d'arrêt définie dans l'offre de transpor
     * 400 BAD_REQUEST : structure SiriException
     * 404 NOT_FOUND
     * 500 INTERNAL_SERVEUR_ERROR        
+
+Ce service renvoi la liste des points d'arrêt définie dans l'offre de transport par tuile.
     
--
      GET /siri-xlite/stoppoints-discovery/[xtile]/[ytile]
 
 #### paramètres
