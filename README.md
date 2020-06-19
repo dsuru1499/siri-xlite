@@ -36,6 +36,7 @@ Le protocole HTTP/2, l’utilisation d’un serveur de type « eventloop » et
 
 
 ##Remarques:
+
 Les services LineDiscovery et StoppointsDiscovery sont redondant avec la definition de l'offre de transport aux format NEPTUNE ou NETEX.
 
 Il serait plus intéressant  de publier l'offre de transport sous forme de ressources REST (HATEOS) NEPTUNE ou NETEX relier par des hyperlien (XPointer/Xlink).
