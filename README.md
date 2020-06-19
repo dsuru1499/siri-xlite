@@ -65,6 +65,7 @@ Ce service renvoi la liste des lignes définie dans l'offre de transport.
     GET /siri-xlite/lines-discovery
     
 ####reponses
+
 * 200 OK : Collection de structure SIRI AnnotatedLineRef[].
 * 304 NOT_MODIFIED : re-validation du cache HTTP
 * 400 BAD_REQUEST : structure SiriException
@@ -80,6 +81,7 @@ Ce service renvoi la liste des points d'arrêt définie dans l'offre de transpor
     GET /siri-xlite/stoppoints-discovery
 
 ####reponses
+
     * 200 OK : Collection de structure SIRI AnnotatedStopPointRef.
     * 304 NOT_MODIFIED : re-validation du cache HTTP
     * 400 BAD_REQUEST : structure SiriException
