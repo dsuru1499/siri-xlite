@@ -218,4 +218,3 @@ SiriException OtherError
 ## TODO: 
 * service connection-monitoring de gestion des correspondances.
 * service situation-exchange de gestion des perturbations.
-* service vehicle-monitoring ??
