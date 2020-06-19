@@ -91,7 +91,7 @@ Ce service renvoi la liste des points d'arrêt définie dans l'offre de transpor
 -
      GET /siri-xlite/stoppoints-discovery/[xtile]/[ytile]
 
-####paramètres
+#### paramètres
 
     Tuilage OpenStreetMap  (zoom = 15)  
     * xtile : Abscisse 
@@ -108,7 +108,7 @@ Ce service renvoi la liste des points d'arrêt définie dans l'offre de transpor
         lat_rad = arctan(sinh(π * (1 - 2 * ytile / n)))
         lat_deg = lat_rad * 180.0 / π
     
-####reponses
+#### reponses
 
     * 200 OK : Collection de structure SIRI AnnotatedStopPointRef.
     * 304 NOT_MODIFIED : re-validation du cache HTTP
@@ -124,11 +124,11 @@ Ce service renvoi la liste des courses sur une ligne définie dans l'offre de tr
 
     /siri-xlite/estimated-timetable/[lineRef]
     
-####paramètres
+#### paramètres
 
     * lineRef : Identifiant de ligne.
    
-####reponses
+#### reponses
 
     * 200 OK : Collection de référence de resource estimated-vehicle-journey (+ meta-données).
     [
@@ -155,11 +155,11 @@ Ce service renvoi la liste des courses passant par un point d'arrêt définie da
 
     /siri-xlite/stop-monitoring/[stopPointRef]
     
-####paramètres
+#### paramètres
 
     * stopPointRef : Identifiant de point d'arret (StopArea ou StopPoint).
    
-####reponses
+#### reponses
 
     * 200 OK : Collection de référence de resource estimated-vehicle-journey (+ meta-données).
     [ 
@@ -189,11 +189,11 @@ Ce service renvoi la course référencée par les services estimated-timetable e
 
     GET /siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]
      
-####paramètres
+#### paramètres
 
     * datedVehicleJourneyRef : Identifiant de course.
    
-####reponses
+#### reponses
 
     * 200 OK : Structure SIRI EstimatedVehicleJourney.
     * 304 NOT_MODIFIED : re-validation du cache HTTP
