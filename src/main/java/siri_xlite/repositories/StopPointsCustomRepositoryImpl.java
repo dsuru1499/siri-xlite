@@ -5,6 +5,7 @@ import org.bson.Document;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.geo.Point;
 import org.springframework.data.geo.Polygon;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -18,6 +19,10 @@ import siri_xlite.model.StopPointDocument;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.StreamSupport;
 
@@ -37,9 +42,24 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
     @Autowired
     private EmbeddedCacheManager manager;
 
+    private static Collector<Point,List<List<Double>>,List<List<List<Double>>>> COORDINATES_COLLECTOR = Collector.of((Supplier<List<List<Double>>>) ArrayList::new,
+            (BiConsumer<List<List<Double>>, Point>) (left, right) -> {
+                List<Double> value = new ArrayList<Double>(2);
+                value.add(right.getX());
+                value.add(right.getY());
+                left.add(value);
+            }, (BinaryOperator<List<List<Double>>>) (left, right) -> {
+                left.addAll(right);
+                return left;
+            }, (Function<List<List<Double>>, List<List<List<Double>>>>) list -> {
+                List result = new ArrayList();
+                result.add(list);
+                return result;
+            }
+    );
+
     @Override
     public Flux<String> findStopPointRefs(String id) {
-
         Aggregation aggregation = newAggregation(match(where("stopPointRef").is(id)),
                 graphLookup(COLLECTION_NAME).startWith("$stopPointRef").connectFrom("stopPointRef").connectTo("parent")
                         .as("children"),
@@ -55,23 +75,8 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
 
     @Override
     public Flux<StopPointDocument> findAllByLocation(Polygon polygon) {
-        List coordinates = StreamSupport.stream(polygon.spliterator(), true)
-                .collect(Collector.of(ArrayList::new, (left, right) -> {
-                            List<Double> value = new ArrayList<Double>(2);
-                            value.add(right.getX());
-                            value.add(right.getY());
-                            left.add(value);
-                        },
-                        (left, right) -> {
-                            left.addAll(right);
-                            return left;
-                        },
-                        list -> {
-                            List result = new ArrayList();
-                            result.add(list);
-                            return result;
-                        }
-                ));
+        List<List<List<Double>>> coordinates = StreamSupport.stream(polygon.spliterator(), true)
+                .collect(COORDINATES_COLLECTOR);
 
         Document $geometry = new Document().append("type", "Polygon").append("coordinates", coordinates);
         Document $geoWithin = new Document("$geometry", $geometry);
@@ -80,7 +85,6 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
         Query query = query(where("location").is(location));
         return template.find(query, StopPointDocument.class, COLLECTION_NAME);
     }
-
 
     @Override
     public void clearAll() {

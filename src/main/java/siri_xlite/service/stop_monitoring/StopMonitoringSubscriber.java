@@ -16,6 +16,8 @@ import static siri_xlite.marshaller.json.SiriMarshaller.INDEX;
 import static siri_xlite.marshaller.json.StopPointInSequenceGroupMarshaller.ORDER;
 import static siri_xlite.service.Verticle.*;
 import static siri_xlite.service.common.EstimatedVehiculeJourney.ESTIMATED_VEHICLE_JOURNEY;
+import static siri_xlite.common.DateTimeUtils.toLocalTime;
+
 
 @Slf4j
 public class StopMonitoringSubscriber extends CollectionSubscriber<StopMonitoringParameters> implements Constants {
@@ -32,9 +34,9 @@ public class StopMonitoringSubscriber extends CollectionSubscriber<StopMonitorin
             writeField(writer, DESTINATION_REF, source.getString(DESTINATION_REF));
             writeField(writer, ROUTE_REF, source.getString(ROUTE_REF));
             writeField(writer, OPERATOR_REF, source.getString(OPERATOR_REF));
-            writeField(writer, ORIGIN_AIMED_DEPARTURE_TIME, source.getDate(ORIGIN_AIMED_DEPARTURE_TIME));
+            writeField(writer, ORIGIN_AIMED_DEPARTURE_TIME, toLocalTime(source.getDate(ORIGIN_AIMED_DEPARTURE_TIME)));
 
-            writeField(writer, AIMED_DEPARTURE_TIME, source.getDate(AIMED_DEPARTURE_TIME));
+            writeField(writer, AIMED_DEPARTURE_TIME, toLocalTime(source.getDate(AIMED_DEPARTURE_TIME)));
             writeField(writer, ORDER, source.getInteger(ORDER));
             writeField(writer, INDEX, source.getInteger(INDEX));
         });

@@ -6,6 +6,8 @@ import org.bson.Document;
 import siri_xlite.service.common.SiriStructureFactory;
 import uk.org.siri.siri.DepartureBoardingActivityEnumeration;
 
+import static siri_xlite.common.DateTimeUtils.toLocalTime;
+
 public class AimedCallGroupMarshaller implements Marshaller<Document> {
 
     private static final String AIMED_ARRIVAL_TIME = "aimedArrivalTime";
@@ -21,7 +23,7 @@ public class AimedCallGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set aimedArrivalTime
-        writeField(writer, AIMED_ARRIVAL_TIME, source.getDate(AIMED_ARRIVAL_TIME));
+        writeField(writer, AIMED_ARRIVAL_TIME, toLocalTime(source.getDate(AIMED_ARRIVAL_TIME)));
 
         // set arrivalPlatformName
         writeField(writer, ARRIVAL_PLATFORM_NAME, source.getString(ARRIVAL_PLATFORM_NAME));
@@ -31,7 +33,7 @@ public class AimedCallGroupMarshaller implements Marshaller<Document> {
         // set arrivalOperatorRefs
 
         // set aimedDepartureTime
-        writeField(writer, AIMED_DEPARTURE_TIME, source.getDate(AIMED_DEPARTURE_TIME));
+        writeField(writer, AIMED_DEPARTURE_TIME, toLocalTime(source.getDate(AIMED_DEPARTURE_TIME)));
 
         // set departurePlatformName
         writeField(writer, DEPARTURE_PLATFORM_NAME, source.getString(DEPARTURE_PLATFORM_NAME));

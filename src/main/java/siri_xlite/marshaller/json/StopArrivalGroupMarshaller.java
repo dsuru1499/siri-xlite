@@ -5,6 +5,8 @@ import lombok.Getter;
 import org.bson.Document;
 import uk.org.siri.siri.CallStatusEnumeration;
 
+import static siri_xlite.common.DateTimeUtils.toLocalTime;
+
 public class StopArrivalGroupMarshaller implements Marshaller<Document> {
 
     private static final String AIMED_ARRIVAL_TIME = "aimedArrivalTime";
@@ -19,13 +21,13 @@ public class StopArrivalGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set aimedArrivalTime
-        writeField(writer, AIMED_ARRIVAL_TIME, source.getDate(AIMED_ARRIVAL_TIME));
+        writeField(writer, AIMED_ARRIVAL_TIME, toLocalTime(source.getDate(AIMED_ARRIVAL_TIME)));
 
         // set actualArrivalTime
-        writeField(writer, ACTUAL_ARRIVAL_TIME, source.getDate(ACTUAL_ARRIVAL_TIME));
+        writeField(writer, ACTUAL_ARRIVAL_TIME, toLocalTime(source.getDate(ACTUAL_ARRIVAL_TIME)));
 
         // set expectedArrivalTime
-        writeField(writer, EXPECTED_ARRIVAL_TIME, source.getDate(EXPECTED_ARRIVAL_TIME));
+        writeField(writer, EXPECTED_ARRIVAL_TIME, toLocalTime(source.getDate(EXPECTED_ARRIVAL_TIME)));
 
         // set latestExpectedArrivalTime
 

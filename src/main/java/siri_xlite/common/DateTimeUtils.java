@@ -14,6 +14,10 @@ public interface DateTimeUtils {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
     }
 
+    static LocalTime toLocalTime(Date date) {
+        return LocalTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
+    }
+
     static LocalDateTime toLocalDateTime(GregorianCalendar calendar) {
         return LocalDateTime.ofInstant(calendar.toInstant(), ZoneId.systemDefault());
     }

@@ -99,7 +99,7 @@ public abstract class SiriSubscriber<T, P extends Parameters> implements Subscri
                 SiriExceptionMarshaller.getInstance().write(writer, SiriException.createOtherError(t));
                 writer.close();
                 this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()).end(out.toString());
+                        .setStatusCode(HttpResponseStatus.BAD_REQUEST.code()).end(out.toString());
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

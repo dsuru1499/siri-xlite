@@ -6,6 +6,7 @@ import org.bson.Document;
 import siri_xlite.service.common.CollectionSubscriber;
 import siri_xlite.service.common.Constants;
 
+import static siri_xlite.common.DateTimeUtils.toLocalTime;
 import static siri_xlite.marshaller.json.EstimatedTimetableAlterationGroupMarshaller.DATED_VEHICLE_JOURNEY_REF;
 import static siri_xlite.marshaller.json.JourneyEndNamesGroupMarshaller.DESTINATION_REF;
 import static siri_xlite.marshaller.json.JourneyEndTimesGroupMarshaller.ORIGIN_AIMED_DEPARTURE_TIME;
@@ -30,7 +31,7 @@ public class EstimatedTimetableSubscriber extends CollectionSubscriber<Estimated
             writeField(writer, DESTINATION_REF, source.getString(DESTINATION_REF));
             writeField(writer, ROUTE_REF, source.getString(ROUTE_REF));
             writeField(writer, OPERATOR_REF, source.getString(OPERATOR_REF));
-            writeField(writer, ORIGIN_AIMED_DEPARTURE_TIME, source.getDate(ORIGIN_AIMED_DEPARTURE_TIME));
+            writeField(writer, ORIGIN_AIMED_DEPARTURE_TIME, toLocalTime(source.getDate(ORIGIN_AIMED_DEPARTURE_TIME)));
         });
     }
 

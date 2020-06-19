@@ -60,43 +60,153 @@ StopMonitoring, EstimatedTimetable, VehicleMonitoring (voir ci-dessous)
 
 ## Service Siri Xlite
 ### Service lines discovery
-    /siri-xlite/lines-discovery
+Ce service renvoi la liste des lignes définie dans l'offre de transport.
+
+    GET /siri-xlite/lines-discovery
     
+####reponses
+* 200 OK : Collection de structure SIRI AnnotatedLineRef[].
+* 304 NOT_MODIFIED : re-validation du cache HTTP
+* 400 BAD_REQUEST : structure SiriException
+* 404 NOT_FOUND
+* 500 INTERNAL_SERVEUR_ERROR 
+  
 ### ex: https://localhost:8443/siri-xlite/lines-discovery    
 ![](./images/ld.png)
 
 ### Service stoppoints discovery
-    /siri-xlite/stoppoints-discovery
+Ce service renvoi la liste des points d'arrêt définie dans l'offre de transport (complète ou par tuile).
+
+    GET /siri-xlite/stoppoints-discovery
+
+####reponses
+    * 200 OK : Collection de structure SIRI AnnotatedStopPointRef.
+    * 304 NOT_MODIFIED : re-validation du cache HTTP
+    * 400 BAD_REQUEST : structure SiriException
+    * 404 NOT_FOUND
+    * 500 INTERNAL_SERVEUR_ERROR        
+    
+-
+     GET /siri-xlite/stoppoints-discovery/[xtile]/[ytile]
+
+####paramètres
+
+    Tuilage OpenStreetMap  (zoom = 15)  
+    * xtile : Abscisse 
+    * ytile : Ordonnée 
+    
+    Pseudocode longitude/latitude -> xtile/ytile
+        n = 2 ^ zoom
+        xtile = n * ((lon_deg + 180) / 360)
+        ytile = n * (1 - (log(tan(lat_rad) + sec(lat_rad)) / π)) / 2
         
-    /siri-xlite/stoppoints-discovery/[xtile]/[ytile]
+    Pseudocode xtile/ytile -> longitude/latitude
+        n = 2 ^ zoom
+        lon_deg = xtile / n * 360.0 - 180.0
+        lat_rad = arctan(sinh(π * (1 - 2 * ytile / n)))
+        lat_deg = lat_rad * 180.0 / π
+    
+####reponses
+
+    * 200 OK : Collection de structure SIRI AnnotatedStopPointRef.
+    * 304 NOT_MODIFIED : re-validation du cache HTTP
+    * 400 BAD_REQUEST : structure SiriException
+    * 404 NOT_FOUND
+    * 500 INTERNAL_SERVEUR_ERROR 
     
 #### ex: https://localhost:8443/siri-xlite/stoppoints-discovery/33194/22549
 ![](./images/sd.png)
 
-#### Pseudocode longitude/latitude -> xtile/ytile
-    n = 2 ^ zoom
-    xtile = n * ((lon_deg + 180) / 360)
-    ytile = n * (1 - (log(tan(lat_rad) + sec(lat_rad)) / π)) / 2
-    
-####  Pseudocode xtile/ytile -> longitude/latitude
-    n = 2 ^ zoom
-    lon_deg = xtile / n * 360.0 - 180.0
-    lat_rad = arctan(sinh(π * (1 - 2 * ytile / n)))
-    lat_deg = lat_rad * 180.0 / π
-    
-
 ### Service estimated timetable
+Ce service renvoi la liste des courses sur une ligne définie dans l'offre de transport.
+
     /siri-xlite/estimated-timetable/[lineRef]
+    
+####paramètres
+
+    * lineRef : Identifiant de ligne.
+   
+####reponses
+
+    * 200 OK : Collection de référence de resource estimated-vehicle-journey (+ meta-données).
+    [
+      {
+          "href": url,
+          "datedVehicleJourneyRef": string,
+          "destinationRef": string,
+          "routeRef": string,
+          "operatorRef": string,
+          "originAimedDepartureTime": timestamp
+      },
+     ...
+    ]
+    * 304 NOT_MODIFIED : re-validation du cache HTTP
+    * 400 BAD_REQUEST : structure SiriException
+    * 404 NOT_FOUND
+    * 500 INTERNAL_SERVEUR_ERROR 
+        
 #### ex: https://localhost:8443/siri-xlite/estimated-timetable/067167006:G
 ![](./images/et.png)
 
-### Service stop monitoring
+### Service stop monitoring    
+Ce service renvoi la liste des courses passant par un point d'arrêt définie dans l'offre de transport.
+
     /siri-xlite/stop-monitoring/[stopPointRef]
+    
+####paramètres
+
+    * stopPointRef : Identifiant de point d'arret (StopArea ou StopPoint).
+   
+####reponses
+
+    * 200 OK : Collection de référence de resource estimated-vehicle-journey (+ meta-données).
+    [ 
+       {
+         "href": url,
+         "datedVehicleJourneyRef": string,
+         "destinationRef": string,
+         "routeRef": string,
+         "operatorRef": string,
+         "originAimedDepartureTime": timestamp,
+         "aimedDepartureTime": timestamp,
+         "order": 26,
+         "index": 25
+       },
+       ...
+    ]
+    * 304 NOT_MODIFIED : re-validation du cache HTTP
+    * 400 BAD_REQUEST : structure SiriException
+    * 404 NOT_FOUND
+    * 500 INTERNAL_SERVEUR_ERROR     
     
 #### ex:  https://localhost:8443/siri-xlite/stop-monitoring/StopArea:59:3893358
 ![](./images/sm.png)
 
 ### Service estimated vehicle journey
-    /siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]
+Ce service renvoi la course référencée par les services estimated-timetable et stop-monitoring.
+
+    GET /siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]
+     
+####paramètres
+
+    * datedVehicleJourneyRef : Identifiant de course.
+   
+####reponses
+
+    * 200 OK : Structure SIRI EstimatedVehicleJourney.
+    * 304 NOT_MODIFIED : re-validation du cache HTTP
+    * 400 BAD_REQUEST : structure SiriException
+    * 404 NOT_FOUND
+    * 500 INTERNAL_SERVEUR_ERROR 
+        
 #### ex:  https://localhost:8443/siri-xlite/estimated-vehicle-journey/107707296-1_447664
 ![](./images/evj.png)
+
+#### Structure SiriException
+    {
+        "errorCode": """,
+        "errorText": ""
+    } 
+    
+SiriException OtherError
+![](./images/err.png)

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -65,21 +66,31 @@ public interface JsonUtils {
         }
     }
 
-    default void writeField(JsonGenerator writer, String name, Date value) {
+//    default void writeField(JsonGenerator writer, String name, Date value) {
+//        try {
+//            if (value != null) {
+//                LocalDateTime date = LocalDateTime.ofInstant(value.toInstant(), ZoneId.systemDefault());
+//                writer.writeStringField(name, date.format(DateTimeFormatter.ISO_DATE_TIME));
+//            }
+//        } catch (IOException e) {
+//            ExceptionUtils.wrapAndThrow(e);
+//        }
+//    }
+
+    default void writeField(JsonGenerator writer, String name, LocalDateTime value) {
         try {
             if (value != null) {
-                LocalDateTime date = LocalDateTime.ofInstant(value.toInstant(), ZoneId.systemDefault());
-                writer.writeStringField(name, date.format(DateTimeFormatter.ISO_DATE_TIME));
+                writer.writeStringField(name, value.format(DateTimeFormatter.ISO_DATE_TIME));
             }
         } catch (IOException e) {
             ExceptionUtils.wrapAndThrow(e);
         }
     }
 
-    default void writeField(JsonGenerator writer, String name, LocalDateTime value) {
+    default void writeField(JsonGenerator writer, String name, LocalTime value) {
         try {
             if (value != null) {
-                writer.writeStringField(name, value.format(DateTimeFormatter.ISO_DATE_TIME));
+                writer.writeStringField(name, value.format(DateTimeFormatter.ISO_TIME));
             }
         } catch (IOException e) {
             ExceptionUtils.wrapAndThrow(e);
