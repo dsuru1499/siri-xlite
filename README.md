@@ -216,5 +216,7 @@ SiriException OtherError
 ![](./images/err.png)
 
 ## TODO: 
-* service connection-monitoring de gestion des correspondances.
-* service situation-exchange de gestion des perturbations.
+* Unifier les structures EstimatedVehicleJourney et MonitoredVehicleJourney de définition des courses.   
+* Service connection-monitoring de gestion des correspondances.
+* Service situation-exchange de gestion des perturbations.
+* Publier les fichiers NETEX de definition d'offre de transport sous forme de service REST HATEOAS.
