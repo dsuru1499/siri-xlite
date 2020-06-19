@@ -34,6 +34,11 @@ La ressource partagé EstimatedVehicleJourney est référencé à la manière d'
 
 Le protocole HTTP/2, l’utilisation d’un serveur de type « eventloop » et de cache HTTP/2 locale et serveur permet une optimisation des échanges avec le serveur siri-xlite.
 
+
+
+
+
+
 ## Remarques
 
 Les services LineDiscovery et StoppointsDiscovery sont redondant avec la definition de l'offre de transport aux format NEPTUNE ou NETEX.
