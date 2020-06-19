@@ -123,7 +123,7 @@ Ce service renvoi la liste des points d'arrêt définie dans l'offre de transpor
 ### Service estimated timetable
 Ce service renvoi la liste des courses sur une ligne définie dans l'offre de transport.
 
-    /siri-xlite/estimated-timetable/[lineRef]
+    GET /siri-xlite/estimated-timetable/[lineRef]
     
 #### paramètres
 
@@ -154,7 +154,7 @@ Ce service renvoi la liste des courses sur une ligne définie dans l'offre de tr
 ### Service stop monitoring    
 Ce service renvoi la liste des courses passant par un point d'arrêt définie dans l'offre de transport.
 
-    /siri-xlite/stop-monitoring/[stopPointRef]
+    GET /siri-xlite/stop-monitoring/[stopPointRef]
     
 #### paramètres
 
