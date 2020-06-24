@@ -66,16 +66,16 @@ public interface JsonUtils {
         }
     }
 
-//    default void writeField(JsonGenerator writer, String name, Date value) {
-//        try {
-//            if (value != null) {
-//                LocalDateTime date = LocalDateTime.ofInstant(value.toInstant(), ZoneId.systemDefault());
-//                writer.writeStringField(name, date.format(DateTimeFormatter.ISO_DATE_TIME));
-//            }
-//        } catch (IOException e) {
-//            ExceptionUtils.wrapAndThrow(e);
-//        }
-//    }
+    // default void writeField(JsonGenerator writer, String name, Date value) {
+    // try {
+    // if (value != null) {
+    // LocalDateTime date = LocalDateTime.ofInstant(value.toInstant(), ZoneId.systemDefault());
+    // writer.writeStringField(name, date.format(DateTimeFormatter.ISO_DATE_TIME));
+    // }
+    // } catch (IOException e) {
+    // ExceptionUtils.wrapAndThrow(e);
+    // }
+    // }
 
     default void writeField(JsonGenerator writer, String name, LocalDateTime value) {
         try {

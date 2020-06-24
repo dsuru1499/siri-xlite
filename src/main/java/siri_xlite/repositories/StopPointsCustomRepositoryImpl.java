@@ -42,8 +42,8 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
     @Autowired
     private EmbeddedCacheManager manager;
 
-    private static Collector<Point,List<List<Double>>,List<List<List<Double>>>> COORDINATES_COLLECTOR = Collector.of((Supplier<List<List<Double>>>) ArrayList::new,
-            (BiConsumer<List<List<Double>>, Point>) (left, right) -> {
+    private static Collector<Point, List<List<Double>>, List<List<List<Double>>>> COORDINATES_COLLECTOR = Collector.of(
+            (Supplier<List<List<Double>>>) ArrayList::new, (BiConsumer<List<List<Double>>, Point>) (left, right) -> {
                 List<Double> value = new ArrayList<Double>(2);
                 value.add(right.getX());
                 value.add(right.getY());
@@ -55,8 +55,7 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
                 List result = new ArrayList();
                 result.add(list);
                 return result;
-            }
-    );
+            });
 
     @Override
     public Flux<String> findStopPointRefs(String id) {

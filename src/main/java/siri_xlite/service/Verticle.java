@@ -76,6 +76,7 @@ public class Verticle extends AbstractVerticle {
 
         router.route().handler(StaticHandler.create(PUBLIC));
 
+
         // SelfSignedCertificate certificate = SelfSignedCertificate.create();
         // HttpServerOptions options = new HttpServerOptions()
         // .setSsl(true)

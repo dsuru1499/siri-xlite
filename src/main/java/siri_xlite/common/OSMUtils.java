@@ -1,8 +1,5 @@
 package siri_xlite.common;
 
-
-
-
 import org.springframework.data.geo.Point;
 import org.springframework.data.geo.Polygon;
 
@@ -20,12 +17,9 @@ public class OSMUtils {
         double[] upperLeft = fromTile(x, y, z);
         double[] bottomRight = fromTile(x + 1, y + 1, z);
 
-        Polygon result = new Polygon(Arrays.asList(
-                new Point(upperLeft[0], upperLeft[1]),
-                new Point(bottomRight[0], upperLeft[1]),
-                new Point(bottomRight[0], bottomRight[1]),
-                new Point(upperLeft[0], bottomRight[1]),
-                new Point(upperLeft[0], upperLeft[1])));
+        Polygon result = new Polygon(Arrays.asList(new Point(upperLeft[0], upperLeft[1]),
+                new Point(bottomRight[0], upperLeft[1]), new Point(bottomRight[0], bottomRight[1]),
+                new Point(upperLeft[0], bottomRight[1]), new Point(upperLeft[0], upperLeft[1])));
         return result;
     }
 
@@ -33,7 +27,7 @@ public class OSMUtils {
         double n = (1 << zoom);
         double lon = (double) x / n * 360d - 180d;
         double lat = Math.atan(Math.sinh(Math.PI * (1d - 2d * (double) y / n))) * 180d / Math.PI;
-        double[] result = {lon, lat};
+        double[] result = { lon, lat };
         return result;
     }
 
@@ -42,7 +36,7 @@ public class OSMUtils {
         int x = (int) (n * ((lon + 180d) / 360d));
         double lat_rad = Math.toRadians(lat);
         int y = (int) (n * (1 - (Math.log(Math.tan(lat_rad) + 1d / Math.cos(lat_rad)) / Math.PI)) / 2d);
-        int[] result = {x, y};
+        int[] result = { x, y };
         return result;
     }
 

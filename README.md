@@ -69,6 +69,12 @@ Elle est constituée des composants logiciels suivants:
 StopMonitoring, EstimatedTimetable (voir ci-dessous)
 
 ## Services Siri Xlite
+
+### Build
+
+    mvn -Dmaven.test.skip=true clean install
+    docker-compose -f docker/docker-compose.yml build & docker-compose -f docker/docker-compose.yml up
+    
 ### Service lines discovery
 Ce service renvoie la liste des lignes définie dans l'offre de transport.
 

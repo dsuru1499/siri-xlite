@@ -19,7 +19,7 @@ import java.io.IOException;
 @SpringBootApplication
 @EnableAutoConfiguration
 @Slf4j
-class Application {
+public class Application {
 
     @Autowired
     private Verticle siriVerticle;
@@ -34,7 +34,6 @@ class Application {
 
     @PostConstruct
     private void initialize() {
-        // initializer.initialize();
         Vertx vertx = Vertx.vertx();
         vertx.deployVerticle(siriVerticle);
     }

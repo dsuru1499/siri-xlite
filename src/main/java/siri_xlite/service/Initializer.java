@@ -19,15 +19,15 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import siri_xlite.common.Color;
 import siri_xlite.common.ZipUtils;
 import siri_xlite.model.*;
-import siri_xlite.repositories.LinesRepository;
-import siri_xlite.repositories.StopPointsRepository;
-import siri_xlite.repositories.VehicleJourneyRepository;
 import uk.org.siri.siri.CallStatusEnumeration;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,23 +51,25 @@ public class Initializer {
     private MongoDatabase database;
 
     @Autowired
-    private LinesRepository linesRepository;
+    private Environment environment;
 
-    @Autowired
-    private StopPointsRepository stopPointsRepository;
+    @PostConstruct
+    void onStartup() {
+        String temp = environment.getProperty("java.io.tmpdir", "/tmp");
+        Path path = Paths.get(temp, OUTPUT_DIR);
+        if (Files.notExists(path)) {
+            initialize();
+        }
+    }
 
-    @Autowired
-    private VehicleJourneyRepository vehicleJourneyRepository;
-
-    // @PostConstruct
-    // @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Paris")
+    @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Paris")
     boolean initialize() {
 
         Monitor monitor = MonitorFactory.start();
         log.info(Color.YELLOW + "[DSU] initialize model (~ 1mn)" + Color.NORMAL);
 
-        // String temp = System.getProperty("user.home");
-        String temp = System.getProperty("java.io.tmpdir");
+        String temp = environment.getProperty("java.io.tmpdir", "/tmp");
+
         Path path = Paths.get(temp, OUTPUT_DIR);
         try {
             if (Files.notExists(path)) {
@@ -82,8 +84,10 @@ public class Initializer {
             log.error(e.getMessage(), e);
         }
 
-        MongoClient client = MongoClients.create("mongodb://localhost");
-        this.database = client.getDatabase("siri");
+        String host = environment.getProperty("spring.data.mongodb.host", "localhost");
+        String database = environment.getProperty("spring.data.mongodb.database", "siri");
+        MongoClient client = MongoClients.create("mongodb://" + host);
+        this.database = client.getDatabase(database);
 
         GtfsImporter importer = new GtfsImporter(path.toString());
         SetValuedMap<String, Destination> destinations = new HashSetValuedHashMap<>();

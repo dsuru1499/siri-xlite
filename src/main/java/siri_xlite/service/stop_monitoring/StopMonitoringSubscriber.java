@@ -18,7 +18,6 @@ import static siri_xlite.service.Verticle.*;
 import static siri_xlite.service.common.EstimatedVehiculeJourney.ESTIMATED_VEHICLE_JOURNEY;
 import static siri_xlite.common.DateTimeUtils.toLocalTime;
 
-
 @Slf4j
 public class StopMonitoringSubscriber extends CollectionSubscriber<StopMonitoringParameters> implements Constants {
 
