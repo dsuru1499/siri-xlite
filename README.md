@@ -61,7 +61,7 @@ permettant la publication d'information transport de manière simple et performa
  
 Elle est constituée des composants logiciels suivants:
   
-* Cache HTTP/2 (Varnish)
+* Cache HTTP/2
 * Serveur HTTP/2 de type "event loop" (Vert.x-Web).
 * Cache cluster en mode invalidation (Infinispan) pour la revalidation du cache HTTP.
 * Base de données MongoDB

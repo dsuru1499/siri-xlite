@@ -5,6 +5,7 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.FaviconHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,8 +75,8 @@ public class Verticle extends AbstractVerticle {
         router.get(APPLICATION + SEP + ESTIMATED_VEHICLE_JOURNEY + SEP + COLON + DATED_VEHICLE_JOURNEY_REF)
                 .handler(estimatedVehiculeJourneyService);
 
+        router.route().handler(FaviconHandler.create());
         router.route().handler(StaticHandler.create(PUBLIC));
-
 
         // SelfSignedCertificate certificate = SelfSignedCertificate.create();
         // HttpServerOptions options = new HttpServerOptions()
