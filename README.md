@@ -61,7 +61,7 @@ permettant la publication d'information transport de manière simple et performa
  
 Elle est constituée des composants logiciels suivants:
   
-* Cache HTTP/2
+* Cache HTTP/2 (nuster)
 * Serveur HTTP/2 de type "event loop" (Vert.x-Web).
 * Cache cluster en mode invalidation (Infinispan) pour la revalidation du cache HTTP.
 * Base de données MongoDB
@@ -73,7 +73,8 @@ StopMonitoring, EstimatedTimetable (voir ci-dessous)
 ### Build
 
     mvn -Dmaven.test.skip=true clean install
-    docker-compose -f docker/docker-compose.yml build & docker-compose -f docker/docker-compose.yml up
+    docker-compose -f docker/docker-compose.yml build 
+    docker-compose -f docker/docker-compose.yml up
     
 ### Service lines discovery
 Ce service renvoie la liste des lignes définie dans l'offre de transport.

@@ -1,21 +1,20 @@
 version: "3.3"
 services:
-  varnish:
+  nuster:
     build:
       context: "../"
-      dockerfile: "docker/varnish/Dockerfile"
+      dockerfile: "docker/nuster/Dockerfile"
     depends_on:
       - "siri-xlite"
     ports:
-      - "443:8443"
+      - "80:80"
+      - "8443:8443"
   siri-xlite:
     build:
       context: "../"
       dockerfile: "docker/siri-xlite/Dockerfile"
     depends_on:
       - "mongodb"
-    ports:
-      - "8443:8443"
   mongodb:
     image: "mongo"
     ports:
