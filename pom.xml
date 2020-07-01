@@ -13,6 +13,13 @@
         <maven.compiler.release>11</maven.compiler.release>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>local-maven-repo</id>
+            <url>file:///${project.basedir}/repository</url>
+        </repository>
+    </repositories>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -59,6 +66,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -100,12 +112,6 @@
             <artifactId>guava</artifactId>
             <version>27.1-jre</version>
         </dependency>
-
-        <!--        <dependency>-->
-        <!--            <groupId>com.github.davidmoten</groupId>-->
-        <!--            <artifactId>rtree</artifactId>-->
-        <!--            <version>0.8.7</version>-->
-        <!--        </dependency>-->
 
         <!-- Other Dependencies -->
         <dependency>
