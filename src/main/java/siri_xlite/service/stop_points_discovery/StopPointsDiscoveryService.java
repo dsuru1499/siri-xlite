@@ -8,9 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinispan.Cache;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
 import org.springframework.data.geo.Polygon;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -21,10 +18,7 @@ import siri_xlite.common.OSMUtils;
 import siri_xlite.model.StopPointDocument;
 import siri_xlite.repositories.NotModifiedException;
 import siri_xlite.repositories.StopPointsRepository;
-import siri_xlite.service.common.Constants;
-import siri_xlite.service.common.Messages;
-import siri_xlite.service.common.ParametersFactory;
-import siri_xlite.service.common.StopPointsDiscovery;
+import siri_xlite.service.common.*;
 
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
@@ -41,30 +35,31 @@ public class StopPointsDiscoveryService implements StopPointsDiscovery, Constant
 
     @Autowired
     private EmbeddedCacheManager manager;
-    @Autowired
-    private StopPointsDiscoverySubcriber subscriber;
+    // @Autowired
+    // private StopPointsDiscoverySubcriber ;
     @Autowired
     private Configuration configuration;
     @Autowired
     private StopPointsRepository repository;
 
-    @Bean
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public StopPointsDiscoverySubcriber stopPointsDiscoverySubcriber() {
-        return new StopPointsDiscoverySubcriber();
-    }
+    // @Bean
+    // @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    // public StopPointsDiscoverySubcriber stopPointsDiscoverySubcriber() {
+    // return new StopPointsDiscoverySubcriber();
+    // }
 
     @Override
     public void handle(final RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(STOPPOINTS_DISCOVERY);
-
+            final StopPointsDiscoverySubcriber subscriber = new StopPointsDiscoverySubcriber();
             Mono.fromCallable(() -> {
                 StopPointsDiscoveryParameters parameters = ParametersFactory.create(StopPointsDiscoveryParameters.class,
                         context);
                 subscriber.configure(configuration, parameters, context);
                 return parameters;
-            }).flatMapMany(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(context))
+            }).flatMapMany(parameters -> stream(parameters, context))
+                    .doOnComplete(() -> onComplete(subscriber, context))
                     .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))
                     .subscribe(subscriber);
         } catch (Exception e) {
@@ -72,7 +67,7 @@ public class StopPointsDiscoveryService implements StopPointsDiscovery, Constant
         }
     }
 
-    private void onComplete(RoutingContext context) {
+    private void onComplete(StopPointsDiscoverySubcriber subscriber, RoutingContext context) {
         String eTag = subscriber.getEtag();
         if (StringUtils.isNotEmpty(eTag)) {
             Cache<String, String> cache = manager.getCache(ETAGS);

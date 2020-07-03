@@ -16,7 +16,7 @@
     <repositories>
         <repository>
             <id>local-maven-repo</id>
-            <url>file:///${project.basedir}/repository</url>
+            <url>file:///${basedir}/repository</url>
         </repository>
     </repositories>
 
@@ -129,6 +129,12 @@
 
     <build>
         <plugins>
+            <!--mvn versions:display-dependency-updates-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -150,14 +156,47 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!--mvn versions:display-dependency-updates-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>2.7</version>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build siri-lite-react</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>run-script</argument>
+                                <argument>build</argument>
+                            </arguments>
+                            <workingDirectory>${basedir}/../siri-xlite-cli</workingDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
-
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy siri-xlite-cli</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/src/main/resources/public/siri-xlite-cli</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/../siri-xlite-cli/build</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

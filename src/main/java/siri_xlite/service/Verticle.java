@@ -5,10 +5,13 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.net.JksOptions;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.FaviconHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import siri_xlite.Configuration;
 import siri_xlite.service.common.DefaultService;
@@ -17,6 +20,11 @@ import siri_xlite.service.estimated_vehicule_journey.EstimatedVehiculeJourneySer
 import siri_xlite.service.lines_discovery.LinesDiscoveryService;
 import siri_xlite.service.stop_monitoring.StopMonitoringService;
 import siri_xlite.service.stop_points_discovery.StopPointsDiscoveryService;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static siri_xlite.service.common.EstimatedTimetable.ESTIMATED_TIMETABLE;
 import static siri_xlite.service.common.EstimatedVehiculeJourney.ESTIMATED_VEHICLE_JOURNEY;
@@ -64,6 +72,11 @@ public class Verticle extends AbstractVerticle {
         super.start();
 
         Router router = Router.router(vertx);
+        router.route()
+                .handler(CorsHandler.create("*")
+                        .allowedHeaders(Stream.of("Access-Control-Allow-Origin").collect(Collectors.toSet()))
+                        .allowedMethods(Stream.of(HttpMethod.GET).collect(Collectors.toSet())));
+
         router.get(APPLICATION).handler(defaultService);
         router.get(APPLICATION + SEP + LINES_DISCOVERY).handler(linesDiscovery);
         router.route(HttpMethod.GET,

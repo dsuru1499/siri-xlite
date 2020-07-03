@@ -69,8 +69,8 @@ public abstract class SiriSubscriber<T, P extends Parameters> implements Subscri
     public void configure(Configuration configuration, P parameters, RoutingContext context) {
         this.configuration = configuration;
         this.context = context;
-        this.out = new ByteArrayOutputStream(1024);
-        this.writer = createJsonWriter(out);
+        this.out = new ByteArrayOutputStream(10 * 1024);
+        this.writer = createJsonWriter(this.out);
         this.current = null;
         this.count = new AtomicInteger();
     }

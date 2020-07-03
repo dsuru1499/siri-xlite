@@ -26,18 +26,18 @@ public interface JsonUtils {
     JsonFactory factory = new JsonFactory();
 
     default void writeStartDocument(JsonGenerator writer, String href, String version) {
-        try {
-            writer.writeStartArray();
-            // writeField(writer, VERSION, version);
-            // writeField(writer, HREF, href);
-        } catch (IOException e) {
-            ExceptionUtils.wrapAndThrow(e);
-        }
+        // try {
+        // writer.writeStartObject();
+        // writeField(writer, VERSION, version);
+        // writeField(writer, HREF, href);
+        // } catch (IOException e) {
+        // ExceptionUtils.wrapAndThrow(e);
+        // }
     }
 
     default void writeEndDocument(JsonGenerator writer) {
         try {
-            writer.writeEndArray();
+            // writer.writeEndObject();
             writer.flush();
             writer.close();
         } catch (IOException e) {
