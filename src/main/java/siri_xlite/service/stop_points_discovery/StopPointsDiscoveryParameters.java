@@ -22,6 +22,8 @@ public class StopPointsDiscoveryParameters extends DefaultParameters {
         super.configure(context);
         setXtile(intValue(X_TILE));
         setYtile(intValue((Y_TILE)));
+        setMaxAge("max-age=30");
+        setSMaxAge("s-maxage=60");
     }
 
 }

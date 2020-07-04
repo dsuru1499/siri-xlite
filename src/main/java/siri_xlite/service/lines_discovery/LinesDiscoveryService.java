@@ -40,25 +40,19 @@ public class LinesDiscoveryService implements LinesDiscovery, Constants {
     @Autowired
     private EmbeddedCacheManager manager;
     @Autowired
-    private LinesDiscoverySubscriber subscriber;
-    @Autowired
     private Configuration configuration;
-
-    @Bean
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public LinesDiscoverySubscriber linesDiscoverySubscriber() {
-        return new LinesDiscoverySubscriber();
-    }
 
     @Override
     public void handle(RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(LINES_DISCOVERY);
+            final LinesDiscoverySubscriber subscriber = new LinesDiscoverySubscriber();
             Mono.fromCallable(() -> {
                 LinesDiscoveryParameters parameters = ParametersFactory.create(LinesDiscoveryParameters.class, context);
                 subscriber.configure(configuration, parameters, context);
                 return parameters;
-            }).flatMapMany(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(context))
+            }).flatMapMany(parameters -> stream(parameters, context))
+                    .doOnComplete(() -> onComplete(subscriber, context))
                     .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))
                     .subscribe(subscriber);
         } catch (Exception e) {
@@ -66,7 +60,7 @@ public class LinesDiscoveryService implements LinesDiscovery, Constants {
         }
     }
 
-    private void onComplete(RoutingContext context) {
+    private void onComplete(LinesDiscoverySubscriber subscriber, RoutingContext context) {
         String eTag = subscriber.getEtag();
         if (StringUtils.isNotEmpty(eTag)) {
             Cache<String, String> cache = manager.getCache(ETAGS);

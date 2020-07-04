@@ -9,9 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinispan.Cache;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import siri_xlite.Configuration;
@@ -39,27 +36,20 @@ public class StopMonitoringService implements StopMonitoring, Constants {
     @Autowired
     private EmbeddedCacheManager manager;
     @Autowired
-    private StopMonitoringSubscriber subscriber;
-    @Autowired
     private Configuration configuration;
     @Autowired
     private VehicleJourneyRepository repository;
-
-    @Bean
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public StopMonitoringSubscriber stopMonitoringSubscriber() {
-        return new StopMonitoringSubscriber();
-    }
 
     @Override
     public void handle(final RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(STOP_MONITORING);
+            final StopMonitoringSubscriber subscriber = new StopMonitoringSubscriber();
             Flowable.fromCallable(() -> {
                 StopMonitoringParameters parameters = ParametersFactory.create(StopMonitoringParameters.class, context);
                 subscriber.configure(configuration, parameters, context);
                 return parameters;
-            }).flatMap(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(context))
+            }).flatMap(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(subscriber, context))
                     .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))
                     .subscribe(subscriber);
         } catch (Exception e) {
@@ -67,7 +57,7 @@ public class StopMonitoringService implements StopMonitoring, Constants {
         }
     }
 
-    private void onComplete(RoutingContext context) {
+    private void onComplete(StopMonitoringSubscriber subscriber, RoutingContext context) {
         String etag = subscriber.getEtag();
         if (StringUtils.isNotEmpty(etag)) {
             Cache<String, String> cache = manager.getCache(ETAGS);

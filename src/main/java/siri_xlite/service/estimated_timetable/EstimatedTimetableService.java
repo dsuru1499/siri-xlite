@@ -9,9 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinispan.Cache;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import siri_xlite.Configuration;
@@ -39,30 +36,21 @@ public class EstimatedTimetableService implements EstimatedTimetable, Constants 
     @Autowired
     private EmbeddedCacheManager manager;
     @Autowired
-    private EstimatedTimetableSubscriber subscriber;
-    @Autowired
     private Configuration configuration;
-
     @Autowired
     private VehicleJourneyRepository repository;
-
-    @Bean
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public EstimatedTimetableSubscriber estimatedTimetableSubscriber() {
-        return new EstimatedTimetableSubscriber();
-    }
 
     @Override
     public void handle(final RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(ESTIMATED_TIMETABLE);
-
+            final EstimatedTimetableSubscriber subscriber = new EstimatedTimetableSubscriber();
             Flowable.fromCallable(() -> {
                 EstimatedTimetableParameters parameters = ParametersFactory.create(EstimatedTimetableParameters.class,
                         context);
                 subscriber.configure(configuration, parameters, context);
                 return parameters;
-            }).flatMap(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(context))
+            }).flatMap(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(subscriber, context))
                     .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))
                     .subscribe(subscriber);
         } catch (Exception e) {
@@ -70,7 +58,7 @@ public class EstimatedTimetableService implements EstimatedTimetable, Constants 
         }
     }
 
-    private void onComplete(RoutingContext context) {
+    private void onComplete(EstimatedTimetableSubscriber subscriber, RoutingContext context) {
         String etag = subscriber.getEtag();
         if (StringUtils.isNotEmpty(etag)) {
             Cache<String, String> cache = manager.getCache(ETAGS);

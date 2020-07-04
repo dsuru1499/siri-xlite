@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public class OSMUtils {
 
-    public static int ZOOM = 15;
+    public static int ZOOM = 14;
 
     public static Polygon location(final int x, final int y) {
         return location(x, y, ZOOM);

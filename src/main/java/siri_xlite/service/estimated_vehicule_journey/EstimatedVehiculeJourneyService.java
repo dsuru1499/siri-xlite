@@ -39,29 +39,21 @@ public class EstimatedVehiculeJourneyService implements EstimatedVehiculeJourney
     @Autowired
     protected EmbeddedCacheManager manager;
     @Autowired
-    protected EstimatedVehiculeJourneySubscriber subscriber;
-    @Autowired
     private Configuration configuration;
     @Autowired
     private VehicleJourneyRepository repository;
-
-    @Bean
-    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public EstimatedVehiculeJourneySubscriber estimatedVehiculeJourneySubscriber() {
-        return new EstimatedVehiculeJourneySubscriber();
-    }
 
     @Override
     public void handle(final RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(ESTIMATED_VEHICLE_JOURNEY);
-
+            final EstimatedVehiculeJourneySubscriber subscriber = new EstimatedVehiculeJourneySubscriber();
             Flowable.fromCallable(() -> {
                 EstimatedVehiculeJourneyParameters parameters = ParametersFactory
                         .create(EstimatedVehiculeJourneyParameters.class, context);
                 subscriber.configure(configuration, parameters, context);
                 return parameters;
-            }).flatMap(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(context))
+            }).flatMap(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(subscriber, context))
                     .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))
                     .subscribe(subscriber);
         } catch (Exception e) {
@@ -69,7 +61,7 @@ public class EstimatedVehiculeJourneyService implements EstimatedVehiculeJourney
         }
     }
 
-    private void onComplete(RoutingContext context) {
+    private void onComplete(EstimatedVehiculeJourneySubscriber subscriber, RoutingContext context) {
         String etag = subscriber.getEtag();
         if (StringUtils.isNotEmpty(etag)) {
             Cache<String, String> cache = manager.getCache(ETAGS);

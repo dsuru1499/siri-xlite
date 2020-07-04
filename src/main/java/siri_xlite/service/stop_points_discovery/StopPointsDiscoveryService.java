@@ -35,18 +35,10 @@ public class StopPointsDiscoveryService implements StopPointsDiscovery, Constant
 
     @Autowired
     private EmbeddedCacheManager manager;
-    // @Autowired
-    // private StopPointsDiscoverySubcriber ;
     @Autowired
     private Configuration configuration;
     @Autowired
     private StopPointsRepository repository;
-
-    // @Bean
-    // @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    // public StopPointsDiscoverySubcriber stopPointsDiscoverySubcriber() {
-    // return new StopPointsDiscoverySubcriber();
-    // }
 
     @Override
     public void handle(final RoutingContext context) {
