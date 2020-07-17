@@ -6,8 +6,9 @@ import org.bson.Document;
 
 public class CallPropertyGroupMarshaller implements Marshaller<Document> {
 
-    private static final String ORIGIN_DISPLAY = "originDisplay";
-    private static final String DESTINATION_DISPLAY = "destinationDisplay";
+    public static final String ORIGIN_DISPLAY = "originDisplay";
+    public static final String DESTINATION_DISPLAY = "destinationDisplay";
+
     @Getter
     private static final Marshaller<Document> instance = new CallPropertyGroupMarshaller();
 

@@ -111,7 +111,7 @@ Ce service renvoie la liste des points d'arrêt définie dans l'offre de transpo
 
 #### paramètres
 
-    Tuilage OpenStreetMap  (zoom = 15)  
+    Tuilage OpenStreetMap  (zoom = 14)  
     * xtile : Abscisse 
     * ytile : Ordonnée 
     
@@ -183,11 +183,6 @@ Ce service renvoie la liste des courses passant par un point d'arrêt défini da
     [ 
        {
          "href": url,
-         "datedVehicleJourneyRef": string,
-         "destinationRef": string,
-         "routeRef": string,
-         "operatorRef": string,
-         "originAimedDepartureTime": timestamp,
          "aimedDepartureTime": timestamp,
          "order": 26,
          "index": 25

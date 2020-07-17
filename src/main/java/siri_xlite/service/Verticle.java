@@ -10,8 +10,6 @@ import io.vertx.ext.web.handler.FaviconHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import siri_xlite.Configuration;
 import siri_xlite.service.common.DefaultService;
@@ -21,8 +19,6 @@ import siri_xlite.service.lines_discovery.LinesDiscoveryService;
 import siri_xlite.service.stop_monitoring.StopMonitoringService;
 import siri_xlite.service.stop_points_discovery.StopPointsDiscoveryService;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -45,6 +41,7 @@ public class Verticle extends AbstractVerticle {
     public static final String SEP = "/";
     public static final String COLON = ":";
     private static final String PUBLIC = "public";
+    public static final String HASH = "#";
 
     @Autowired
     Configuration configuration;

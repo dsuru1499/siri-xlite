@@ -6,8 +6,9 @@ import org.bson.Document;
 
 public class StopPointInSequenceGroupMarshaller implements Marshaller<Document> {
     public static final String ORDER = "order";
-    private static final String STOP_POINT_REF = "stopPointRef";
-    private static final String STOP_POINT_NAME = "stopPointName";
+    public static final String STOP_POINT_REF = "stopPointRef";
+    public static final String STOP_POINT_NAME = "stopPointName";
+
     @Getter
     private static final Marshaller<Document> instance = new StopPointInSequenceGroupMarshaller();
 

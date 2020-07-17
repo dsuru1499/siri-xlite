@@ -6,8 +6,9 @@ import org.bson.Document;
 
 public class TimetableRealtimeInfoGroupMarshaller implements Marshaller<Document> {
 
-    private static final String MONITORED = "monitored";
-    private static final String HEADWAY_SERVICE = "headwayService";
+    public static final String MONITORED = "monitored";
+    public static final String HEADWAY_SERVICE = "headwayService";
+
     @Getter
     private static final Marshaller<Document> instance = new TimetableRealtimeInfoGroupMarshaller();
 

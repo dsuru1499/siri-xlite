@@ -8,8 +8,9 @@ import java.util.List;
 
 public class DisruptionGroupMarshaller implements Marshaller<Document> {
 
-    private static final String SITUATION_REFS = "situationRefs";
-    private static final String SITUATION_SIMPLE_REF = "situationSimpleRef";
+    public static final String SITUATION_REFS = "situationRefs";
+    public static final String SITUATION_SIMPLE_REF = "situationSimpleRef";
+
     @Getter
     private static final Marshaller<Document> instance = new DisruptionGroupMarshaller();
 

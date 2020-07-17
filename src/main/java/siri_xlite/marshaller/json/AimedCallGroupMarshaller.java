@@ -10,12 +10,13 @@ import static siri_xlite.common.DateTimeUtils.toLocalTime;
 
 public class AimedCallGroupMarshaller implements Marshaller<Document> {
 
-    private static final String AIMED_ARRIVAL_TIME = "aimedArrivalTime";
-    private static final String ARRIVAL_PLATFORM_NAME = "arrivalPlatformName";
-    private static final String AIMED_DEPARTURE_TIME = "aimedDepartureTime";
-    private static final String DEPARTURE_PLATFORM_NAME = "departurePlatformName";
-    private static final String DEPARTURE_BOARDING_ACTIVITY = "departureBoardingActivity";
-    private static final String AIMED_HEADWAY_INTERVAL = "aimedHeadwayInterval";
+    public static final String AIMED_ARRIVAL_TIME = "aimedArrivalTime";
+    public static final String ARRIVAL_PLATFORM_NAME = "arrivalPlatformName";
+    public static final String AIMED_DEPARTURE_TIME = "aimedDepartureTime";
+    public static final String DEPARTURE_PLATFORM_NAME = "departurePlatformName";
+    public static final String DEPARTURE_BOARDING_ACTIVITY = "departureBoardingActivity";
+    public static final String AIMED_HEADWAY_INTERVAL = "aimedHeadwayInterval";
+
     @Getter
     private static final Marshaller<Document> instance = new AimedCallGroupMarshaller();
 

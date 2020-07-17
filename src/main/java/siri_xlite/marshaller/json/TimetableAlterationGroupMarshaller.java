@@ -8,11 +8,12 @@ import java.time.LocalDateTime;
 
 public class TimetableAlterationGroupMarshaller implements Marshaller<Document> {
 
-    private static final String EXTRA_JOURNEY = "extraJourney";
-    private static final String CANCELLATION = "cancellation";
-    private static final String DATED_DOCUMENT_REF = "datedDocumentRef";
-    private static final String FRAMED_DOCUMENT_REF = "framedDocumentRef";
-    private static final String DATA_FRAME_REF = "dataFrameRef";
+    public static final String EXTRA_JOURNEY = "extraJourney";
+    public static final String CANCELLATION = "cancellation";
+    public static final String DATED_DOCUMENT_REF = "datedDocumentRef";
+    public static final String FRAMED_DOCUMENT_REF = "framedDocumentRef";
+    public static final String DATA_FRAME_REF = "dataFrameRef";
+
     @Getter
     private static final Marshaller<Document> instance = new TimetableAlterationGroupMarshaller();
 

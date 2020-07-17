@@ -92,11 +92,13 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
                         .putHeader(HttpHeaders.ETAG, getEtag(context))
                         .setStatusCode(HttpURLConnection.HTTP_NOT_MODIFIED).end();
             } else if (t instanceof SiriException) {
+                log.error(t.getMessage(), t);
                 SiriExceptionMarshaller.getInstance().write(writer, (SiriException) t);
                 writer.close();
                 this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .setStatusCode(HttpResponseStatus.BAD_REQUEST.code()).end(out.toString());
             } else if (t != null) {
+                log.error(t.getMessage(), t);
                 SiriExceptionMarshaller.getInstance().write(writer, SiriException.createOtherError(t));
                 writer.close();
                 this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

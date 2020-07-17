@@ -6,8 +6,9 @@ import org.bson.Document;
 
 public class LineIdentityGroupMarshaller implements Marshaller<Document> {
 
-    private static final String LINE_REF = "lineRef";
-    private static final String DIRECTION_REF = "directionRef";
+    public static final String LINE_REF = "lineRef";
+    public static final String DIRECTION_REF = "directionRef";
+
     @Getter
     private static final Marshaller<Document> instance = new LineIdentityGroupMarshaller();
 

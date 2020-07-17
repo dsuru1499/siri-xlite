@@ -9,12 +9,13 @@ import java.util.List;
 public class JourneyEndNamesGroupMarshaller implements Marshaller<Document> {
 
     public static final String DESTINATION_REF = "destinationRef";
-    private static final String ORIGIN_REF = "originRef";
-    private static final String ORIGIN_NAME = "originName";
-    private static final String VIAS = "vias";
-    private static final String PLACE_REF = "placeRef";
-    private static final String PLACE_NAME = "placeName";
-    private static final String DESTINATION_NAME = "destinationName";
+    public static final String ORIGIN_REF = "originRef";
+    public static final String ORIGIN_NAME = "originName";
+    public static final String VIAS = "vias";
+    public static final String PLACE_REF = "placeRef";
+    public static final String PLACE_NAME = "placeName";
+    public static final String DESTINATION_NAME = "destinationName";
+
     @Getter
     private static final Marshaller<Document> instance = new JourneyEndNamesGroupMarshaller();
 

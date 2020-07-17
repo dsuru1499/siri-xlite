@@ -9,7 +9,8 @@ import static siri_xlite.common.DateTimeUtils.toLocalTime;
 public class OnwardVehicleDepartureTimesGroupMarshaller implements Marshaller<Document> {
 
     public static final String AIMED_DEPARTURE_TIME = "aimedDepartureTime";
-    private static final String EXPECTED_DEPARTURE_TIME = "expectedDepartureTime";
+    public static final String EXPECTED_DEPARTURE_TIME = "expectedDepartureTime";
+
     @Getter
     private static final Marshaller<Document> instance = new OnwardVehicleDepartureTimesGroupMarshaller();
 

@@ -11,8 +11,8 @@ import java.util.Map;
 
 public class SiriExceptionMarshaller implements Marshaller<SiriException>, JsonUtils {
 
-    private static final String ERROR_TEXT = "errorText";
-    private static final String ERROR_CODE = "errorCode";
+    public static final String ERROR_TEXT = "errorText";
+    public static final String ERROR_CODE = "errorCode";
 
     @Getter
     private static final Marshaller<SiriException> instance = new SiriExceptionMarshaller();

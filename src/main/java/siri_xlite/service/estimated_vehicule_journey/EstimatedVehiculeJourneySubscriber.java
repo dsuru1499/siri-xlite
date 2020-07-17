@@ -8,6 +8,8 @@ import siri_xlite.service.common.ItemSubscriber;
 
 import java.util.List;
 
+import static siri_xlite.marshaller.json.SiriMarshaller.CALLS;
+
 @Slf4j
 public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<EstimatedVehiculeJourneyParameters>
         implements Constants {
@@ -15,7 +17,6 @@ public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<Estimated
     private static final String EXTRA_CALL = "extraCall";
     private static final String CANCELLATION = "cancellation";
     private static final String ESTIMATED_CALLS = "estimatedCalls";
-    private static final String CALLS = "calls";
 
     @Override
     protected void writeItem(Document t) {
@@ -32,7 +33,6 @@ public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<Estimated
             TrainOperationalInfoGroupMarshaller.getInstance().write(writer, source);
 
             // EstimatedCalls calls
-
             writeArray(writer, ESTIMATED_CALLS, source.get(CALLS, List.class), this::writeEstimatedCall);
         });
     }

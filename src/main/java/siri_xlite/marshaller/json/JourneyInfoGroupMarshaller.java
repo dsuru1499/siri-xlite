@@ -8,8 +8,9 @@ import java.util.List;
 
 public class JourneyInfoGroupMarshaller implements Marshaller<Document> {
 
-    private static final String VEHICLE_JOURNEY_NAME = "vehicleJourneyName";
-    private static final String JOURNEY_NOTE = "journeyNote";
+    public static final String VEHICLE_JOURNEY_NAME = "vehicleJourneyName";
+    public static final String JOURNEY_NOTE = "journeyNote";
+
     @Getter
     private static final Marshaller<Document> instance = new JourneyInfoGroupMarshaller();
 

@@ -6,8 +6,9 @@ import org.bson.Document;
 
 public class StopProximityGroupMarshaller implements Marshaller<Document> {
 
-    private static final String DISTANCE_FROM_STOP = "distanceFromStop";
-    private static final String NUMBER_OF_STOPS_AWAY = "numberOfStopsAway";
+    public static final String DISTANCE_FROM_STOP = "distanceFromStop";
+    public static final String NUMBER_OF_STOPS_AWAY = "numberOfStopsAway";
+
     @Getter
     private static final Marshaller<Document> instance = new StopProximityGroupMarshaller();
 

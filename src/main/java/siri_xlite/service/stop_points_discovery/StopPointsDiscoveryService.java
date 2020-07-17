@@ -18,7 +18,10 @@ import siri_xlite.common.OSMUtils;
 import siri_xlite.model.StopPointDocument;
 import siri_xlite.repositories.NotModifiedException;
 import siri_xlite.repositories.StopPointsRepository;
-import siri_xlite.service.common.*;
+import siri_xlite.service.common.Constants;
+import siri_xlite.service.common.Messages;
+import siri_xlite.service.common.ParametersFactory;
+import siri_xlite.service.common.StopPointsDiscovery;
 
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;

@@ -12,11 +12,12 @@ import java.util.stream.Collectors;
 public class JourneyPatternInfoGroupMarshaller implements Marshaller<Document> {
 
     public static final String ROUTE_REF = "routeRef";
-    private static final String JOURNEY_PATTERN_REF = "journeyPatternRef";
-    private static final String JOURNEY_PATTERN_NAME = "journeyPatternName";
-    private static final String VEHICLE_MODES = "vehicleModes";
-    private static final String PUBLISHED_LINE_NAME = "publishedLineName";
-    private static final String DIRECTION_NAME = "directionName";
+    public static final String JOURNEY_PATTERN_REF = "journeyPatternRef";
+    public static final String JOURNEY_PATTERN_NAME = "journeyPatternName";
+    public static final String VEHICLE_MODES = "vehicleModes";
+    public static final String PUBLISHED_LINE_NAME = "publishedLineName";
+    public static final String DIRECTION_NAME = "directionName";
+
     @Getter
     private static final Marshaller<Document> instance = new JourneyPatternInfoGroupMarshaller();
 

@@ -10,9 +10,10 @@ import static siri_xlite.common.DateTimeUtils.toLocalTime;
 public class JourneyEndTimesGroupMarshaller implements Marshaller<Document> {
 
     public static final String ORIGIN_AIMED_DEPARTURE_TIME = "originAimedDepartureTime";
-    private static final String HEADWAY_SERVICE = "headwayService";
-    private static final String DESTINATION_AIMED_ARRIVAL_TIME = "destinationAimedArrivalTime";
-    private static final String FIRST_OR_LAST_JOURNEY = "firstOrLastJourney";
+    public static final String HEADWAY_SERVICE = "headwayService";
+    public static final String DESTINATION_AIMED_ARRIVAL_TIME = "destinationAimedArrivalTime";
+    public static final String FIRST_OR_LAST_JOURNEY = "firstOrLastJourney";
+
     @Getter
     private static final Marshaller<Document> instance = new JourneyEndTimesGroupMarshaller();
 

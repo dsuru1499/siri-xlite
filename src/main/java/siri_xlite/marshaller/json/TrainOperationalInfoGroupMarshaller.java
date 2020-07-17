@@ -8,10 +8,11 @@ import java.util.List;
 
 public class TrainOperationalInfoGroupMarshaller implements Marshaller<Document> {
 
-    private static final String TRAIN_NUMBERS = "trainNumbers";
-    private static final String JOURNEY_PARTS = "journeyParts";
-    private static final String JOURNEY_PART_REF = "journeyPartRef";
-    private static final String TRAIN_NUMBER_REF = "trainNumberRef";
+    public static final String TRAIN_NUMBERS = "trainNumbers";
+    public static final String JOURNEY_PARTS = "journeyParts";
+    public static final String JOURNEY_PART_REF = "journeyPartRef";
+    public static final String TRAIN_NUMBER_REF = "trainNumberRef";
+
     @Getter
     private static final Marshaller<Document> instance = new TrainOperationalInfoGroupMarshaller();
 

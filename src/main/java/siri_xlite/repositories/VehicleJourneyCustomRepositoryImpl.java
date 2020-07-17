@@ -16,19 +16,28 @@ import siri_xlite.common.Color;
 import siri_xlite.model.VehicleJourneyDocument;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import static org.springframework.data.domain.Sort.Order;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 import static siri_xlite.marshaller.json.OnwardVehicleDepartureTimesGroupMarshaller.AIMED_DEPARTURE_TIME;
+import static siri_xlite.marshaller.json.SiriMarshaller.CALLS;
 import static siri_xlite.marshaller.json.SiriMarshaller.INDEX;
-import static siri_xlite.marshaller.json.StopPointInSequenceGroupMarshaller.ORDER;
 import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 
 @Slf4j
 public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomRepository<String> {
 
+    static final Comparator<? super VehicleJourneyDocument> aimedDepartureTimeComparator = Comparator.comparing(t -> {
+        Integer index = t.getInteger(INDEX);
+        List<Document> calls = t.get(CALLS, List.class);
+        Document call = calls.get(index);
+        Date result = call.get(AIMED_DEPARTURE_TIME, Date.class);
+        return result;
+    });
     @Autowired
     private ReactiveMongoTemplate template;
 
@@ -68,8 +77,9 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
         try {
             return stopPointsRepository.findStopPointRefs(id).collectList().flatMapMany(stopPointRefs -> {
                 Query query = query(where("calls.stopPointRef").in(stopPointRefs));
-                query.with(Sort.by(Order.by("originAimedDepartureTime")));
-                return template.find(query, Document.class, COLLECTION_NAME).flatMap(t -> create(t, stopPointRefs));
+                // query.with(Sort.by(Order.by("originAimedDepartureTime")));
+                return template.find(query, Document.class, COLLECTION_NAME).flatMap(t -> create(t, stopPointRefs))
+                        .sort(aimedDepartureTimeComparator);
             });
         } finally {
             log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
@@ -86,9 +96,6 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
             if (stopPointRefs.contains(call.getString("stopPointRef"))) {
                 VehicleJourneyDocument result = new VehicleJourneyDocument(document);
                 result.put(INDEX, i);
-                result.put(ORDER, call.getInteger(ORDER));
-                result.put(AIMED_DEPARTURE_TIME, call.getDate(AIMED_DEPARTURE_TIME));
-
                 list.add(result);
             }
         }
