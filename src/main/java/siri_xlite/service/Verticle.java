@@ -29,7 +29,7 @@ import static siri_xlite.service.common.StopMonitoring.STOP_MONITORING;
 import static siri_xlite.service.common.StopPointsDiscovery.STOPPOINTS_DISCOVERY;
 import static siri_xlite.service.estimated_timetable.EstimatedTimetableParameters.LINE_REF;
 import static siri_xlite.service.estimated_vehicule_journey.EstimatedVehiculeJourneyParameters.DATED_VEHICLE_JOURNEY_REF;
-import static siri_xlite.service.stop_monitoring.StopMonitoringParameters.STOPPOINT_REF;
+import static siri_xlite.service.stop_monitoring.StopMonitoringParameters.MONITORING_REF;
 import static siri_xlite.service.stop_points_discovery.StopPointsDiscoveryParameters.X_TILE;
 import static siri_xlite.service.stop_points_discovery.StopPointsDiscoveryParameters.Y_TILE;
 
@@ -40,9 +40,8 @@ public class Verticle extends AbstractVerticle {
     public static final String APPLICATION = "/siri-xlite";
     public static final String SEP = "/";
     public static final String COLON = ":";
-    private static final String PUBLIC = "public";
     public static final String HASH = "#";
-
+    private static final String PUBLIC = "public";
     @Autowired
     Configuration configuration;
 
@@ -80,7 +79,7 @@ public class Verticle extends AbstractVerticle {
                 APPLICATION + SEP + STOPPOINTS_DISCOVERY + SEP + COLON + X_TILE + SEP + COLON + Y_TILE)
                 .handler(stopPointsDiscovery);
         router.route(HttpMethod.GET, APPLICATION + SEP + STOPPOINTS_DISCOVERY + SEP).handler(stopPointsDiscovery);
-        router.get(APPLICATION + SEP + STOP_MONITORING + SEP + COLON + STOPPOINT_REF).handler(stopMonitoring);
+        router.get(APPLICATION + SEP + STOP_MONITORING + SEP + COLON + MONITORING_REF).handler(stopMonitoring);
         router.get(APPLICATION + SEP + ESTIMATED_TIMETABLE + SEP + COLON + LINE_REF).handler(estimatedTimetable);
         router.get(APPLICATION + SEP + ESTIMATED_VEHICLE_JOURNEY + SEP + COLON + DATED_VEHICLE_JOURNEY_REF)
                 .handler(estimatedVehiculeJourneyService);

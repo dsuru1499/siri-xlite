@@ -14,16 +14,16 @@ public class StopPointsDiscoveryParameters extends DefaultParameters {
     public static final String Y_TILE = "y";
 
     private Integer xtile;
-
     private Integer ytile;
 
     @Override
     public void configure(RoutingContext context) throws SiriException {
         super.configure(context);
+        setMaxAge(30);
+        setSMaxAge(600);
         setXtile(intValue(X_TILE));
         setYtile(intValue((Y_TILE)));
-        setMaxAge("max-age=30");
-        setSMaxAge("s-maxage=60");
+
     }
 
 }

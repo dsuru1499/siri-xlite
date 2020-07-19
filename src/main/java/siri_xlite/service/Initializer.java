@@ -104,7 +104,7 @@ public class Initializer {
     }
 
     private void fillVehicleJourney(GtfsImporter importer, SetValuedMap<String, String> lineRefs,
-            SetValuedMap<String, Destination> destinations) {
+                                    SetValuedMap<String, Destination> destinations) {
 
         Monitor monitor = MonitorFactory.start("vehicle_journey");
         Monitor tripMonitor = MonitorFactory.start("trip");
@@ -148,12 +148,12 @@ public class Initializer {
                     builder.vehicleLocation(location.longitude(0d).latitude(0d).build());
                     builder.vehicleJourneyName(trip.getTripId());
                     builder.operatorRef(agency.getAgencyId());
-                    builder.directionName(route.getRouteLongName() + SEP + trip.getDirectionId());
+                    builder.directionName(trip.getTripHeadSign());
                     builder.publishedLineName(route.getRouteLongName());
-                    builder.routeRef(trip.getTripHeadSign());
+                    builder.routeRef(trip.getTripId());
                     builder.vehicleModes(new ArrayList<>(route.getRouteType().ordinal()));
-                    builder.journeyPatternName(trip.getTripHeadSign());
-                    builder.journeyPatternRef(trip.getTripHeadSign());
+                    builder.journeyPatternName(trip.getTripId());
+                    builder.journeyPatternRef(trip.getTripId());
                     builder.datedVehicleJourneyRef(trip.getTripId());
                     builder.directionRef(trip.getDirectionId().name());
                     builder.lineRef(route.getRouteId());
@@ -368,29 +368,29 @@ public class Initializer {
             // if ((now.compareTo(startDate) >= 0) && (now.compareTo(endDate) <=
             // 0)) {
             switch (day) {
-            case MONDAY:
-                result = calendar.getMonday();
-                break;
-            case TUESDAY:
-                result = calendar.getTuesday();
-                break;
-            case WEDNESDAY:
-                result = calendar.getWednesday();
-                break;
-            case THURSDAY:
-                result = calendar.getThursday();
-                break;
-            case FRIDAY:
-                result = calendar.getFriday();
-                break;
-            case SATURDAY:
-                result = calendar.getSaturday();
-                break;
-            case SUNDAY:
-                result = calendar.getSunday();
-                break;
-            default:
-                break;
+                case MONDAY:
+                    result = calendar.getMonday();
+                    break;
+                case TUESDAY:
+                    result = calendar.getTuesday();
+                    break;
+                case WEDNESDAY:
+                    result = calendar.getWednesday();
+                    break;
+                case THURSDAY:
+                    result = calendar.getThursday();
+                    break;
+                case FRIDAY:
+                    result = calendar.getFriday();
+                    break;
+                case SATURDAY:
+                    result = calendar.getSaturday();
+                    break;
+                case SUNDAY:
+                    result = calendar.getSunday();
+                    break;
+                default:
+                    break;
             }
 
             // }

@@ -15,7 +15,7 @@ public abstract class ZipUtils {
         log.info("[DSU] unzip archive : " + archive + " to " + outputDir);
 
         ZipFile zipfile = new ZipFile(archive);
-        for (Enumeration<? extends ZipEntry> e = zipfile.entries(); e.hasMoreElements();) {
+        for (Enumeration<? extends ZipEntry> e = zipfile.entries(); e.hasMoreElements(); ) {
             ZipEntry entry = e.nextElement();
             unzipEntry(zipfile, entry, outputDir);
         }
@@ -36,7 +36,7 @@ public abstract class ZipUtils {
         }
 
         try (BufferedInputStream in = new BufferedInputStream(zipfile.getInputStream(entry));
-                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile))) {
+             BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile))) {
             IOUtils.copy(in, out);
         }
     }

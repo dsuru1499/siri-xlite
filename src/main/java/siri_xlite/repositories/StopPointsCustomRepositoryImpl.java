@@ -36,12 +36,6 @@ import static siri_xlite.repositories.StopPointsRepository.COLLECTION_NAME;
 @Slf4j
 public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepository<String> {
 
-    @Autowired
-    private ReactiveMongoTemplate template;
-
-    @Autowired
-    private EmbeddedCacheManager manager;
-
     private static Collector<Point, List<List<Double>>, List<List<List<Double>>>> COORDINATES_COLLECTOR = Collector.of(
             (Supplier<List<List<Double>>>) ArrayList::new, (BiConsumer<List<List<Double>>, Point>) (left, right) -> {
                 List<Double> value = new ArrayList<Double>(2);
@@ -56,6 +50,10 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
                 result.add(list);
                 return result;
             });
+    @Autowired
+    private ReactiveMongoTemplate template;
+    @Autowired
+    private EmbeddedCacheManager manager;
 
     @Override
     public Flux<String> findStopPointRefs(String id) {

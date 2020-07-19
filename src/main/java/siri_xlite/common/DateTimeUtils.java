@@ -34,6 +34,12 @@ public interface DateTimeUtils {
         return GregorianCalendar.from(ZonedDateTime.of(toLocalDateTime(xsdDateTime), ZoneId.systemDefault()));
     }
 
+    static Date toDate(LocalTime time) {
+        Instant instant = time.atDate(LocalDate.of(1970, 1, 1)).
+                atZone(ZoneId.systemDefault()).toInstant();
+        return Date.from(instant);
+    }
+
     static Date toDate(LocalDateTime dateTime) {
         return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
     }

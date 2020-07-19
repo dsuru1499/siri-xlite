@@ -19,9 +19,9 @@ public abstract class DefaultParameters implements Parameters {
 
     private String messageIdentifier;
 
-    private String maxAge = "max-age=3";
+    private Integer maxAge = 3;
 
-    private String sMaxAge = "s-maxage=30";
+    private Integer sMaxAge = 30;
 
     protected DefaultParameters() {
     }

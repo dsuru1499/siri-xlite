@@ -17,6 +17,8 @@ public class EstimatedVehiculeJourneyParameters extends DefaultParameters {
     @Override
     public void configure(RoutingContext context) throws SiriException {
         super.configure(context);
+        setMaxAge(30);
+        setSMaxAge(600);
         setDatedVehicleJourneyRef(values.get(DATED_VEHICLE_JOURNEY_REF));
     }
 

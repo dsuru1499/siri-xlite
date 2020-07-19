@@ -78,7 +78,7 @@ public class StopMonitoringService implements StopMonitoring, Constants {
         }
 
         log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
-        return repository.findByStopPointRef(parameters.getStopPointRef());
+        return repository.findByStopPointRef(parameters.getMonitoringRef());
     }
 
 }

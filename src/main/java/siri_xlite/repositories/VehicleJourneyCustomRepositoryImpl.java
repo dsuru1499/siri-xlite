@@ -13,17 +13,20 @@ import org.springframework.data.mongodb.core.query.Query;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import siri_xlite.common.Color;
+import siri_xlite.common.DateTimeUtils;
 import siri_xlite.model.VehicleJourneyDocument;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.function.BiPredicate;
 
 import static org.springframework.data.domain.Sort.Order;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
-import static siri_xlite.marshaller.json.OnwardVehicleDepartureTimesGroupMarshaller.AIMED_DEPARTURE_TIME;
+import static siri_xlite.marshaller.json.OnwardVehicleDepartureTimesGroupMarshaller.EXPECTED_DEPARTURE_TIME;
 import static siri_xlite.marshaller.json.SiriMarshaller.CALLS;
 import static siri_xlite.marshaller.json.SiriMarshaller.INDEX;
 import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
@@ -31,13 +34,21 @@ import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 @Slf4j
 public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomRepository<String> {
 
-    static final Comparator<? super VehicleJourneyDocument> aimedDepartureTimeComparator = Comparator.comparing(t -> {
+    static final Comparator<? super VehicleJourneyDocument> expectedDepartureTimeComparator = Comparator.comparing(t -> {
         Integer index = t.getInteger(INDEX);
-        List<Document> calls = t.get(CALLS, List.class);
-        Document call = calls.get(index);
-        Date result = call.get(AIMED_DEPARTURE_TIME, Date.class);
-        return result;
+        List<?> calls = t.get(CALLS, List.class);
+        Document call = (Document) calls.get(index);
+        return call.get(EXPECTED_DEPARTURE_TIME, Date.class);
     });
+
+    static final BiPredicate<? super VehicleJourneyDocument, Date> expectedDepartureTimePredicate = (t, now) -> {
+        Integer index = t.getInteger(INDEX);
+        List<?> calls = t.get(CALLS, List.class);
+        Document call = (Document) calls.get(index);
+        Date result = call.get(EXPECTED_DEPARTURE_TIME, Date.class);
+        return result.after(now);
+    };
+
     @Autowired
     private ReactiveMongoTemplate template;
 
@@ -74,12 +85,14 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
     @Override
     public Flux<VehicleJourneyDocument> findByStopPointRef(String id) {
         Monitor monitor = MonitorFactory.start(COLLECTION_NAME);
+        Date now = DateTimeUtils.toDate(LocalTime.now());
         try {
             return stopPointsRepository.findStopPointRefs(id).collectList().flatMapMany(stopPointRefs -> {
                 Query query = query(where("calls.stopPointRef").in(stopPointRefs));
-                // query.with(Sort.by(Order.by("originAimedDepartureTime")));
-                return template.find(query, Document.class, COLLECTION_NAME).flatMap(t -> create(t, stopPointRefs))
-                        .sort(aimedDepartureTimeComparator);
+                return template.find(query, Document.class, COLLECTION_NAME)
+                        .flatMap(t -> create(t, stopPointRefs))
+                        .filter(t -> expectedDepartureTimePredicate.test(t, now))
+                        .sort(expectedDepartureTimeComparator);
             });
         } finally {
             log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
@@ -90,9 +103,9 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
 
         List<VehicleJourneyDocument> list = new ArrayList<>();
 
-        List<Document> calls = document.get("calls", List.class);
+        List<?> calls = document.get("calls", List.class);
         for (int i = 0; i < calls.size(); i++) {
-            Document call = calls.get(i);
+            Document call = (Document) calls.get(i);
             if (stopPointRefs.contains(call.getString("stopPointRef"))) {
                 VehicleJourneyDocument result = new VehicleJourneyDocument(document);
                 result.put(INDEX, i);

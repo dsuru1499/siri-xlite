@@ -31,6 +31,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class SiriSubscriber<T, P extends DefaultParameters> implements Subscriber<T>, JsonUtils {
 
     static final String PROXY_REVALIDATE = "proxy-revalidate";
+    static final String MAX_AGE = "max-age=";
+    static final String S_MAX_AGE = "s-maxage=";
     static final String PUBLIC = "public";
     private static final String RECCORDED_AT_TIME = "recordedAtTime";
 
@@ -87,7 +89,7 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
                 writer.close();
                 this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .putHeader(HttpHeaders.CACHE_CONTROL,
-                                Arrays.asList(PUBLIC, parameters.getMaxAge(), parameters.getSMaxAge(),
+                                Arrays.asList(PUBLIC, MAX_AGE + parameters.getMaxAge(), S_MAX_AGE + parameters.getSMaxAge(),
                                         PROXY_REVALIDATE))
                         .putHeader(HttpHeaders.ETAG, getEtag(context))
                         .setStatusCode(HttpURLConnection.HTTP_NOT_MODIFIED).end();

@@ -13,6 +13,8 @@ public class LinesDiscoveryParameters extends DefaultParameters {
     @Override
     public void configure(RoutingContext context) throws SiriException {
         super.configure(context);
+        setMaxAge(30);
+        setSMaxAge(600);
     }
 
 }

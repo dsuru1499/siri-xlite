@@ -17,6 +17,8 @@ public class EstimatedTimetableParameters extends DefaultParameters {
     @Override
     public void configure(RoutingContext context) throws SiriException {
         super.configure(context);
+        setMaxAge(3);
+        setSMaxAge(30);
         setLineRef(values.get(LINE_REF));
     }
 

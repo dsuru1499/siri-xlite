@@ -44,7 +44,7 @@ public abstract class CollectionSubscriber<P extends DefaultParameters> extends 
                 writeEndDocument(writer);
                 this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .putHeader(HttpHeaders.CACHE_CONTROL,
-                                Arrays.asList(parameters.getMaxAge(), parameters.getSMaxAge(), PROXY_REVALIDATE))
+                                Arrays.asList(MAX_AGE + parameters.getMaxAge(), S_MAX_AGE + parameters.getSMaxAge(), PROXY_REVALIDATE))
                         .putHeader(HttpHeaders.ETAG, getEtag()).end(out.toString());
             }
         } catch (Exception e) {

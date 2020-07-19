@@ -47,7 +47,7 @@ public abstract class ItemSubscriber<P extends DefaultParameters> extends SiriSu
                 writer.close();
                 this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .putHeader(HttpHeaders.CACHE_CONTROL,
-                                Arrays.asList(PUBLIC, parameters.getMaxAge(), parameters.getSMaxAge(),
+                                Arrays.asList(PUBLIC, MAX_AGE + parameters.getMaxAge(), S_MAX_AGE + parameters.getSMaxAge(),
                                         PROXY_REVALIDATE))
                         .putHeader(HttpHeaders.ETAG, createEtag(current)).end(out.toString());
             }

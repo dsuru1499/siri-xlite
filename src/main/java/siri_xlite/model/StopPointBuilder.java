@@ -12,7 +12,7 @@ public class StopPointBuilder {
 
     @Builder
     public static StopPointDocument create(Date recordedAtTime, String stopPointRef, String parent, String stopName,
-            Document location, Collection<String> lineRefs) {
+                                           Document location, Collection<String> lineRefs) {
 
         StopPointDocument result = new StopPointDocument();
         append(result, "recordedAtTime", recordedAtTime);
