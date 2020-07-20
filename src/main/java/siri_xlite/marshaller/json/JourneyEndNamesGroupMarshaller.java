@@ -46,7 +46,7 @@ public class JourneyEndNamesGroupMarshaller implements Marshaller<Document> {
         writeField(writer, DESTINATION_REF, source.getString(DESTINATION_REF));
 
         // set destinationName
-        writeField(writer, DESTINATION_REF, source.getString(DESTINATION_NAME));
+        writeField(writer, DESTINATION_NAME, source.getString(DESTINATION_NAME));
 
         // destinationShortName :string;
         // ? originDisplayAtDestination :string;
