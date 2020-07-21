@@ -12,7 +12,7 @@ public class LineBuilder {
 
     @Builder
     public static LineDocument create(Date recordedAtTime, String lineRef, String lineName,
-                                      Collection<Document> destinations) {
+            Collection<Document> destinations) {
 
         LineDocument result = new LineDocument();
         append(result, "recordedAtTime", recordedAtTime);

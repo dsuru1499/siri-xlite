@@ -35,8 +35,7 @@ public interface DateTimeUtils {
     }
 
     static Date toDate(LocalTime time) {
-        Instant instant = time.atDate(LocalDate.of(1970, 1, 1)).
-                atZone(ZoneId.systemDefault()).toInstant();
+        Instant instant = time.atDate(LocalDate.of(1970, 1, 1)).atZone(ZoneId.systemDefault()).toInstant();
         return Date.from(instant);
     }
 

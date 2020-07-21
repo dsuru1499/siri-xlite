@@ -33,12 +33,13 @@ import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 @Slf4j
 public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomRepository<String> {
 
-    static final Comparator<? super VehicleJourneyDocument> expectedDepartureTimeComparator = Comparator.comparing(t -> {
-        Integer index = t.getInteger(INDEX);
-        List<?> calls = t.get(CALLS, List.class);
-        Document call = (Document) calls.get(index);
-        return call.get(EXPECTED_DEPARTURE_TIME, Date.class);
-    });
+    static final Comparator<? super VehicleJourneyDocument> expectedDepartureTimeComparator = Comparator
+            .comparing(t -> {
+                Integer index = t.getInteger(INDEX);
+                List<?> calls = t.get(CALLS, List.class);
+                Document call = (Document) calls.get(index);
+                return call.get(EXPECTED_DEPARTURE_TIME, Date.class);
+            });
 
     static final BiPredicate<? super VehicleJourneyDocument, Date> expectedDepartureTimePredicate = (t, now) -> {
         Integer index = t.getInteger(INDEX);
@@ -75,8 +76,7 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
 
         try {
             Query query = query(where("lineRef").is(id));
-            return template.find(query, Document.class, COLLECTION_NAME)
-                    .map(this::create)
+            return template.find(query, Document.class, COLLECTION_NAME).map(this::create)
                     .filter(t -> !t.getDate(DESTINATION_EXPECTED_ARRIVAL_TIME).before(now))
                     .sort(Comparator.comparing(t -> t.getDate(ORIGIN_EXPECTED_DEPARTURE_TIME)));
 
@@ -103,10 +103,8 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
         try {
             return stopPointsRepository.findStopPointRefs(id).collectList().flatMapMany(stopPointRefs -> {
                 Query query = query(where("calls.stopPointRef").in(stopPointRefs));
-                return template.find(query, Document.class, COLLECTION_NAME)
-                        .flatMap(t -> create(t, stopPointRefs))
-                        .filter(t -> expectedDepartureTimePredicate.test(t, now))
-                        .sort(expectedDepartureTimeComparator);
+                return template.find(query, Document.class, COLLECTION_NAME).flatMap(t -> create(t, stopPointRefs))
+                        .filter(t -> expectedDepartureTimePredicate.test(t, now)).sort(expectedDepartureTimeComparator);
             });
         } finally {
             log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);

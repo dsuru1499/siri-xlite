@@ -39,8 +39,10 @@ public class EstimatedTimetableSubscriber extends CollectionSubscriber<Estimated
             writeField(writer, DIRECTION_NAME, source.getString(DIRECTION_NAME));
             writeField(writer, DESTINATION_REF, source.getString(DESTINATION_REF));
             writeField(writer, OPERATOR_REF, source.getString(OPERATOR_REF));
-            writeField(writer, ORIGIN_EXPECTED_DEPARTURE_TIME, toLocalTime(source.getDate(ORIGIN_EXPECTED_DEPARTURE_TIME)));
-            writeField(writer, DESTINATION_EXPECTED_ARRIVAL_TIME, toLocalTime(source.getDate(DESTINATION_EXPECTED_ARRIVAL_TIME)));
+            writeField(writer, ORIGIN_EXPECTED_DEPARTURE_TIME,
+                    toLocalTime(source.getDate(ORIGIN_EXPECTED_DEPARTURE_TIME)));
+            writeField(writer, DESTINATION_EXPECTED_ARRIVAL_TIME,
+                    toLocalTime(source.getDate(DESTINATION_EXPECTED_ARRIVAL_TIME)));
 
         });
     }

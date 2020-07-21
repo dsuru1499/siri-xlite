@@ -89,8 +89,8 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
                 writer.close();
                 this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                         .putHeader(HttpHeaders.CACHE_CONTROL,
-                                Arrays.asList(PUBLIC, MAX_AGE + parameters.getMaxAge(), S_MAX_AGE + parameters.getSMaxAge(),
-                                        PROXY_REVALIDATE))
+                                Arrays.asList(PUBLIC, MAX_AGE + parameters.getMaxAge(),
+                                        S_MAX_AGE + parameters.getSMaxAge(), PROXY_REVALIDATE))
                         .putHeader(HttpHeaders.ETAG, getEtag(context))
                         .setStatusCode(HttpURLConnection.HTTP_NOT_MODIFIED).end();
             } else if (t instanceof SiriException) {
