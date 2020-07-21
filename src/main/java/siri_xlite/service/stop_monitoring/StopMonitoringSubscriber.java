@@ -50,8 +50,8 @@ public class StopMonitoringSubscriber extends CollectionSubscriber<StopMonitorin
             writeField(writer, DIRECTION_NAME, source.getString(DIRECTION_NAME));
             writeField(writer, DESTINATION_REF, source.getString(DESTINATION_REF));
             writeField(writer, OPERATOR_REF, source.getString(OPERATOR_REF));
-            writeField(writer, STOP_POINT_REF, source.getString(STOP_POINT_REF));
-            writeField(writer, ORDER, source.getInteger(ORDER));
+            writeField(writer, STOP_POINT_REF, call.getString(STOP_POINT_REF));
+            writeField(writer, ORDER, call.getInteger(ORDER));
             writeField(writer, AIMED_DEPARTURE_TIME, toLocalTime(call.getDate(AIMED_DEPARTURE_TIME)));
             writeField(writer, AIMED_ARRIVAL_TIME, toLocalTime(call.getDate(AIMED_ARRIVAL_TIME)));
         });
