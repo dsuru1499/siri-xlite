@@ -29,24 +29,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public abstract class SiriSubscriber<T, P extends DefaultParameters> implements Subscriber<T>, JsonUtils {
+    public static final String PROXY_REVALIDATE = "must-revalidate";
+    public static final String MAX_AGE = "max-age=";
+    public static final String S_MAX_AGE = "s-maxage=";
+    public static final String PUBLIC = "public";
+    public static final String RECCORDED_AT_TIME = "recordedAtTime";
+    public static final Comparator<Document> COMPARATOR = Comparator
+            .comparing(t -> t.getDate(RECCORDED_AT_TIME).getTime());
 
-    static final String PROXY_REVALIDATE = "proxy-revalidate";
-    static final String MAX_AGE = "max-age=";
-    static final String S_MAX_AGE = "s-maxage=";
-    static final String PUBLIC = "public";
-    private static final String RECCORDED_AT_TIME = "recordedAtTime";
-
-    static final Comparator<Document> COMPARATOR = Comparator.comparing(t -> t.getDate(RECCORDED_AT_TIME).getTime());
-
-    protected RoutingContext context;
-    protected JsonGenerator writer;
     @Autowired
     protected EmbeddedCacheManager manager;
-    Configuration configuration;
-    DefaultParameters parameters;
-    ByteArrayOutputStream out;
-    Document current;
-    AtomicInteger count;
+
+    protected Configuration configuration;
+    protected DefaultParameters parameters;
+    protected RoutingContext context;
+    protected ByteArrayOutputStream out;
+    protected JsonGenerator writer;
+    protected Document current;
+    protected AtomicInteger count;
 
     public static String getEtag(RoutingContext context) {
         String text = context.request().getHeader(HttpHeaders.IF_NONE_MATCH);

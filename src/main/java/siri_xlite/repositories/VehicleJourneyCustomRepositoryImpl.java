@@ -1,7 +1,5 @@
 package siri_xlite.repositories;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.infinispan.manager.EmbeddedCacheManager;
@@ -45,8 +43,8 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
         Integer index = t.getInteger(INDEX);
         List<?> calls = t.get(CALLS, List.class);
         Document call = (Document) calls.get(index);
-        Date result = call.get(EXPECTED_DEPARTURE_TIME, Date.class);
-        return result.after(now);
+        Date expectedDepartureTime = call.get(EXPECTED_DEPARTURE_TIME, Date.class);
+        return expectedDepartureTime.after(now);
     };
 
     @Autowired
@@ -60,29 +58,17 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
 
     @Override
     public Mono<VehicleJourneyDocument> findById(String id) {
-        Monitor monitor = MonitorFactory.start(COLLECTION_NAME);
-        try {
-            Query query = query(where("datedVehicleJourneyRef").is(id));
-            return template.findOne(query, VehicleJourneyDocument.class, COLLECTION_NAME);
-        } finally {
-            log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
-        }
+        Query query = query(where("datedVehicleJourneyRef").is(id));
+        return template.findOne(query, VehicleJourneyDocument.class, COLLECTION_NAME);
     }
 
     @Override
     public Flux<VehicleJourneyDocument> findByLineRef(String id) {
-        Monitor monitor = MonitorFactory.start(COLLECTION_NAME);
         Date now = DateTimeUtils.toDate(LocalTime.now());
-
-        try {
-            Query query = query(where("lineRef").is(id));
-            return template.find(query, Document.class, COLLECTION_NAME).map(this::create)
-                    .filter(t -> !t.getDate(DESTINATION_EXPECTED_ARRIVAL_TIME).before(now))
-                    .sort(Comparator.comparing(t -> t.getDate(ORIGIN_EXPECTED_DEPARTURE_TIME)));
-
-        } finally {
-            log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
-        }
+        Query query = query(where("lineRef").is(id));
+        return template.find(query, Document.class, COLLECTION_NAME).map(this::create)
+                .filter(t -> t.getDate(DESTINATION_EXPECTED_ARRIVAL_TIME).after(now))
+                .sort(Comparator.comparing(t -> t.getDate(ORIGIN_EXPECTED_DEPARTURE_TIME)));
     }
 
     private VehicleJourneyDocument create(Document document) {
@@ -97,18 +83,12 @@ public class VehicleJourneyCustomRepositoryImpl implements VehicleJourneyCustomR
 
     @Override
     public Flux<VehicleJourneyDocument> findByStopPointRef(String id) {
-        Monitor monitor = MonitorFactory.start(COLLECTION_NAME);
         Date now = DateTimeUtils.toDate(LocalTime.now());
-
-        try {
-            return stopPointsRepository.findStopPointRefs(id).collectList().flatMapMany(stopPointRefs -> {
-                Query query = query(where("calls.stopPointRef").in(stopPointRefs));
-                return template.find(query, Document.class, COLLECTION_NAME).flatMap(t -> create(t, stopPointRefs))
-                        .filter(t -> expectedDepartureTimePredicate.test(t, now)).sort(expectedDepartureTimeComparator);
-            });
-        } finally {
-            log.info(Color.YELLOW + monitor.stop() + Color.NORMAL);
-        }
+        return stopPointsRepository.findStopPointRefs(id).collectList().flatMapMany(stopPointRefs -> {
+            Query query = query(where("calls.stopPointRef").in(stopPointRefs));
+            return template.find(query, Document.class, COLLECTION_NAME).flatMap(t -> create(t, stopPointRefs))
+                    .filter(t -> expectedDepartureTimePredicate.test(t, now)).sort(expectedDepartureTimeComparator);
+        });
     }
 
     private Flux<VehicleJourneyDocument> create(Document document, List<String> stopPointRefs) {

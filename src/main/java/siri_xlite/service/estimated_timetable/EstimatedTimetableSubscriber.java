@@ -1,11 +1,19 @@
 package siri_xlite.service.estimated_timetable;
 
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.reactivex.exceptions.Exceptions;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import org.springframework.http.MediaType;
 import siri_xlite.common.DateTimeUtils;
+import siri_xlite.marshaller.json.SiriExceptionMarshaller;
 import siri_xlite.service.common.CollectionSubscriber;
 import siri_xlite.service.common.Constants;
+import siri_xlite.service.common.SiriException;
+
+import java.util.Arrays;
 
 import static siri_xlite.common.DateTimeUtils.toLocalTime;
 import static siri_xlite.marshaller.json.EstimatedTimetableAlterationGroupMarshaller.DATED_VEHICLE_JOURNEY_REF;
@@ -47,4 +55,26 @@ public class EstimatedTimetableSubscriber extends CollectionSubscriber<Estimated
         });
     }
 
+    @Override
+    public void onComplete() {
+        try {
+            if (count.get() == 0) {
+                SiriExceptionMarshaller.getInstance().write(writer, SiriException.createInvalidDataReferencesError());
+                writer.close();
+                this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .setStatusCode(HttpResponseStatus.NOT_FOUND.code()).end(out.toString());
+            } else {
+                writer.writeEndArray();
+                writeEndDocument(writer);
+                this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).putHeader(
+                        HttpHeaders.CACHE_CONTROL,
+                        Arrays.asList(PUBLIC, MAX_AGE + parameters.getMaxAge(), S_MAX_AGE + parameters.getSMaxAge()))
+                        .end(out.toString());
+                ;
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            Exceptions.propagate(e);
+        }
+    }
 }

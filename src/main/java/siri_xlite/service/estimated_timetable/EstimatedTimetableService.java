@@ -50,7 +50,7 @@ public class EstimatedTimetableService implements EstimatedTimetable, Constants 
                         context);
                 subscriber.configure(configuration, parameters, context);
                 return parameters;
-            }).flatMap(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(subscriber, context))
+            }).flatMap(parameters -> stream(parameters, context))
                     .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))
                     .subscribe(subscriber);
         } catch (Exception e) {
@@ -58,26 +58,7 @@ public class EstimatedTimetableService implements EstimatedTimetable, Constants 
         }
     }
 
-    private void onComplete(EstimatedTimetableSubscriber subscriber, RoutingContext context) {
-        String etag = subscriber.getEtag();
-        if (StringUtils.isNotEmpty(etag)) {
-            Cache<String, String> cache = manager.getCache(ETAGS);
-            String uri = context.request().uri();
-            cache.putForExternalRead(uri, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
-        }
-    }
-
     private Flux<VehicleJourneyDocument> stream(EstimatedTimetableParameters parameters, RoutingContext context) {
-        Cache<String, String> cache = manager.getCache(ETAGS);
-        String etag = getEtag(context);
-        if (StringUtils.isNotEmpty(etag)) {
-            String uri = context.request().uri();
-            String cached = cache.get(uri);
-            if (StringUtils.equals(cached, etag)) {
-                throw new NotModifiedException();
-            }
-        }
-
         log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
         return repository.findByLineRef(parameters.getLineRef());
     }
