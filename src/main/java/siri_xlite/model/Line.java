@@ -11,8 +11,8 @@ import java.util.List;
 @Accessors(fluent = true)
 @Builder
 class Line {
-    private String lineRef;
-    private String lineName;
+    String lineRef;
+    String lineName;
     @Singular
-    private List<Destination> destinations;
+    List<Destination> destinations;
 }

@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @Builder
 class JourneyPart {
-    private String journeyPartRef;
-    private String trainNumberRef;
+    String journeyPartRef;
+    String trainNumberRef;
     // operatorRef :string;
 }

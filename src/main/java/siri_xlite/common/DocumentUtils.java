@@ -7,18 +7,15 @@ import java.util.Collection;
 
 public interface DocumentUtils {
 
-    static Document append(Document document, String key, Object value) {
+    static void append(Document document, String key, Object value) {
         if (value != null) {
             document.append(key, value);
         }
-        return document;
     }
 
-    static Document append(Document document, String key, Collection<?> values) {
+    static void append(Document document, String key, Collection<?> values) {
         if (CollectionUtils.isNotEmpty(values)) {
             document.append(key, values);
         }
-
-        return document;
     }
 }

@@ -8,7 +8,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @Builder
 public class Destination {
-    private String destinationRef;
-    private String placeName;
+    String destinationRef;
+    String placeName;
     // directionRef :string;
 }

@@ -36,7 +36,7 @@ public class MonitorSubscriber<T> implements Subscriber<T> {
         return MonitorSubscriber.create(label, onNext, onError, null, null);
     }
 
-    private static <T> MonitorSubscriber<T> create(String label, Consumer<? super T> onNext,
+    public static <T> MonitorSubscriber<T> create(String label, Consumer<? super T> onNext,
                                                    Consumer<? super Throwable> onError, Action onComplete, Consumer<? super Subscription> onSubscribe) {
         return new MonitorSubscriber<>(label, onNext, onError, onComplete, onSubscribe);
     }

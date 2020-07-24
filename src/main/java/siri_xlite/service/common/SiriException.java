@@ -21,16 +21,16 @@ public class SiriException extends Exception {
         this(ERROR_CODE.OtherError);
     }
 
-    private SiriException(ERROR_CODE code) {
+    public SiriException(ERROR_CODE code) {
         this(code, code.name(), null);
     }
 
-    private SiriException(ERROR_CODE code, String description) {
+    public SiriException(ERROR_CODE code, String description) {
         super(description);
         this.code = code;
     }
 
-    private SiriException(ERROR_CODE code, String description, Map<String, Object> values) {
+    public SiriException(ERROR_CODE code, String description, Map<String, Object> values) {
         super(description);
         this.code = code;
         this.values = values;
@@ -40,11 +40,11 @@ public class SiriException extends Exception {
         this(ERROR_CODE.OtherError, cause);
     }
 
-    private SiriException(ERROR_CODE code, Throwable cause) {
+    public SiriException(ERROR_CODE code, Throwable cause) {
         this(code, ExceptionUtils.getMessage(cause), null, cause);
     }
 
-    private SiriException(ERROR_CODE code, String description, Map<String, Object> values, Throwable cause) {
+    public SiriException(ERROR_CODE code, String description, Map<String, Object> values, Throwable cause) {
         super(description, cause);
         this.code = code;
         this.values = values;

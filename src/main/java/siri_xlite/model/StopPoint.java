@@ -9,14 +9,14 @@ import java.util.List;
 @Value
 @Accessors(fluent = true)
 @Builder
-final class StopPoint {
+class StopPoint {
     // timingPoint :bool;
     // monitored :bool;
-    private String stopPointRef;
-    private String stopName;
+    String stopPointRef;
+    String stopName;
     // stopAreaRef ;
-    private List<String> lineRefs;
+    List<String> lineRefs;
     // features : [Feature];
-    private Location location;
+    Location location;
     // url ;
 }

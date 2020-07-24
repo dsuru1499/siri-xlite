@@ -7,12 +7,12 @@ import lombok.experimental.Accessors;
 @Value
 @Accessors(fluent = true)
 @Builder
-final class DistributorConnectionLink {
-    private String connectionLinkCode;
-    private String stopPointRef;
-    private String stopPointName;
-    private Long defaultDuration;
-    private Long frequentTravellerDuration;
-    private Long occasionalTravellerDuration;
-    private Long impairedAccessDuration;
+class DistributorConnectionLink {
+    String connectionLinkCode;
+    String stopPointRef;
+    String stopPointName;
+    Long defaultDuration;
+    Long frequentTravellerDuration;
+    Long occasionalTravellerDuration;
+    Long impairedAccessDuration;
 }

@@ -24,9 +24,9 @@ public class DisruptionGroupMarshaller implements Marshaller<Document> {
 
         // set situationRef
 
-        List<String> situationRefs = source.get(SITUATION_REFS, List.class);
+        List<?> situationRefs = source.get(SITUATION_REFS, List.class);
         writeArray(writer, SITUATION_REFS, situationRefs,
-                t -> writeObject(writer, t, situationRef -> writeField(writer, SITUATION_SIMPLE_REF, situationRef)));
+                t -> writeObject(writer, t, situationRef -> writeField(writer, SITUATION_SIMPLE_REF, (String) situationRef)));
     }
 
 }

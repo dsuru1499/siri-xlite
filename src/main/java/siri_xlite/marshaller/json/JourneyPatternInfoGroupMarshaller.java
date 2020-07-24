@@ -35,9 +35,10 @@ public class JourneyPatternInfoGroupMarshaller implements Marshaller<Document> {
 
         // set vehicleMode
 
-        List<Integer> values = source.get(VEHICLE_MODES, List.class);
+        List<?> values = source.get(VEHICLE_MODES, List.class);
         if (CollectionUtils.isNotEmpty(values)) {
-            String text = values.stream().map(t -> VehicleModesEnumeration.values()[t].name())
+            String text = values.stream()
+                    .map(t -> VehicleModesEnumeration.values()[(Integer) t].name())
                     .collect(Collectors.joining(","));
             writeField(writer, VEHICLE_MODES, text);
         }

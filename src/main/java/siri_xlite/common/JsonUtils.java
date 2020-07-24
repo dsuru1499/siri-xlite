@@ -29,6 +29,9 @@ public class JsonUtils {
     private static final JsonFactory factory = new JsonFactory();
 
     public static void writeStartDocument(JsonGenerator writer, String href, String version) {
+        if (writer.isClosed()) {
+            ExceptionUtils.wrapAndThrow(new Exception());
+        }
     }
 
     public static void writeEndDocument(JsonGenerator writer) {
@@ -80,7 +83,7 @@ public class JsonUtils {
     }
 
     public static void writeArrayField(JsonGenerator writer, String name, Document source) {
-        writeArray(writer, name, source.get(name, List.class));
+        writeArray(writer, name, (List<?>) source.get(name, List.class));
     }
 
     public static <T> void writeArrayField(JsonGenerator writer, String name, Document source, Consumer<T> consumer) {

@@ -63,7 +63,7 @@ public class Initializer {
     }
 
     @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Paris")
-    boolean initialize() {
+    void initialize() {
 
         Monitor monitor = MonitorFactory.start();
         log.info(Color.YELLOW + "[DSU] initialize model (~ 1mn)" + Color.NORMAL);
@@ -98,8 +98,6 @@ public class Initializer {
 
         importer.dispose();
         log.info(Color.YELLOW + "[DSU] model initialized : " + monitor.stop() + Color.NORMAL);
-
-        return Boolean.TRUE;
 
     }
 

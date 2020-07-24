@@ -35,14 +35,16 @@ public class JourneyEndNamesGroupMarshaller implements Marshaller<Document> {
         // destinationDisplayAtOrigin :string;
 
         // set via
+        List<?> vias = source.get(VIAS, List.class);
+        writeArray(writer, VIAS, vias, o -> {
+            if (o instanceof Document) {
+                Document via = (Document) o;
+                // set placeRef
+                writeStringField(writer, PLACE_REF, via);
 
-        writeArray(writer, VIAS, source.get(VIAS, List.class), (Document t) -> {
-
-            // set placeRef
-            writeStringField(writer, PLACE_REF, t);
-
-            // set placeName
-            writeStringField(writer, PLACE_NAME, t);
+                // set placeName
+                writeStringField(writer, PLACE_NAME, via);
+            }
         });
 
         // set destinationRef

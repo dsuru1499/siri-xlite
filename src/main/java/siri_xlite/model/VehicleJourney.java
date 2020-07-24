@@ -11,83 +11,83 @@ import java.util.List;
 @Value
 @Accessors(fluent = true)
 @Builder
-final class VehicleJourney {
+class VehicleJourney {
     // EstimatedVehicleJourney
-    private Date recordedAtTime;
+    Date recordedAtTime;
 
     // LineIdentityGroup
-    private String lineRef;
-    private String directionRef;
+    String lineRef;
+    String directionRef;
 
     // framedVehicleJourneyRef :string;
     // datedVehicleJourneyCode :string;
 
     // EstimatedTimetableAlterationGroup
-    private String datedVehicleJourneyRef;
+    String datedVehicleJourneyRef;
     // datedVehicleJourneyIndirectRef :string;
     // estimatedVehicleJourneyCode :string;
-    private Boolean extraJourney;
-    private Boolean cancellation;
+    Boolean extraJourney;
+    Boolean cancellation;
 
     // JourneyPatternInfoGroup
-    private String journeyPatternRef;
-    private String journeyPatternName;
+    String journeyPatternRef;
+    String journeyPatternName;
     @Singular
-    private List<Integer> vehicleModes;
-    private String routeRef;
-    private String publishedLineName;
+    List<Integer> vehicleModes;
+    String routeRef;
+    String publishedLineName;
     // groupOfLinesRef :string;
-    private String directionName;
+    String directionName;
     // externalLineRef :string;
 
     // VehicleJourneyInfoGroup
-    private String originRef;
-    private String originName;
+    String originRef;
+    String originName;
     // originShortName :string;
     // destinationDisplayAtOrigin :string;
     @Singular
-    private List<Via> vias;
-    private String destinationRef;
-    private String destinationName;
+    List<Via> vias;
+    String destinationRef;
+    String destinationName;
     // destinationShortName :string;
     // originDisplayAtDestination :string;
-    private String operatorRef;
-    private String productCategoryRef;
+    String operatorRef;
+    String productCategoryRef;
     @Singular
-    private List<String> serviceFeatureRefs;
+    List<String> serviceFeatureRefs;
     @Singular
-    private List<String> vehicleFeatureRefs;
-    private String vehicleJourneyName;
+    List<String> vehicleFeatureRefs;
+    String vehicleJourneyName;
     @Singular
-    private List<String> journeyNotes;
+    List<String> journeyNotes;
     // publicContact :SimpleContact;
     // operationsContact:SimpleContact;
-    private Boolean headwayService;
-    private Date originAimedDepartureTime;
-    private Date destinationAimedArrivalTime;
-    private Integer firstOrLastJourney;
+    Boolean headwayService;
+    Date originAimedDepartureTime;
+    Date destinationAimedArrivalTime;
+    Integer firstOrLastJourney;
     // DisruptionGroup
     // ? facilityConditionElement :[FacilityCondition];
     // facilityChangeElement :[FacilityChange];
     @Singular
-    private List<String> situationRefs;
+    List<String> situationRefs;
 
     // JourneyProgressGroup
-    private Boolean monitored;
-    private String monitoringError;
-    private Boolean inCongestion;
-    private Boolean inPanic;
+    Boolean monitored;
+    String monitoringError;
+    Boolean inCongestion;
+    Boolean inPanic;
     // predictionInaccurate :bool;
     // dataSource :string;
     // confidenceLevel :string;
-    private Location vehicleLocation;
+    Location vehicleLocation;
     // ? locationRecordedAtTime :long;
-    private Double bearing;
+    Double bearing;
     // progressRate :string;
     // ? velocity : long;
     // ? engineOn :bool;
-    private Integer occupancy;
-    private Long delay;
+    Integer occupancy;
+    Long delay;
     // progressStatus :[string];
     // vehicleStatus : string;
 
@@ -101,9 +101,9 @@ final class VehicleJourney {
     // driverRef :string;
     // driverName :string;
     @Singular
-    private List<String> trainNumbers;
+    List<String> trainNumbers;
     @Singular
-    private List<JourneyPart> journeyParts;
+    List<JourneyPart> journeyParts;
 
     // isCompleteStopSequence :bool;
 
@@ -111,8 +111,8 @@ final class VehicleJourney {
 
     // DatedVehicleJourney
 
-    private String originDisplay;
-    private String destinationDisplay;
+    String originDisplay;
+    String destinationDisplay;
     // lineNote :[string];
 
     @Singular

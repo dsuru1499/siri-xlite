@@ -7,9 +7,9 @@ import lombok.experimental.Accessors;
 @Value
 @Accessors(fluent = true)
 @Builder
-final class Via {
+class Via {
     // viaPriority :long;
-    private String placeRef;
-    private String placeName;
+    String placeRef;
+    String placeName;
     // placeShortName :string;
 }

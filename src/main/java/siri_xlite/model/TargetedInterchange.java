@@ -7,18 +7,18 @@ import lombok.experimental.Accessors;
 @Value
 @Accessors(fluent = true)
 @Builder
-final class TargetedInterchange {
-    private String interchangeCode;
-    private String distributorVehicleJourneyRef;
+class TargetedInterchange {
+    String interchangeCode;
+    String distributorVehicleJourneyRef;
     // distributorConnectionLinkRef ;
-    private DistributorConnectionLink distributorConnectionLink;
+    DistributorConnectionLink distributorConnectionLink;
     // distributorVisitNumber :long;
     // distributorOrder :long;
-    private Boolean staySeated;
-    private Boolean guaranteed;
+    Boolean staySeated;
+    Boolean guaranteed;
     // advertised :bool;
     // standardWaitTime :long;
-    private Long maximumWaitTime;
+    Long maximumWaitTime;
     // maximumAutomaticWaitTime :long;
     // standardTransferTime :long;
     // minimumTransferTime :long;

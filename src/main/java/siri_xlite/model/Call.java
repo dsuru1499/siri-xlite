@@ -11,16 +11,16 @@ import java.util.List;
 @Value
 @Accessors(fluent = true)
 @Builder
-final class Call {
+class Call {
     // EstimatedCallStructure
-    private Boolean extraCall;
-    private Boolean cancellation;
+    Boolean extraCall;
+    Boolean cancellation;
 
     // StopPointInSequenceGroup
-    private String stopPointRef;
+    String stopPointRef;
     // visitNumber :ushort;
-    private Integer order;
-    private String stopPointName;
+    Integer order;
+    String stopPointName;
 
     // CallRealTimeInfoGroup
     // predictionInaccurate :bool;
@@ -30,8 +30,8 @@ final class Call {
     // timingPoint :bool;
     // boardingStretch :bool;
     // requestStop :bool;
-    private String originDisplay;
-    private String destinationDisplay;
+    String originDisplay;
+    String destinationDisplay;
 
     // CallNoteGroup
     // callNote :[string];
@@ -40,60 +40,60 @@ final class Call {
     // facilityConditionElement: [FacilityCondition];
     // facilityChangeElement :FacilityChange;
     @Singular
-    private List<String> situationRefs;
+    List<String> situationRefs;
 
     // OnwardVehicleArrivalTimesGroup VehicleArrivalTimesGroup, MonitoredCallArrivalTimesGroup
-    private Date aimedArrivalTime;
-    private Date actualDepartureTime;
-    private Date expectedArrivalTime;
+    Date aimedArrivalTime;
+    Date actualDepartureTime;
+    Date expectedArrivalTime;
     // expectedArrivalPredictionQuality :PredictionQuality;
     // latestExpectedArrivalTime :long;
 
     // MonitoredStopArrivalStatusGroup
-    private Integer arrivalStatus;
-    private String arrivalProximityText;
-    private String arrivalPlatformName;
+    Integer arrivalStatus;
+    String arrivalProximityText;
+    String arrivalPlatformName;
     // arrivalBoardingActivity :byte;
     // arrivalStopAssignment :StopAssignment;
     // arrivalOperatorRefs :[string];
 
     // OnwardVehicleDepartureTimesGroup VehicleDepartureTimesGroup, MonitoredCallDepartureTimesGroup
-    private Date aimedDepartureTime;
-    private Date expectedDepartureTime;
+    Date aimedDepartureTime;
+    Date expectedDepartureTime;
     // provisionalExpectedDepartureTime :long;
     // earliestExpectedDepartureTime :long;
     // expectedDeparturePredictionQuality :PredictionQuality;
-    private Date actualArrivalTime;
+    Date actualArrivalTime;
 
     // PassengerDepartureTimesGroup
     // aimedLatestPassengerAccessTime :long;
     // expectedLatestPassengerAccessTime :long;
 
     // MonitoredStopDepartureStatusGroup
-    private Integer departureStatus;
+    Integer departureStatus;
     // departureProximityText :string;
-    private String departurePlatformName;
-    private Integer departureBoardingActivity;
+    String departurePlatformName;
+    Integer departureBoardingActivity;
     // departureStopAssignment :StopAssignment;
     // departureOperatorRefs :[string];
 
     // HeadwayIntervalGroup
-    private Long aimedHeadwayInterval;
-    private Long expectedHeadwayInterval;
+    Long aimedHeadwayInterval;
+    Long expectedHeadwayInterval;
 
     // StopProximityGroup
-    private Long distanceFromStop;
-    private Long numberOfStopsAway;
+    Long distanceFromStop;
+    Long numberOfStopsAway;
 
     // MonitoredCallStructure
 
     // CallRealtimeGroup
-    private Boolean vehicleAtStop;
+    Boolean vehicleAtStop;
     // vehicleLocationAtStop : Location;
 
     // CallRailGroup
     // reversesAtStop :bool;
-    private Boolean platformTraversal;
+    Boolean platformTraversal;
     // signalStatus :string;
 
     // DatedCallStructure

@@ -34,12 +34,13 @@ public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<Estimated
             TrainOperationalInfoGroupMarshaller.getInstance().write(writer, source);
 
             // EstimatedCalls calls
-            writeArray(writer, ESTIMATED_CALLS, source.get(CALLS, List.class), this::writeEstimatedCall);
+            List<?> calls = source.get(CALLS, List.class);
+            writeArray(writer, ESTIMATED_CALLS, calls, this::writeEstimatedCall);
         });
     }
 
-    private void writeEstimatedCall(Document t) {
-        writeObject(writer, t, source -> {
+    private void writeEstimatedCall(Object o) {
+        writeObject(writer, (Document) o, source -> {
             StopPointInSequenceGroupMarshaller.getInstance().write(writer, source);
 
             // setExtraCall
