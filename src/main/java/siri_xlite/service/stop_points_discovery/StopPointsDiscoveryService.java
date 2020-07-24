@@ -18,16 +18,11 @@ import siri_xlite.common.OSMUtils;
 import siri_xlite.model.StopPointDocument;
 import siri_xlite.repositories.NotModifiedException;
 import siri_xlite.repositories.StopPointsRepository;
-import siri_xlite.service.common.Constants;
-import siri_xlite.service.common.Messages;
-import siri_xlite.service.common.ParametersFactory;
-import siri_xlite.service.common.StopPointsDiscovery;
+import siri_xlite.service.common.*;
 
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
-
-import static siri_xlite.repositories.StopPointsRepository.COLLECTION_NAME;
-import static siri_xlite.service.common.SiriSubscriber.getEtag;
 
 @Slf4j
 @Service
@@ -63,26 +58,29 @@ public class StopPointsDiscoveryService implements StopPointsDiscovery, Constant
     }
 
     private void onComplete(StopPointsDiscoverySubcriber subscriber, RoutingContext context) {
-        String eTag = subscriber.getEtag();
-        if (StringUtils.isNotEmpty(eTag)) {
+        Date lastModified = subscriber.getLastModified();
+        if (lastModified != null) {
             Cache<String, String> cache = manager.getCache(ETAGS);
             String uri = context.request().uri();
-            cache.putForExternalRead(uri, eTag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
+            cache.putForExternalRead(uri, String.valueOf(lastModified.getTime()), LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
         }
     }
 
     private Flux<StopPointDocument> stream(StopPointsDiscoveryParameters parameters, RoutingContext context) {
-        Cache<String, String> cache = manager.getCache(ETAGS);
-        String eTag = getEtag(context);
-        if (StringUtils.isNotEmpty(eTag)) {
-            String uri = context.request().uri();
+        Date when = CacheControl.getLastModified(context);
+        String uri = context.request().uri();
+        if (when != null) {
+            Cache<String, String> cache = manager.getCache(ETAGS);
             String cached = cache.get(uri);
-            if (StringUtils.equals(cached, eTag)) {
-                throw new NotModifiedException();
+            if (StringUtils.isNotEmpty(cached)) {
+                Date lastModified = new Date(Long.parseLong(cached));
+                if (lastModified.after(when)) {
+                    throw new NotModifiedException();
+                }
             }
         }
 
-        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
+        log.info(messages.getString(LOAD_FROM_BACKEND), uri);
         if (parameters.getXtile() != null && parameters.getYtile() != null) {
             Polygon polygon = OSMUtils.location(parameters.getXtile(), parameters.getYtile());
             return repository.findAllByLocation(polygon);

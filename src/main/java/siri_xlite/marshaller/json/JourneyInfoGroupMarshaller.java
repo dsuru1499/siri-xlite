@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class JourneyInfoGroupMarshaller implements Marshaller<Document> {

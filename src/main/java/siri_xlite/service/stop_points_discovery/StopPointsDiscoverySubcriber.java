@@ -25,8 +25,8 @@ public class StopPointsDiscoverySubcriber extends CollectionSubscriber<StopPoint
             writeField(writer, STOP_POINT_REF, source.getString(STOP_POINT_REF));
             writeField(writer, STOP_NAME, source.getString(STOP_NAME));
 
-            writeArray(writer, LINES, (Collection<String>) source.get(LINE_REFS),
-                    value -> writeObject(writer, value, (lineRef) -> writeField(writer, LINE_REFS, lineRef)));
+            writeArray(writer, LINES, (Collection<?>) source.get(LINE_REFS),
+                    value -> writeObject(writer, value, (lineRef) -> writeField(writer, LINE_REFS, (String) lineRef)));
             writeObject(writer, LOCATION, (Document) source.get(LOCATION), (Document location) -> {
                 writeField(writer, LONGITUDE, location.getDouble(LONGITUDE));
                 writeField(writer, LATITUDE, location.getDouble(LATITUDE));

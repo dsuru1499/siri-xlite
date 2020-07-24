@@ -8,14 +8,8 @@ import java.util.GregorianCalendar;
 
 public interface DateTimeUtils {
 
-    // static DateTimeFormatter XSD_DATETIME = DateTimeFormatter.ofPattern("%Y-%M-%DT%h:%m:%s%z");
-
     static LocalDateTime toLocalDateTime(Date date) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
-    }
-
-    static LocalTime toLocalTime(Date date) {
-        return LocalTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
     }
 
     static LocalDateTime toLocalDateTime(GregorianCalendar calendar) {
@@ -30,8 +24,8 @@ public interface DateTimeUtils {
         return GregorianCalendar.from(ZonedDateTime.of(dateTime, ZoneId.systemDefault()));
     }
 
-    static GregorianCalendar toGregorianCalendar(String xsdDateTime) {
-        return GregorianCalendar.from(ZonedDateTime.of(toLocalDateTime(xsdDateTime), ZoneId.systemDefault()));
+    static LocalTime toLocalTime(Date date) {
+        return LocalTime.ofInstant(Instant.ofEpochMilli(date.getTime()), ZoneId.systemDefault());
     }
 
     static Date toDate(LocalTime time) {
@@ -43,12 +37,12 @@ public interface DateTimeUtils {
         return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    static Date toDate(String xsdDateTime) {
-        return Date.from(toLocalDateTime(xsdDateTime).atZone(ZoneId.systemDefault()).toInstant());
+    static Date fromXsdDateTime(String text) {
+        return Date.from(fromLocalDateTime(text).atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    static LocalDateTime toLocalDateTime(String xsdDateTime) {
-        return LocalDateTime.parse(xsdDateTime, DateTimeFormatter.ISO_DATE_TIME);
+    static LocalDateTime fromLocalDateTime(String text) {
+        return LocalDateTime.parse(text, DateTimeFormatter.ISO_DATE_TIME);
     }
 
     static long toEpochMilli(Time time) {
@@ -57,4 +51,13 @@ public interface DateTimeUtils {
                 .withSecond(localTime.getSecond()).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
+    static String toRFC1123(Date date) {
+        ZonedDateTime time = ZonedDateTime.ofInstant(date.toInstant(), ZoneId.of("GMT"));
+        return DateTimeFormatter.RFC_1123_DATE_TIME.format(time);
+    }
+
+    static Date fromRFC1123(String text) {
+        LocalDateTime dateTime = LocalDateTime.parse(text, DateTimeFormatter.RFC_1123_DATE_TIME);
+        return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
 }

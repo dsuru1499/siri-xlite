@@ -6,8 +6,6 @@ import io.reactivex.exceptions.Exceptions;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.reactivestreams.Subscriber;
@@ -15,6 +13,7 @@ import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import siri_xlite.Configuration;
+import siri_xlite.common.DateTimeUtils;
 import siri_xlite.common.JsonUtils;
 import siri_xlite.marshaller.json.SiriExceptionMarshaller;
 import siri_xlite.repositories.NotModifiedException;
@@ -22,24 +21,14 @@ import siri_xlite.repositories.NotModifiedException;
 import java.io.ByteArrayOutputStream;
 import java.net.HttpURLConnection;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+
 
 @Slf4j
 public abstract class SiriSubscriber<T, P extends DefaultParameters> implements Subscriber<T>, JsonUtils {
-    public static final String PROXY_REVALIDATE = "must-revalidate";
-    public static final String MAX_AGE = "max-age=";
-    public static final String S_MAX_AGE = "s-maxage=";
-    public static final String PUBLIC = "public";
-    public static final String RECCORDED_AT_TIME = "recordedAtTime";
-    public static final Comparator<Document> COMPARATOR = Comparator
-            .comparing(t -> t.getDate(RECCORDED_AT_TIME).getTime());
 
     @Autowired
     protected EmbeddedCacheManager manager;
-
     protected Configuration configuration;
     protected DefaultParameters parameters;
     protected RoutingContext context;
@@ -47,25 +36,6 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
     protected JsonGenerator writer;
     protected Document current;
     protected AtomicInteger count;
-
-    public static String getEtag(RoutingContext context) {
-        String text = context.request().getHeader(HttpHeaders.IF_NONE_MATCH);
-        String[] noneMatch = (StringUtils.isNotEmpty(text)) ? text.split(",") : ArrayUtils.EMPTY_STRING_ARRAY;
-        return (ArrayUtils.isNotEmpty(noneMatch)) ? noneMatch[0].replaceAll("^\"|\"$", "") : null;
-    }
-
-    private static String getEtag(Document document) {
-        return document.getObjectId(ID).toHexString();
-    }
-
-    public static String createEtag(List<? extends Document> list) {
-        Optional<? extends Document> result = list.stream().max(COMPARATOR);
-        return result.map(SiriSubscriber::createEtag).orElse(null);
-    }
-
-    static String createEtag(Document document) {
-        return (document != null) ? String.valueOf(document.getDate(RECCORDED_AT_TIME).getTime()) : null;
-    }
 
     public void configure(Configuration configuration, P parameters, RoutingContext context) {
         this.configuration = configuration;
@@ -88,10 +58,10 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
             if (t instanceof NotModifiedException) {
                 writer.close();
                 this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .putHeader(HttpHeaders.CACHE_CONTROL,
-                                Arrays.asList(PUBLIC, MAX_AGE + parameters.getMaxAge(),
-                                        S_MAX_AGE + parameters.getSMaxAge(), PROXY_REVALIDATE))
-                        .putHeader(HttpHeaders.ETAG, getEtag(context))
+                        .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(
+                                CacheControl.MAX_AGE + parameters.getMaxAge(),
+                                CacheControl.S_MAX_AGE + parameters.getSMaxAge()))
+                        .putHeader(HttpHeaders.LAST_MODIFIED, DateTimeUtils.toRFC1123(CacheControl.getLastModified(context)))
                         .setStatusCode(HttpURLConnection.HTTP_NOT_MODIFIED).end();
             } else if (t instanceof SiriException) {
                 log.error(t.getMessage(), t);
@@ -111,9 +81,4 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
             Exceptions.propagate(e);
         }
     }
-
-    public final boolean noneMatch(Document document) {
-        return !StringUtils.equals(getEtag(document), getEtag(context));
-    }
-
 }

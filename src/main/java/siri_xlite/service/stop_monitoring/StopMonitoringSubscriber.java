@@ -7,12 +7,15 @@ import io.vertx.core.http.HttpServerRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.http.MediaType;
+import siri_xlite.service.common.CacheControl;
+import siri_xlite.common.DateTimeUtils;
 import siri_xlite.marshaller.json.SiriExceptionMarshaller;
 import siri_xlite.service.common.CollectionSubscriber;
 import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.SiriException;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static siri_xlite.common.DateTimeUtils.toLocalTime;
@@ -43,8 +46,8 @@ public class StopMonitoringSubscriber extends CollectionSubscriber<StopMonitorin
             List<?> calls = source.get(CALLS, List.class);
             Document call = (Document) calls.get(index);
 
-            String url = request.scheme() + COLON + SEP + SEP + request.host() + APPLICATION + SEP
-                    + ESTIMATED_VEHICLE_JOURNEY + SEP + source.getString(DATED_VEHICLE_JOURNEY_REF) + HASH + index;
+            String url = APPLICATION + SEP + ESTIMATED_VEHICLE_JOURNEY + SEP
+                    + source.getString(DATED_VEHICLE_JOURNEY_REF) + HASH + index;
             writeField(writer, HREF, url);
 
             // metadata
@@ -67,13 +70,18 @@ public class StopMonitoringSubscriber extends CollectionSubscriber<StopMonitorin
             if (count.get() == 0) {
                 SiriExceptionMarshaller.getInstance().write(writer, SiriException.createInvalidDataReferencesError());
                 writer.close();
-                this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .setStatusCode(HttpResponseStatus.NOT_FOUND.code()).end(out.toString());
+                this.context.response()
+                        .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
+                        .end(out.toString());
             } else {
                 writer.writeEndArray();
                 writeEndDocument(writer);
-                this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(PUBLIC, MAX_AGE + parameters.getMaxAge()))
+                this.context.response()
+                        .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(
+                                CacheControl.MAX_AGE + parameters.getMaxAge()))
+                        .putHeader(HttpHeaders.LAST_MODIFIED, DateTimeUtils.toRFC1123(new Date()))
                         .end(out.toString());
                 ;
             }

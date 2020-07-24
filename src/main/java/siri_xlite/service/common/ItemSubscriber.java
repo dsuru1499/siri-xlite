@@ -7,16 +7,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.reactivestreams.Subscription;
 import org.springframework.http.MediaType;
+import siri_xlite.common.DateTimeUtils;
 import siri_xlite.marshaller.json.SiriExceptionMarshaller;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public abstract class ItemSubscriber<P extends DefaultParameters> extends SiriSubscriber<Document, P> {
 
     private final AtomicInteger count = new AtomicInteger();
-    private Document current;
 
     @Override
     public void onSubscribe(Subscription s) {
@@ -41,15 +42,18 @@ public abstract class ItemSubscriber<P extends DefaultParameters> extends SiriSu
             if (count.get() == 0) {
                 SiriExceptionMarshaller.getInstance().write(writer, SiriException.createInvalidDataReferencesError());
                 writer.close();
-                this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .setStatusCode(HttpResponseStatus.NOT_FOUND.code()).end(out.toString());
+                this.context.response()
+                        .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
+                        .end(out.toString());
             } else {
                 writer.close();
                 this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .putHeader(HttpHeaders.CACHE_CONTROL,
-                                Arrays.asList(PUBLIC, MAX_AGE + parameters.getMaxAge(),
-                                        S_MAX_AGE + parameters.getSMaxAge(), PROXY_REVALIDATE))
-                        .putHeader(HttpHeaders.ETAG, createEtag(current)).end(out.toString());
+                        .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(
+                                CacheControl.MAX_AGE + parameters.getMaxAge(),
+                                CacheControl.S_MAX_AGE + parameters.getSMaxAge()))
+                        .putHeader(HttpHeaders.LAST_MODIFIED, DateTimeUtils.toRFC1123(getLastModified()))
+                        .end(out.toString());
             }
 
         } catch (Exception e) {
@@ -58,8 +62,8 @@ public abstract class ItemSubscriber<P extends DefaultParameters> extends SiriSu
         }
     }
 
-    public String getEtag() {
-        return createEtag(current);
+    public Date getLastModified() {
+        return CacheControl.getLastModified(current);
     }
 
     protected abstract void writeItem(Document t);

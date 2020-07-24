@@ -25,7 +25,6 @@ import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
-import static siri_xlite.service.common.SiriSubscriber.getEtag;
 
 @Slf4j
 @Service
@@ -59,7 +58,8 @@ public class EstimatedTimetableService implements EstimatedTimetable, Constants 
     }
 
     private Flux<VehicleJourneyDocument> stream(EstimatedTimetableParameters parameters, RoutingContext context) {
-        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
+        String uri = context.request().uri();
+        log.info(messages.getString(LOAD_FROM_BACKEND), uri);
         return repository.findByLineRef(parameters.getLineRef());
     }
 

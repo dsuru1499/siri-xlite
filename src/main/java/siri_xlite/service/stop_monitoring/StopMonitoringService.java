@@ -53,7 +53,8 @@ public class StopMonitoringService implements StopMonitoring, Constants {
     }
 
     private Flux<VehicleJourneyDocument> stream(StopMonitoringParameters parameters, RoutingContext context) {
-        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
+        String uri = context.request().uri();
+        log.info(messages.getString(LOAD_FROM_BACKEND), uri);
         return repository.findByStopPointRef(parameters.getMonitoringRef());
     }
 

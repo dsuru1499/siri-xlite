@@ -16,16 +16,13 @@ import siri_xlite.common.Color;
 import siri_xlite.model.VehicleJourneyDocument;
 import siri_xlite.repositories.NotModifiedException;
 import siri_xlite.repositories.VehicleJourneyRepository;
-import siri_xlite.service.common.Constants;
-import siri_xlite.service.common.EstimatedVehiculeJourney;
-import siri_xlite.service.common.Messages;
-import siri_xlite.service.common.ParametersFactory;
+import siri_xlite.service.common.*;
 
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
-import static siri_xlite.service.common.SiriSubscriber.getEtag;
 
 @Slf4j
 @Service
@@ -59,26 +56,30 @@ public class EstimatedVehiculeJourneyService implements EstimatedVehiculeJourney
     }
 
     private void onComplete(EstimatedVehiculeJourneySubscriber subscriber, RoutingContext context) {
-        String etag = subscriber.getEtag();
-        if (StringUtils.isNotEmpty(etag)) {
+        Date lastModified = subscriber.getLastModified();
+        if (lastModified != null) {
             Cache<String, String> cache = manager.getCache(ETAGS);
             String uri = context.request().uri();
-            cache.putForExternalRead(uri, etag, LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
+            cache.putForExternalRead(uri, String.valueOf(lastModified.getTime()), LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
         }
     }
 
     private Mono<VehicleJourneyDocument> stream(EstimatedVehiculeJourneyParameters parameters, RoutingContext context) {
-        Cache<String, String> cache = manager.getCache(ETAGS);
-        String etag = getEtag(context);
-        if (StringUtils.isNotEmpty(etag)) {
-            String uri = context.request().uri();
+        Date when = CacheControl.getLastModified(context);
+        String uri = context.request().uri();
+        if (when != null) {
+            Cache<String, String> cache = manager.getCache(ETAGS);
             String cached = cache.get(uri);
-            if (StringUtils.equals(cached, etag)) {
-                throw new NotModifiedException();
+            if (StringUtils.isNotEmpty(cached)) {
+                Date lastModified = new Date(Long.parseLong(cached));
+                if (lastModified.after(when)) {
+                    log.info(messages.getString(REVALIDATE_RESSOURCE), uri);
+                    throw new NotModifiedException();
+                }
             }
         }
 
-        log.info(messages.getString(LOAD_FROM_BACKEND), COLLECTION_NAME, "");
+        log.info(messages.getString(LOAD_FROM_BACKEND), uri);
         return repository.findById(parameters.getDatedVehicleJourneyRef());
     }
 
