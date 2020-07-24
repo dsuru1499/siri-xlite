@@ -7,6 +7,8 @@ import siri_xlite.service.common.Constants;
 
 import java.util.Collection;
 
+import static siri_xlite.common.JsonUtils.*;
+
 @Slf4j
 public class StopPointsDiscoverySubcriber extends CollectionSubscriber<StopPointsDiscoveryParameters>
         implements Constants {
@@ -22,15 +24,17 @@ public class StopPointsDiscoverySubcriber extends CollectionSubscriber<StopPoint
     @Override
     protected void writeItem(Document t) {
         writeObject(writer, t, source -> {
-            writeField(writer, STOP_POINT_REF, source.getString(STOP_POINT_REF));
-            writeField(writer, STOP_NAME, source.getString(STOP_NAME));
+            writeStringField(writer, STOP_POINT_REF, source);
+            writeStringField(writer, STOP_NAME, source);
 
             writeArray(writer, LINES, (Collection<?>) source.get(LINE_REFS),
                     value -> writeObject(writer, value, (lineRef) -> writeField(writer, LINE_REFS, (String) lineRef)));
-            writeObject(writer, LOCATION, (Document) source.get(LOCATION), (Document location) -> {
-                writeField(writer, LONGITUDE, location.getDouble(LONGITUDE));
-                writeField(writer, LATITUDE, location.getDouble(LATITUDE));
+
+            writeObjectField(writer, LOCATION, source, location -> {
+                writeDoubleField(writer, LONGITUDE, location);
+                writeDoubleField(writer, LATITUDE, location);
             });
+
         });
     }
 

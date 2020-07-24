@@ -6,6 +6,8 @@ import org.bson.Document;
 
 import java.util.List;
 
+import static siri_xlite.common.JsonUtils.*;
+
 public class TrainOperationalInfoGroupMarshaller implements Marshaller<Document> {
 
     public static final String TRAIN_NUMBERS = "trainNumbers";
@@ -30,17 +32,15 @@ public class TrainOperationalInfoGroupMarshaller implements Marshaller<Document>
 
         // set trainNumbers
 
-        List<String> trainNumbers = source.get(TRAIN_NUMBERS, List.class);
+        List<?> trainNumbers = source.get(TRAIN_NUMBERS, List.class);
         writeArray(writer, TRAIN_NUMBERS, trainNumbers,
-                t -> writeObject(writer, t, trainNumber -> writeField(writer, TRAIN_NUMBER_REF, trainNumber)));
+                t -> writeObject(writer, (String) t, trainNumber -> writeField(writer, TRAIN_NUMBER_REF, trainNumber)));
 
         // set journeyParts
-
-        List<Document> journeyParts = source.get(JOURNEY_PARTS, List.class);
-        writeArray(writer, JOURNEY_PARTS, journeyParts, t -> writeObject(writer, t, journeyPart -> {
-            writeField(writer, JOURNEY_PART_REF, journeyPart.getString(JOURNEY_PART_REF));
-            writeField(writer, TRAIN_NUMBER_REF, journeyPart.getString(TRAIN_NUMBER_REF));
-
+        List<?> journeyParts = source.get(JOURNEY_PARTS, List.class);
+        writeArray(writer, JOURNEY_PARTS, journeyParts, t -> writeObject(writer, (Document) t, journeyPart -> {
+            writeStringField(writer, JOURNEY_PART_REF, journeyPart);
+            writeStringField(writer, TRAIN_NUMBER_REF, journeyPart);
         }));
 
     }

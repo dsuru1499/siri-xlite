@@ -5,6 +5,9 @@ import lombok.Getter;
 import org.bson.Document;
 import uk.org.siri.siri.FirstOrLastJourneyEnumeration;
 
+import static siri_xlite.common.JsonUtils.writeField;
+import static siri_xlite.common.JsonUtils.writeStringField;
+
 public class DatedServiceInfoGroupMarshaller implements Marshaller<Document> {
 
     public static final String DESTINATION_DISPLAY = "destinationDisplay";
@@ -17,7 +20,7 @@ public class DatedServiceInfoGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set destinationDisplay
-        writeField(writer, DESTINATION_DISPLAY, source.getString(DESTINATION_DISPLAY));
+        writeStringField(writer, DESTINATION_DISPLAY, source);
 
         // lineNote :[string];
 

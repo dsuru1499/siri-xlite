@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
 
+import static siri_xlite.common.JsonUtils.writeStringField;
+
 public class LineIdentityGroupMarshaller implements Marshaller<Document> {
 
     public static final String LINE_REF = "lineRef";
@@ -16,9 +18,9 @@ public class LineIdentityGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set lineRef
-        writeField(writer, LINE_REF, source.getString(LINE_REF));
+        writeStringField(writer, LINE_REF, source);
 
         // set directionRef
-        writeField(writer, DIRECTION_REF, source.getString(DIRECTION_REF));
+        writeStringField(writer, DIRECTION_REF, source);
     }
 }

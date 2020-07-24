@@ -6,6 +6,9 @@ import org.bson.Document;
 
 import java.util.List;
 
+import static siri_xlite.common.JsonUtils.writeArray;
+import static siri_xlite.common.JsonUtils.writeStringField;
+
 public class JourneyEndNamesGroupMarshaller implements Marshaller<Document> {
 
     public static final String DESTINATION_REF = "destinationRef";
@@ -23,10 +26,10 @@ public class JourneyEndNamesGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set originRef
-        writeField(writer, ORIGIN_REF, source.getString(ORIGIN_REF));
+        writeStringField(writer, ORIGIN_REF, source);
 
         // set originName
-        writeField(writer, ORIGIN_NAME, source.getString(ORIGIN_NAME));
+        writeStringField(writer, ORIGIN_NAME, source);
 
         // originShortName :string;
         // destinationDisplayAtOrigin :string;
@@ -36,17 +39,17 @@ public class JourneyEndNamesGroupMarshaller implements Marshaller<Document> {
         writeArray(writer, VIAS, source.get(VIAS, List.class), (Document t) -> {
 
             // set placeRef
-            writeField(writer, PLACE_REF, t.getString(PLACE_REF));
+            writeStringField(writer, PLACE_REF, t);
 
             // set placeName
-            writeField(writer, PLACE_NAME, t.getString(PLACE_NAME));
+            writeStringField(writer, PLACE_NAME, t);
         });
 
         // set destinationRef
-        writeField(writer, DESTINATION_REF, source.getString(DESTINATION_REF));
+        writeStringField(writer, DESTINATION_REF, source);
 
         // set destinationName
-        writeField(writer, DESTINATION_NAME, source.getString(DESTINATION_NAME));
+        writeStringField(writer, DESTINATION_NAME, source);
 
         // destinationShortName :string;
         // ? originDisplayAtDestination :string;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
 
-import static siri_xlite.common.DateTimeUtils.toLocalTime;
+import static siri_xlite.common.JsonUtils.writeLocalTimeField;
 
 public class VehicleDepartureTimesGroupMarshaller implements Marshaller<Document> {
 
@@ -19,13 +19,13 @@ public class VehicleDepartureTimesGroupMarshaller implements Marshaller<Document
     public void write(JsonGenerator writer, Document source) {
 
         // set aimedDepartureTime
-        writeField(writer, AIMED_DEPARTURE_TIME, toLocalTime(source.getDate(AIMED_DEPARTURE_TIME)));
+        writeLocalTimeField(writer, AIMED_DEPARTURE_TIME, source);
 
         // set actualDepartureTime
-        writeField(writer, ACTUAL_DEPARTURE_TIME, toLocalTime(source.getDate(ACTUAL_DEPARTURE_TIME)));
+        writeLocalTimeField(writer, ACTUAL_DEPARTURE_TIME, source);
 
         // set expectedDepartureTime
-        writeField(writer, EXPECTED_DEPARTURE_TIME, toLocalTime(source.getDate(EXPECTED_DEPARTURE_TIME)));
+        writeLocalTimeField(writer, EXPECTED_DEPARTURE_TIME, source);
 
     }
 }

@@ -22,8 +22,6 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
-import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
-
 @Slf4j
 @Service
 public class EstimatedVehiculeJourneyService implements EstimatedVehiculeJourney, Constants {
@@ -39,6 +37,11 @@ public class EstimatedVehiculeJourneyService implements EstimatedVehiculeJourney
 
     @Override
     public void handle(final RoutingContext context) {
+
+        log.info(Color.GREEN + "[DSU] GET " + context.request().uri() + Color.NORMAL);
+        context.request().headers().iterator().forEachRemaining(
+                (t) -> log.info(Color.GREEN + t.getKey() + "=" + t.getValue() + Color.NORMAL));
+
         try {
             Monitor monitor = MonitorFactory.start(ESTIMATED_VEHICLE_JOURNEY);
             final EstimatedVehiculeJourneySubscriber subscriber = new EstimatedVehiculeJourneySubscriber();

@@ -5,6 +5,9 @@ import lombok.Getter;
 import org.bson.Document;
 import uk.org.siri.siri.CallStatusEnumeration;
 
+import static siri_xlite.common.JsonUtils.writeField;
+import static siri_xlite.common.JsonUtils.writeStringField;
+
 public class MonitoredStopArrivalStatusGroupMarshaller implements Marshaller<Document> {
 
     public static final String ARRIVAL_STATUS = "arrivalStatus";
@@ -24,7 +27,7 @@ public class MonitoredStopArrivalStatusGroupMarshaller implements Marshaller<Doc
         // arrivalProximityText :string;
 
         // set arrivalPlatformName
-        writeField(writer, ARRIVAL_PLATFORM_NAME, source.getString(ARRIVAL_PLATFORM_NAME));
+        writeStringField(writer, ARRIVAL_PLATFORM_NAME, source);
 
         // arrivalBoardingActivity :byte;
         // arrivalStopAssignment :StopAssignment;

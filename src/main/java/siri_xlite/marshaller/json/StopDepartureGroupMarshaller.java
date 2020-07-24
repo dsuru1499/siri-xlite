@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.bson.Document;
 import uk.org.siri.siri.CallStatusEnumeration;
 
-import static siri_xlite.common.DateTimeUtils.toLocalTime;
+import static siri_xlite.common.JsonUtils.*;
 
 public class StopDepartureGroupMarshaller implements Marshaller<Document> {
 
@@ -22,13 +22,13 @@ public class StopDepartureGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set aimedDepartureTime
-        writeField(writer, AIMED_DEPARTURE_TIME, toLocalTime(source.getDate(AIMED_DEPARTURE_TIME)));
+        writeLocalTimeField(writer, AIMED_DEPARTURE_TIME, source);
 
         // set actualDepartureTime
-        writeField(writer, ACTUAL_DEPARTURE_TIME, toLocalTime(source.getDate(ACTUAL_DEPARTURE_TIME)));
+        writeLocalTimeField(writer, ACTUAL_DEPARTURE_TIME, source);
 
         // set expectedDepartureTime
-        writeField(writer, EXPECTED_DEPARTURE_TIME, toLocalTime(source.getDate(EXPECTED_DEPARTURE_TIME)));
+        writeLocalTimeField(writer, EXPECTED_DEPARTURE_TIME, source);
 
         // provisionalExpectedDepartureTime :long;
 
@@ -49,7 +49,7 @@ public class StopDepartureGroupMarshaller implements Marshaller<Document> {
         // departureProximityText :string;
 
         // set departurePlatformName
-        writeField(writer, DEPARTURE_PLATFORM_NAME, source.getString(DEPARTURE_PLATFORM_NAME));
+        writeStringField(writer, DEPARTURE_PLATFORM_NAME, source);
 
         // departureBoardingActivity :byte;
 

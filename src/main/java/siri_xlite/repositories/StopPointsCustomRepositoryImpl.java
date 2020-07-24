@@ -19,10 +19,6 @@ import siri_xlite.model.StopPointDocument;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.StreamSupport;
 
@@ -36,17 +32,17 @@ import static siri_xlite.repositories.StopPointsRepository.COLLECTION_NAME;
 @Slf4j
 public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepository<String> {
 
-    private static Collector<Point, List<List<Double>>, List<List<List<Double>>>> COORDINATES_COLLECTOR = Collector.of(
-            (Supplier<List<List<Double>>>) ArrayList::new, (BiConsumer<List<List<Double>>, Point>) (left, right) -> {
-                List<Double> value = new ArrayList<Double>(2);
+    private static final Collector<Point, List<List<Double>>, List<List<List<Double>>>> COORDINATES_COLLECTOR = Collector.of(
+            ArrayList::new, (left, right) -> {
+                List<Double> value = new ArrayList<>(2);
                 value.add(right.getX());
                 value.add(right.getY());
                 left.add(value);
-            }, (BinaryOperator<List<List<Double>>>) (left, right) -> {
+            }, (left, right) -> {
                 left.addAll(right);
                 return left;
-            }, (Function<List<List<Double>>, List<List<List<Double>>>>) list -> {
-                List result = new ArrayList();
+            }, list -> {
+                List<List<List<Double>>> result = new ArrayList<>();
                 result.add(list);
                 return result;
             });
@@ -64,9 +60,14 @@ public class StopPointsCustomRepositoryImpl implements StopPointsCustomRepositor
 
         return template.aggregate(aggregation, COLLECTION_NAME, Document.class).flatMap((Document t) -> {
 
-            Collection<String> result = (Collection<String>) t.get("children");
-            result.add(t.getString("stopPointRef"));
-            return Flux.fromIterable(result);
+//            Collection<String> result = (Collection<String>) t.get("children");
+//            result.add( t.getString("stopPointRef"));
+//            return Flux.fromIterable(result);
+            Collection<?> list = (Collection<?>) t.get("children");
+            String stopPointRef = t.getString("stopPointRef");
+            return Flux.concat(
+                    Flux.fromIterable(list).filter(String.class::isInstance).map(String.class::cast),
+                    Flux.just(stopPointRef));
         });
     }
 

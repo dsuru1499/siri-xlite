@@ -15,6 +15,8 @@ public class CacheControl {
     public static final String PUBLIC = "public";
     public static final String MAX_AGE = "max-age=";
     public static final String S_MAX_AGE = "s-maxage=";
+    public static final String PROXY_REVALIDATE = "proxy-revalidate";
+    public static final String MUST_REVALIDATE = "must-revalidate";
 
     public static final String RECCORDED_AT_TIME = "recordedAtTime";
     public static final Comparator<Document> COMPARATOR = Comparator.comparing(t -> t.getDate(RECCORDED_AT_TIME).getTime());

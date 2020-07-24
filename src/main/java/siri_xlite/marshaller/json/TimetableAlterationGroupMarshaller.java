@@ -6,6 +6,8 @@ import org.bson.Document;
 
 import java.time.LocalDateTime;
 
+import static siri_xlite.common.JsonUtils.*;
+
 public class TimetableAlterationGroupMarshaller implements Marshaller<Document> {
 
     public static final String EXTRA_JOURNEY = "extraJourney";
@@ -28,10 +30,10 @@ public class TimetableAlterationGroupMarshaller implements Marshaller<Document> 
         // DocumentRef :string;
 
         // set extraJourney
-        writeField(writer, EXTRA_JOURNEY, source.getBoolean(EXTRA_JOURNEY));
+        writeBooleanField(writer, EXTRA_JOURNEY, source);
 
         // set cancellation
-        writeField(writer, CANCELLATION, source.getBoolean(CANCELLATION));
+        writeBooleanField(writer, CANCELLATION, source);
 
     }
 

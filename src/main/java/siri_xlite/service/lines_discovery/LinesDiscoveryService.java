@@ -22,8 +22,6 @@ import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
-import static siri_xlite.repositories.LinesRepository.COLLECTION_NAME;
-
 @Slf4j
 @Service
 public class LinesDiscoveryService implements LinesDiscovery, Constants {

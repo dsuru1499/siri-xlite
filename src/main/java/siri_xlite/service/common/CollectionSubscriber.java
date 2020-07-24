@@ -1,16 +1,13 @@
 package siri_xlite.service.common;
 
-import io.netty.handler.codec.http.HttpResponseStatus;
 import io.reactivex.exceptions.Exceptions;
-import io.vertx.core.http.HttpHeaders;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
-import org.springframework.http.MediaType;
-import siri_xlite.common.DateTimeUtils;
-import siri_xlite.marshaller.json.SiriExceptionMarshaller;
 
-import java.util.Arrays;
 import java.util.Date;
+
+import static siri_xlite.common.JsonUtils.writeEndDocument;
+import static siri_xlite.common.JsonUtils.writeStartDocument;
 
 @Slf4j
 public abstract class CollectionSubscriber<P extends DefaultParameters> extends SiriSubscriber<Document, P> {
@@ -37,19 +34,11 @@ public abstract class CollectionSubscriber<P extends DefaultParameters> extends 
     public void onComplete() {
         try {
             if (count.get() == 0) {
-                SiriExceptionMarshaller.getInstance().write(writer, SiriException.createInvalidDataReferencesError());
-                writer.close();
-                this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .setStatusCode(HttpResponseStatus.NOT_FOUND.code()).end(out.toString());
+                writeNotFound();
             } else {
                 writer.writeEndArray();
                 writeEndDocument(writer);
-                this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(
-                                CacheControl.MAX_AGE + parameters.getMaxAge(),
-                                CacheControl.S_MAX_AGE + parameters.getSMaxAge()))
-                        .putHeader(HttpHeaders.LAST_MODIFIED, DateTimeUtils.toRFC1123(getLastModified()))
-                        .end(out.toString());
+                writeResponse(getLastModified());
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

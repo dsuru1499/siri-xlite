@@ -9,6 +9,9 @@ import uk.org.siri.siri.VehicleModesEnumeration;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static siri_xlite.common.JsonUtils.writeField;
+import static siri_xlite.common.JsonUtils.writeStringField;
+
 public class JourneyPatternInfoGroupMarshaller implements Marshaller<Document> {
 
     public static final String ROUTE_REF = "routeRef";
@@ -25,10 +28,10 @@ public class JourneyPatternInfoGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set journeyPatternRef
-        writeField(writer, JOURNEY_PATTERN_REF, source.getString(JOURNEY_PATTERN_REF));
+        writeStringField(writer, JOURNEY_PATTERN_REF, source);
 
         // set journeyPatternName
-        writeField(writer, JOURNEY_PATTERN_NAME, source.getString(JOURNEY_PATTERN_NAME));
+        writeStringField(writer, JOURNEY_PATTERN_NAME, source);
 
         // set vehicleMode
 
@@ -40,15 +43,15 @@ public class JourneyPatternInfoGroupMarshaller implements Marshaller<Document> {
         }
 
         // set routeRef
-        writeField(writer, ROUTE_REF, source.getString(ROUTE_REF));
+        writeStringField(writer, ROUTE_REF, source);
 
         // set publishedLineName
-        writeField(writer, PUBLISHED_LINE_NAME, source.getString(PUBLISHED_LINE_NAME));
+        writeStringField(writer, PUBLISHED_LINE_NAME, source);
 
         // groupOfLinesRef :string;
 
         // set directionName
-        writeField(writer, DIRECTION_NAME, source.getString(DIRECTION_NAME));
+        writeStringField(writer, DIRECTION_NAME, source);
 
         // externalLineRef :string;
     }

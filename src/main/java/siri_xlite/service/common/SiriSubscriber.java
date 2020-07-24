@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.reactivex.exceptions.Exceptions;
 import io.vertx.core.http.HttpHeaders;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
@@ -13,19 +14,22 @@ import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import siri_xlite.Configuration;
+import siri_xlite.common.Color;
 import siri_xlite.common.DateTimeUtils;
-import siri_xlite.common.JsonUtils;
 import siri_xlite.marshaller.json.SiriExceptionMarshaller;
 import siri_xlite.repositories.NotModifiedException;
 
 import java.io.ByteArrayOutputStream;
 import java.net.HttpURLConnection;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static siri_xlite.common.JsonUtils.createJsonWriter;
 
 
 @Slf4j
-public abstract class SiriSubscriber<T, P extends DefaultParameters> implements Subscriber<T>, JsonUtils {
+public abstract class SiriSubscriber<T, P extends DefaultParameters> implements Subscriber<T> {
 
     @Autowired
     protected EmbeddedCacheManager manager;
@@ -56,29 +60,53 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
     public void onError(Throwable t) {
         try {
             if (t instanceof NotModifiedException) {
-                writer.close();
-                this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(
-                                CacheControl.MAX_AGE + parameters.getMaxAge(),
-                                CacheControl.S_MAX_AGE + parameters.getSMaxAge()))
-                        .putHeader(HttpHeaders.LAST_MODIFIED, DateTimeUtils.toRFC1123(CacheControl.getLastModified(context)))
-                        .setStatusCode(HttpURLConnection.HTTP_NOT_MODIFIED).end();
+                writeNotModified();
             } else if (t instanceof SiriException) {
-                log.error(t.getMessage(), t);
-                SiriExceptionMarshaller.getInstance().write(writer, (SiriException) t);
-                writer.close();
-                this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .setStatusCode(HttpResponseStatus.BAD_REQUEST.code()).end(out.toString());
+                writeSiriException((SiriException) t);
             } else if (t != null) {
-                log.error(t.getMessage(), t);
-                SiriExceptionMarshaller.getInstance().write(writer, SiriException.createOtherError(t));
-                writer.close();
-                this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .setStatusCode(HttpResponseStatus.BAD_REQUEST.code()).end(out.toString());
+                writeSiriException(SiriException.createOtherError(t));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             Exceptions.propagate(e);
         }
+    }
+
+    protected void writeSiriException(SiriException e) throws Exception {
+        log.error(e.getMessage(), e);
+        SiriExceptionMarshaller.getInstance().write(writer, e);
+        writer.close();
+        this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code()).end(out.toString());
+    }
+
+    protected void writeNotModified() throws Exception {
+        writer.close();
+        HttpServerResponse response = this.context.response()
+                .setStatusCode(HttpURLConnection.HTTP_NOT_MODIFIED);
+        response.headers().iterator().forEachRemaining(
+                (entry) -> log.info(Color.GREEN + entry.getKey() + "=" + entry.getValue() + Color.NORMAL));
+        response.end();
+    }
+
+    protected void writeNotFound() throws Exception {
+        SiriExceptionMarshaller.getInstance().write(writer, SiriException.createInvalidDataReferencesError());
+        writer.close();
+        this.context.response()
+                .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
+                .end(out.toString());
+    }
+
+    protected void writeResponse(Date lastModified) {
+        this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(
+                        CacheControl.PUBLIC,
+                        CacheControl.MUST_REVALIDATE,
+                        CacheControl.PROXY_REVALIDATE,
+                        CacheControl.S_MAX_AGE + parameters.getSMaxAge(),
+                        CacheControl.MAX_AGE + parameters.getMaxAge()))
+                .putHeader(HttpHeaders.LAST_MODIFIED, DateTimeUtils.toRFC1123(lastModified))
+                .end(out.toString());
     }
 }

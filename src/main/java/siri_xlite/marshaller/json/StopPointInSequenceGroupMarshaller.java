@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
 
+import static siri_xlite.common.JsonUtils.writeIntegerField;
+import static siri_xlite.common.JsonUtils.writeStringField;
+
 public class StopPointInSequenceGroupMarshaller implements Marshaller<Document> {
     public static final String ORDER = "order";
     public static final String STOP_POINT_REF = "stopPointRef";
@@ -16,15 +19,15 @@ public class StopPointInSequenceGroupMarshaller implements Marshaller<Document> 
     public void write(JsonGenerator writer, Document source) {
 
         // set stopPointRef
-        writeField(writer, STOP_POINT_REF, source.getString(STOP_POINT_REF));
+        writeStringField(writer, STOP_POINT_REF, source);
 
         // visitNumber :ushort;
 
         // set order
-        writeField(writer, ORDER, source.getInteger(ORDER));
+        writeIntegerField(writer, ORDER, source);
 
         // set stopPointName
-        writeField(writer, STOP_POINT_NAME, source.getString(STOP_POINT_NAME));
+        writeStringField(writer, STOP_POINT_NAME, source);
 
     }
 }

@@ -5,6 +5,8 @@ import lombok.Getter;
 import org.bson.Document;
 import uk.org.siri.siri.CallStatusEnumeration;
 
+import static siri_xlite.common.JsonUtils.*;
+
 public class MonitoredStopDepartureStatusGroupMarshaller implements Marshaller<Document> {
 
     public static final String DEPARTURE_STATUS = "departureStatus";
@@ -26,10 +28,10 @@ public class MonitoredStopDepartureStatusGroupMarshaller implements Marshaller<D
         // departureProximityText :string;
 
         // set departurePlatformName
-        writeField(writer, DEPARTURE_PLATFORM_NAME, source.getString(DEPARTURE_PLATFORM_NAME));
+        writeStringField(writer, DEPARTURE_PLATFORM_NAME, source);
 
         // set departureBoardingActivity
-        writeField(writer, DEPARTURE_BOARDING_ACTIVITY, source.getInteger(DEPARTURE_BOARDING_ACTIVITY));
+        writeIntegerField(writer, DEPARTURE_BOARDING_ACTIVITY, source);
 
         // departureStopAssignment :StopAssignment;
 

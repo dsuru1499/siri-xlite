@@ -4,9 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import static siri_xlite.common.JsonUtils.writeArrayField;
+import static siri_xlite.common.JsonUtils.writeStringField;
 
 public class JourneyInfoGroupMarshaller implements Marshaller<Document> {
 
@@ -20,11 +19,11 @@ public class JourneyInfoGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set vehicleJourneyName
-        writeField(writer, VEHICLE_JOURNEY_NAME, source.getString(VEHICLE_JOURNEY_NAME));
+        writeStringField(writer, VEHICLE_JOURNEY_NAME, source);
 
         // set journeyNote
 
-        writeArray(writer, JOURNEY_NOTE, source.get(JOURNEY_NOTE, List.class));
+        writeArrayField(writer, JOURNEY_NOTE, source);
 
         // publicContact :SimpleContact;
         // operationsContact:SimpleContact;

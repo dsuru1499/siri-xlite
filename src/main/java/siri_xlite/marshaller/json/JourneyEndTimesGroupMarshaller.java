@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.bson.Document;
 import uk.org.siri.siri.FirstOrLastJourneyEnumeration;
 
-import static siri_xlite.common.DateTimeUtils.toLocalTime;
+import static siri_xlite.common.JsonUtils.*;
 
 public class JourneyEndTimesGroupMarshaller implements Marshaller<Document> {
 
@@ -21,13 +21,13 @@ public class JourneyEndTimesGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set headwayService
-        writeField(writer, HEADWAY_SERVICE, source.getBoolean(HEADWAY_SERVICE));
+        writeBooleanField(writer, HEADWAY_SERVICE, source);
 
         // set originAimedDepartureTime
-        writeField(writer, ORIGIN_AIMED_DEPARTURE_TIME, toLocalTime(source.getDate(ORIGIN_AIMED_DEPARTURE_TIME)));
+        writeLocalTimeField(writer, ORIGIN_AIMED_DEPARTURE_TIME, source);
 
         // set destinationAimedArrivalTime
-        writeField(writer, DESTINATION_AIMED_ARRIVAL_TIME, toLocalTime(source.getDate(DESTINATION_AIMED_ARRIVAL_TIME)));
+        writeLocalTimeField(writer, DESTINATION_AIMED_ARRIVAL_TIME, source);
 
         // set firstOrLastJourney
         Integer firstOrLastJourney = source.getInteger(FIRST_OR_LAST_JOURNEY);

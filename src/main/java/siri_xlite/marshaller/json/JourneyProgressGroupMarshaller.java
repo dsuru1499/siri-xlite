@@ -3,8 +3,9 @@ package siri_xlite.marshaller.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
-import siri_xlite.service.common.SiriStructureFactory;
 import uk.org.siri.siri.OccupancyEnumeration;
+
+import static siri_xlite.common.JsonUtils.*;
 
 public class JourneyProgressGroupMarshaller implements Marshaller<Document> {
 
@@ -26,16 +27,16 @@ public class JourneyProgressGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set monitored
-        writeField(writer, MONITORED, source.getBoolean(MONITORED));
+        writeBooleanField(writer, MONITORED, source);
 
         // set monitoringError
-        writeField(writer, MONITORING_ERROR, source.getString(MONITORING_ERROR));
+        writeStringField(writer, MONITORING_ERROR, source);
 
         // set inCongestion
-        writeField(writer, IN_CONGESTION, source.getBoolean(IN_CONGESTION));
+        writeBooleanField(writer, IN_CONGESTION, source);
 
         // set inPanic
-        writeField(writer, IN_PANIC, source.getBoolean(IN_PANIC));
+        writeBooleanField(writer, IN_PANIC, source);
 
         // predictionInaccurate :bool;
         // dataSource :string;
@@ -51,7 +52,7 @@ public class JourneyProgressGroupMarshaller implements Marshaller<Document> {
         // ? locationRecordedAtTime :long;
 
         // set bearing
-        writeField(writer, BEARING, source.getDouble(BEARING));
+        writeDoubleField(writer, BEARING, source);
 
         // progressRate :string;
         // ? velocity : long;
@@ -64,8 +65,7 @@ public class JourneyProgressGroupMarshaller implements Marshaller<Document> {
         }
 
         // set delay
-        Long delay = source.getLong(DELAY);
-        writeField(writer, DELAY, SiriStructureFactory.createDuration(delay));
+        writeDurationField(writer, DELAY, source);
 
         // progressStatus :[string];
         // vehicleStatus : string;

@@ -6,6 +6,8 @@ import org.bson.Document;
 
 import java.util.List;
 
+import static siri_xlite.common.JsonUtils.*;
+
 public class DisruptionGroupMarshaller implements Marshaller<Document> {
 
     public static final String SITUATION_REFS = "situationRefs";

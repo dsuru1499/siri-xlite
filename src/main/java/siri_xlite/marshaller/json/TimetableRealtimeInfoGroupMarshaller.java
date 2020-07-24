@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
 
+import static siri_xlite.common.JsonUtils.writeBooleanField;
+
 public class TimetableRealtimeInfoGroupMarshaller implements Marshaller<Document> {
 
     public static final String MONITORED = "monitored";
@@ -16,10 +18,10 @@ public class TimetableRealtimeInfoGroupMarshaller implements Marshaller<Document
     public void write(JsonGenerator writer, Document source) {
 
         // set monitored
-        writeField(writer, MONITORED, source.getBoolean(MONITORED));
+        writeBooleanField(writer, MONITORED, source);
 
         // set headwayService
-        writeField(writer, HEADWAY_SERVICE, source.getBoolean(HEADWAY_SERVICE));
+        writeBooleanField(writer, HEADWAY_SERVICE, source);
 
     }
 

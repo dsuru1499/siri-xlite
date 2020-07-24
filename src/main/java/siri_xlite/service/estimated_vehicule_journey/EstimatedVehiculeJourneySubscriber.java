@@ -8,6 +8,7 @@ import siri_xlite.service.common.ItemSubscriber;
 
 import java.util.List;
 
+import static siri_xlite.common.JsonUtils.*;
 import static siri_xlite.marshaller.json.SiriMarshaller.CALLS;
 
 @Slf4j
@@ -42,10 +43,10 @@ public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<Estimated
             StopPointInSequenceGroupMarshaller.getInstance().write(writer, source);
 
             // setExtraCall
-            writeField(writer, EXTRA_CALL, source.getBoolean(EXTRA_CALL));
+            writeBooleanField(writer, EXTRA_CALL, source);
 
             // cancellation
-            writeField(writer, CANCELLATION, source.getBoolean(CANCELLATION));
+            writeBooleanField(writer, CANCELLATION, source);
 
             // CallRealTimeInfoGroupMarshaller.getInstance().write(writer, source);
             CallPropertyGroupMarshaller.getInstance().write(writer, source);

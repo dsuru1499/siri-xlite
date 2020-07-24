@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
 
+import static siri_xlite.common.JsonUtils.writeBooleanField;
+
 public class CallRealtimeGroupMarshaller implements Marshaller<Document> {
 
     public static final String VEHICLE_AT_STOP = "vehicleAtStop";
@@ -15,7 +17,7 @@ public class CallRealtimeGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set vehicleAtStop
-        writeField(writer, VEHICLE_AT_STOP, source.getBoolean(VEHICLE_AT_STOP));
+        writeBooleanField(writer, VEHICLE_AT_STOP, source);
 
         // vehicleLocationAtStop : Location;
     }

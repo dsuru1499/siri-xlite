@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
 
+import static siri_xlite.common.JsonUtils.writeLongField;
+
 public class StopProximityGroupMarshaller implements Marshaller<Document> {
 
     public static final String DISTANCE_FROM_STOP = "distanceFromStop";
@@ -16,10 +18,10 @@ public class StopProximityGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set distanceFromStop
-        writeField(writer, DISTANCE_FROM_STOP, source.getLong(DISTANCE_FROM_STOP));
+        writeLongField(writer, DISTANCE_FROM_STOP, source);
 
         // set numberOfStopsAway
-        writeField(writer, NUMBER_OF_STOPS_AWAY, source.getLong(NUMBER_OF_STOPS_AWAY));
+        writeLongField(writer, NUMBER_OF_STOPS_AWAY, source);
 
     }
 

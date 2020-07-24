@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
 
+import static siri_xlite.common.JsonUtils.writeStringField;
+
 public class CallPropertyGroupMarshaller implements Marshaller<Document> {
 
     public static final String ORIGIN_DISPLAY = "originDisplay";
@@ -20,10 +22,10 @@ public class CallPropertyGroupMarshaller implements Marshaller<Document> {
         // requestStop :bool;
 
         // set originDisplay
-        writeField(writer, ORIGIN_DISPLAY, source.getString(ORIGIN_DISPLAY));
+        writeStringField(writer, ORIGIN_DISPLAY, source);
 
         // set destinationDisplay
-        writeField(writer, DESTINATION_DISPLAY, source.getString(DESTINATION_DISPLAY));
+        writeStringField(writer, DESTINATION_DISPLAY, source);
 
     }
 

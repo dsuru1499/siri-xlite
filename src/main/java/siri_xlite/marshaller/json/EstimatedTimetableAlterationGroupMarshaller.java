@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
 
+import static siri_xlite.common.JsonUtils.writeBooleanField;
+import static siri_xlite.common.JsonUtils.writeStringField;
+
 public class EstimatedTimetableAlterationGroupMarshaller implements Marshaller<Document> {
 
     public static final String DATED_VEHICLE_JOURNEY_REF = "datedVehicleJourneyRef";
@@ -17,16 +20,16 @@ public class EstimatedTimetableAlterationGroupMarshaller implements Marshaller<D
     public void write(JsonGenerator writer, Document source) {
 
         // set datedVehicleJourneyRef
-        writeField(writer, DATED_VEHICLE_JOURNEY_REF, source.getString(DATED_VEHICLE_JOURNEY_REF));
+        writeStringField(writer, DATED_VEHICLE_JOURNEY_REF, source);
 
         // datedVehicleJourneyIndirectRef :string;
         // estimatedVehicleJourneyCode :string;
 
         // set extraJourney
-        writeField(writer, EXTRA_JOURNEY, source.getBoolean(EXTRA_JOURNEY));
+        writeBooleanField(writer, EXTRA_JOURNEY, source);
 
         // set cancellation
-        writeField(writer, CANCELLATION, source.getString(CANCELLATION));
+        writeStringField(writer, CANCELLATION, source);
 
     }
 

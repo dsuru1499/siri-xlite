@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
 
+import static siri_xlite.common.JsonUtils.writeBooleanField;
+
 public class CallRailGroupMarshaller implements Marshaller<Document> {
 
     public static final String PLATFORM_TRAVERSAL = "platformTraversal";
@@ -17,7 +19,7 @@ public class CallRailGroupMarshaller implements Marshaller<Document> {
         // reversesAtStop :bool;
 
         // set platformTraversal
-        writeField(writer, PLATFORM_TRAVERSAL, source.getBoolean(PLATFORM_TRAVERSAL));
+        writeBooleanField(writer, PLATFORM_TRAVERSAL, source);
 
         // signalStatus :string;
     }

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.bson.Document;
+import siri_xlite.service.common.SiriStructureFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,29 +15,24 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 
-public interface JsonUtils {
+import static siri_xlite.common.DateTimeUtils.toLocalTime;
 
-    String VERSION = "version";
-    String HREF = "href";
-    String ID = "_id";
+public class JsonUtils {
 
-    JsonFactory factory = new JsonFactory();
+    public static final String VERSION = "version";
+    public static final String HREF = "href";
+    public static final String ID = "_id";
 
-    default void writeStartDocument(JsonGenerator writer, String href, String version) {
-        // try {
-        // writer.writeStartObject();
-        // writeField(writer, VERSION, version);
-        // writeField(writer, HREF, href);
-        // } catch (IOException e) {
-        // ExceptionUtils.wrapAndThrow(e);
-        // }
+    private static final JsonFactory factory = new JsonFactory();
+
+    public static void writeStartDocument(JsonGenerator writer, String href, String version) {
     }
 
-    default void writeEndDocument(JsonGenerator writer) {
+    public static void writeEndDocument(JsonGenerator writer) {
         try {
-            // writer.writeEndObject();
             writer.flush();
             writer.close();
         } catch (IOException e) {
@@ -43,7 +40,7 @@ public interface JsonUtils {
         }
     }
 
-    default JsonGenerator createJsonWriter(final OutputStream out) {
+    public static JsonGenerator createJsonWriter(OutputStream out) {
         JsonGenerator result = null;
         try {
             result = factory.createGenerator(out);
@@ -53,7 +50,48 @@ public interface JsonUtils {
         return result;
     }
 
-    default void writeField(JsonGenerator writer, String name, String value) {
+    public static void writeStringField(JsonGenerator writer, String name, Document source) {
+        writeField(writer, name, source.getString(name));
+    }
+
+    public static void writeIntegerField(JsonGenerator writer, String name, Document source) {
+        writeField(writer, name, source.getInteger(name));
+    }
+
+    public static void writeLongField(JsonGenerator writer, String name, Document source) {
+        writeField(writer, name, source.getLong(name));
+    }
+
+    public static void writeBooleanField(JsonGenerator writer, String name, Document source) {
+        writeField(writer, name, source.getBoolean(name));
+    }
+
+    public static void writeDoubleField(JsonGenerator writer, String name, Document source) {
+        writeField(writer, name, source.getDouble(name));
+    }
+
+    public static void writeLocalTimeField(JsonGenerator writer, String name, Document source) {
+        writeField(writer, name, toLocalTime(source.getDate(name)));
+    }
+
+    public static void writeDurationField(JsonGenerator writer, String name, Document source) {
+        Long duration = source.getLong(name);
+        writeField(writer, name, SiriStructureFactory.createDuration(duration));
+    }
+
+    public static void writeArrayField(JsonGenerator writer, String name, Document source) {
+        writeArray(writer, name, source.get(name, List.class));
+    }
+
+    public static <T> void writeArrayField(JsonGenerator writer, String name, Document source, Consumer<T> consumer) {
+        writeArray(writer, name, source.get(name, List.class), consumer);
+    }
+
+    public static void writeObjectField(JsonGenerator writer, String name, Document source, Consumer<Document> consumer) {
+        writeObject(writer, name, (Document) source.get(name), consumer);
+    }
+
+    public static void writeField(JsonGenerator writer, String name, String value) {
         try {
             if (StringUtils.isNotEmpty(value)) {
                 writer.writeStringField(name, value);
@@ -64,18 +102,7 @@ public interface JsonUtils {
         }
     }
 
-    // default void writeField(JsonGenerator writer, String name, Date value) {
-    // try {
-    // if (value != null) {
-    // LocalDateTime date = LocalDateTime.ofInstant(value.toInstant(), ZoneId.systemDefault());
-    // writer.writeStringField(name, date.format(DateTimeFormatter.ISO_DATE_TIME));
-    // }
-    // } catch (IOException e) {
-    // ExceptionUtils.wrapAndThrow(e);
-    // }
-    // }
-
-    default void writeField(JsonGenerator writer, String name, LocalDateTime value) {
+    public static void writeField(JsonGenerator writer, String name, LocalDateTime value) {
         try {
             if (value != null) {
                 writer.writeStringField(name, value.format(DateTimeFormatter.ISO_DATE_TIME));
@@ -85,7 +112,7 @@ public interface JsonUtils {
         }
     }
 
-    default void writeField(JsonGenerator writer, String name, LocalTime value) {
+    public static void writeField(JsonGenerator writer, String name, LocalTime value) {
         try {
             if (value != null) {
                 writer.writeStringField(name, value.format(DateTimeFormatter.ISO_TIME));
@@ -95,7 +122,7 @@ public interface JsonUtils {
         }
     }
 
-    default void writeField(JsonGenerator writer, String name, Boolean value) {
+    public static void writeField(JsonGenerator writer, String name, Boolean value) {
         try {
             if (value != null) {
                 writer.writeBooleanField(name, value);
@@ -105,7 +132,7 @@ public interface JsonUtils {
         }
     }
 
-    default void writeField(JsonGenerator writer, String name, Integer value) {
+    public static void writeField(JsonGenerator writer, String name, Integer value) {
         try {
             if (value != null) {
                 writer.writeNumberField(name, value);
@@ -115,7 +142,7 @@ public interface JsonUtils {
         }
     }
 
-    default void writeField(JsonGenerator writer, String name, Long value) {
+    public static void writeField(JsonGenerator writer, String name, Long value) {
         try {
             if (value != null) {
                 writer.writeNumberField(name, value);
@@ -125,7 +152,7 @@ public interface JsonUtils {
         }
     }
 
-    default void writeField(JsonGenerator writer, String name, Float value) {
+    public static void writeField(JsonGenerator writer, String name, Float value) {
         try {
             if (value != null) {
                 writer.writeNumberField(name, value);
@@ -135,7 +162,7 @@ public interface JsonUtils {
         }
     }
 
-    default void writeField(JsonGenerator writer, String name, Double value) {
+    public static void writeField(JsonGenerator writer, String name, Double value) {
         try {
             if (value != null) {
                 writer.writeNumberField(name, value);
@@ -145,7 +172,7 @@ public interface JsonUtils {
         }
     }
 
-    default void writeField(JsonGenerator writer, String name, BigDecimal value) {
+    public static void writeField(JsonGenerator writer, String name, BigDecimal value) {
         try {
             if (value != null) {
                 writer.writeNumberField(name, value);
@@ -155,7 +182,7 @@ public interface JsonUtils {
         }
     }
 
-    default void writeField(JsonGenerator writer, String name, Enum value) {
+    public static void writeField(JsonGenerator writer, String name, Enum<?> value) {
         try {
             if (value != null) {
                 writer.writeStringField(name, value.name());
@@ -166,7 +193,7 @@ public interface JsonUtils {
         }
     }
 
-    default <T> void writeArray(JsonGenerator writer, String name, Collection<T> values) {
+    public static <T> void writeArray(JsonGenerator writer, String name, Collection<T> values) {
         try {
             if (CollectionUtils.isNotEmpty(values)) {
                 writer.writeArrayFieldStart(name);
@@ -180,7 +207,7 @@ public interface JsonUtils {
         }
     }
 
-    default <T> void writeArray(JsonGenerator writer, String name, Collection<T> values, Consumer<T> consumer) {
+    public static <T> void writeArray(JsonGenerator writer, String name, Collection<T> values, Consumer<T> consumer) {
         try {
             if (CollectionUtils.isNotEmpty(values)) {
                 writer.writeArrayFieldStart(name);
@@ -192,7 +219,7 @@ public interface JsonUtils {
         }
     }
 
-    default <T> void writeObject(JsonGenerator writer, T value, Consumer<T> consumer) {
+    public static <T> void writeObject(JsonGenerator writer, T value, Consumer<T> consumer) {
         try {
             if (value != null) {
                 writer.writeStartObject();
@@ -204,7 +231,7 @@ public interface JsonUtils {
         }
     }
 
-    default <T> void writeObject(JsonGenerator writer, String name, T value, Consumer<T> consumer) {
+    public static <T> void writeObject(JsonGenerator writer, String name, T value, Consumer<T> consumer) {
         try {
             if (value != null) {
                 writer.writeObjectFieldStart(name);
@@ -216,7 +243,7 @@ public interface JsonUtils {
         }
     }
 
-    default <T, E extends Exception> Consumer<T> wrapper(ConsumerWithException<T, E> fn) {
+    public static <T, E extends Exception> Consumer<T> wrapper(ConsumerWithException<T, E> fn) {
         return t -> {
             try {
                 fn.accept(t);
@@ -226,7 +253,7 @@ public interface JsonUtils {
         };
     }
 
-    default <T, E extends Exception> Runnable wrapper(RunnableWithException<E> fn) {
+    public static <T, E extends Exception> Runnable wrapper(RunnableWithException<E> fn) {
         return () -> {
             try {
                 fn.run();

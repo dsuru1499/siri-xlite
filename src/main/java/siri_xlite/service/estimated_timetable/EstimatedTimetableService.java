@@ -5,8 +5,6 @@ import com.jamonapi.MonitorFactory;
 import io.reactivex.Flowable;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.infinispan.Cache;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +12,6 @@ import reactor.core.publisher.Flux;
 import siri_xlite.Configuration;
 import siri_xlite.common.Color;
 import siri_xlite.model.VehicleJourneyDocument;
-import siri_xlite.repositories.NotModifiedException;
 import siri_xlite.repositories.VehicleJourneyRepository;
 import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.EstimatedTimetable;
@@ -22,9 +19,6 @@ import siri_xlite.service.common.Messages;
 import siri_xlite.service.common.ParametersFactory;
 
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
-
-import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 
 @Slf4j
 @Service

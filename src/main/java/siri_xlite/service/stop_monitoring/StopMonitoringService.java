@@ -20,8 +20,6 @@ import siri_xlite.service.common.StopMonitoring;
 
 import java.util.ResourceBundle;
 
-import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
-
 @Slf4j
 @Service
 public class StopMonitoringService implements StopMonitoring, Constants {

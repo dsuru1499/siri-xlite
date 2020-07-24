@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
 
-import java.util.List;
+import static siri_xlite.common.JsonUtils.writeArrayField;
+import static siri_xlite.common.JsonUtils.writeStringField;
 
 public class ServiceInfoGroupMarshaller implements Marshaller<Document> {
 
@@ -20,16 +21,16 @@ public class ServiceInfoGroupMarshaller implements Marshaller<Document> {
     public void write(JsonGenerator writer, Document source) {
 
         // set operatorRef
-        writeField(writer, OPERATOR_REF, source.getString(OPERATOR_REF));
+        writeStringField(writer, OPERATOR_REF, source);
 
         // set productCategoryRef
-        writeField(writer, PRODUCT_CATEGORY_REF, source.getString(PRODUCT_CATEGORY_REF));
+        writeStringField(writer, PRODUCT_CATEGORY_REF, source);
 
         // set serviceFeatureRef
-        writeArray(writer, SERVICE_FEATURE_REFS, source.get(SERVICE_FEATURE_REFS, List.class));
+        writeArrayField(writer, SERVICE_FEATURE_REFS, source);
 
         // set vehicleFeatureRef
-        writeArray(writer, VEHICLE_FEATURE_REFS, source.get(VEHICLE_FEATURE_REFS, List.class));
+        writeArrayField(writer, VEHICLE_FEATURE_REFS, source);
 
     }
 }
