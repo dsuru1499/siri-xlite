@@ -3,7 +3,6 @@ package siri_xlite.service.estimated_vehicule_journey;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import siri_xlite.marshaller.json.*;
-import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.ItemSubscriber;
 
 import java.util.List;
@@ -12,8 +11,7 @@ import static siri_xlite.common.JsonUtils.*;
 import static siri_xlite.marshaller.json.SiriMarshaller.CALLS;
 
 @Slf4j
-public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<EstimatedVehiculeJourneyParameters>
-        implements Constants {
+public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<EstimatedVehiculeJourneyParameters> {
 
     private static final String EXTRA_CALL = "extraCall";
     private static final String CANCELLATION = "cancellation";

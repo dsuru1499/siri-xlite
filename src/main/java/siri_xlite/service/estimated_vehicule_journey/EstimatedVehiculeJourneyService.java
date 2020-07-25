@@ -5,45 +5,41 @@ import com.jamonapi.MonitorFactory;
 import io.reactivex.Flowable;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.infinispan.Cache;
-import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import siri_xlite.Configuration;
 import siri_xlite.common.Color;
 import siri_xlite.model.VehicleJourneyDocument;
+import siri_xlite.repositories.EtagsRepository;
 import siri_xlite.repositories.NotModifiedException;
 import siri_xlite.repositories.VehicleJourneyRepository;
 import siri_xlite.service.common.*;
 
 import java.util.Date;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
+
+import static siri_xlite.service.common.Messages.LOAD_FROM_BACKEND;
 
 @Slf4j
 @Service
-public class EstimatedVehiculeJourneyService implements EstimatedVehiculeJourney, Constants {
+public class EstimatedVehiculeJourneyService extends SiriService implements EstimatedVehiculeJourney {
 
     private static final ResourceBundle messages = ResourceBundle
             .getBundle(Messages.class.getPackageName() + ".Messages");
-    @Autowired
-    protected EmbeddedCacheManager manager;
+
     @Autowired
     private Configuration configuration;
     @Autowired
     private VehicleJourneyRepository repository;
+    @Autowired
+    private EtagsRepository cache;
 
     @Override
     public void handle(final RoutingContext context) {
-
-        log.info(Color.GREEN + "[DSU] GET " + context.request().uri() + Color.NORMAL);
-        context.request().headers().iterator().forEachRemaining(
-                (t) -> log.info(Color.GREEN + t.getKey() + "=" + t.getValue() + Color.NORMAL));
-
         try {
             Monitor monitor = MonitorFactory.start(ESTIMATED_VEHICLE_JOURNEY);
+            log(context.request());
             final EstimatedVehiculeJourneySubscriber subscriber = new EstimatedVehiculeJourneySubscriber();
             Flowable.fromCallable(() -> {
                 EstimatedVehiculeJourneyParameters parameters = ParametersFactory
@@ -59,29 +55,14 @@ public class EstimatedVehiculeJourneyService implements EstimatedVehiculeJourney
     }
 
     private void onComplete(EstimatedVehiculeJourneySubscriber subscriber, RoutingContext context) {
-        Date lastModified = subscriber.getLastModified();
-        if (lastModified != null) {
-            Cache<String, String> cache = manager.getCache(ETAGS);
-            String uri = context.request().uri();
-            cache.putForExternalRead(uri, String.valueOf(lastModified.getTime()), LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
-        }
+        cache.put(context.request().uri(), subscriber.getLastModified());
     }
 
-    private Mono<VehicleJourneyDocument> stream(EstimatedVehiculeJourneyParameters parameters, RoutingContext context) {
-        Date when = CacheControl.getLastModified(context);
+    private Mono<VehicleJourneyDocument> stream(EstimatedVehiculeJourneyParameters parameters, RoutingContext context)
+            throws NotModifiedException {
+        Date lastModified = CacheControl.getLastModified(context);
         String uri = context.request().uri();
-        if (when != null) {
-            Cache<String, String> cache = manager.getCache(ETAGS);
-            String cached = cache.get(uri);
-            if (StringUtils.isNotEmpty(cached)) {
-                Date lastModified = new Date(Long.parseLong(cached));
-                if (! lastModified.after(when)) {
-                    log.info(messages.getString(REVALIDATE_RESSOURCE), uri);
-                    throw new NotModifiedException();
-                }
-            }
-        }
-
+        cache.validate(uri, lastModified);
         log.info(messages.getString(LOAD_FROM_BACKEND), uri);
         return repository.findById(parameters.getDatedVehicleJourneyRef());
     }

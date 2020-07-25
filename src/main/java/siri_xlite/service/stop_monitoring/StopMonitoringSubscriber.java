@@ -5,7 +5,6 @@ import io.vertx.core.http.HttpServerRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import siri_xlite.service.common.CollectionSubscriber;
-import siri_xlite.service.common.Constants;
 
 import java.util.Date;
 import java.util.List;
@@ -28,7 +27,7 @@ import static siri_xlite.service.Verticle.*;
 import static siri_xlite.service.common.EstimatedVehiculeJourney.ESTIMATED_VEHICLE_JOURNEY;
 
 @Slf4j
-public class StopMonitoringSubscriber extends CollectionSubscriber<StopMonitoringParameters> implements Constants {
+public class StopMonitoringSubscriber extends CollectionSubscriber<StopMonitoringParameters> {
 
     @Override
     protected void writeItem(Document t) {

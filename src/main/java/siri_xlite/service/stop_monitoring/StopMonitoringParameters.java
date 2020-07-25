@@ -17,7 +17,7 @@ public class StopMonitoringParameters extends DefaultParameters {
     @Override
     public void configure(RoutingContext context) throws SiriException {
         super.configure(context);
-        setMaxAge(600);
+        setMaxAge(30);
         setSMaxAge(600);
         setMonitoringRef(values.get(MONITORING_REF));
     }

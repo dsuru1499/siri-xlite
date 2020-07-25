@@ -3,6 +3,7 @@ package siri_xlite.service.common;
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.reactivex.exceptions.Exceptions;
+import io.vertx.core.MultiMap;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
@@ -76,37 +77,57 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
         log.error(e.getMessage(), e);
         SiriExceptionMarshaller.getInstance().write(writer, e);
         writer.close();
-        this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code()).end(out.toString());
-    }
-
-    protected void writeNotModified() throws Exception {
-        writer.close();
         HttpServerResponse response = this.context.response()
-                .setStatusCode(HttpURLConnection.HTTP_NOT_MODIFIED);
-        response.headers().iterator().forEachRemaining(
-                (entry) -> log.info(Color.GREEN + entry.getKey() + "=" + entry.getValue() + Color.NORMAL));
-        response.end();
+                .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setStatusCode(HttpResponseStatus.BAD_REQUEST.code());
+        log(response);
+        response.end(out.toString());
     }
 
     protected void writeNotFound() throws Exception {
         SiriExceptionMarshaller.getInstance().write(writer, SiriException.createInvalidDataReferencesError());
         writer.close();
-        this.context.response()
+        HttpServerResponse response = this.context.response()
+                .setStatusCode(HttpResponseStatus.NOT_FOUND.code());
+        log(response);
+        response.end(out.toString());
+    }
+
+    protected void writeNotModified() throws Exception {
+        writer.close();
+        HttpServerResponse response = this.context.response()
                 .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
-                .end(out.toString());
+                .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(
+                        CacheControl.PROXY_REVALIDATE,
+                        CacheControl.S_MAX_AGE + parameters.getSMaxAge(),
+                        CacheControl.MAX_AGE + parameters.getMaxAge()))
+                .putHeader(HttpHeaders.LAST_MODIFIED, DateTimeUtils.toRFC1123(CacheControl.getLastModified(context)))
+                .setStatusCode(HttpURLConnection.HTTP_NOT_MODIFIED);
+        log(response);
+        response.end();
     }
 
     protected void writeResponse(Date lastModified) {
-        this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        HttpServerResponse response = this.context.response()
+                .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(
-//                        CacheControl.PUBLIC,
-//                        CacheControl.MUST_REVALIDATE,
-//                        CacheControl.PROXY_REVALIDATE,
+                        CacheControl.PROXY_REVALIDATE,
                         CacheControl.S_MAX_AGE + parameters.getSMaxAge(),
                         CacheControl.MAX_AGE + parameters.getMaxAge()))
-                .putHeader(HttpHeaders.LAST_MODIFIED, DateTimeUtils.toRFC1123(lastModified))
-                .end(out.toString());
+                .putHeader(HttpHeaders.LAST_MODIFIED, DateTimeUtils.toRFC1123(lastModified));
+        log(response);
+        response.end(out.toString());
+    }
+
+    private void log(HttpServerResponse response) {
+        log.info(Color.GREEN
+                + String.format("[DSU] %d : %s", response.getStatusCode(), response.getStatusMessage())
+                + Color.NORMAL);
+        MultiMap headers = response.headers();
+        for (String key : headers.names()) {
+            String value = String.join(",", headers.getAll(key));
+            log.info(Color.GREEN + key + "=" + value + Color.NORMAL);
+        }
+
     }
 }

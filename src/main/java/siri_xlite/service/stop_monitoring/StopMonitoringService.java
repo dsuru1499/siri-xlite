@@ -13,16 +13,18 @@ import siri_xlite.Configuration;
 import siri_xlite.common.Color;
 import siri_xlite.model.VehicleJourneyDocument;
 import siri_xlite.repositories.VehicleJourneyRepository;
-import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.Messages;
 import siri_xlite.service.common.ParametersFactory;
+import siri_xlite.service.common.SiriService;
 import siri_xlite.service.common.StopMonitoring;
 
 import java.util.ResourceBundle;
 
+import static siri_xlite.service.common.Messages.LOAD_FROM_BACKEND;
+
 @Slf4j
 @Service
-public class StopMonitoringService implements StopMonitoring, Constants {
+public class StopMonitoringService extends SiriService implements StopMonitoring {
 
     private static final ResourceBundle messages = ResourceBundle
             .getBundle(Messages.class.getPackageName() + ".Messages");
@@ -37,6 +39,7 @@ public class StopMonitoringService implements StopMonitoring, Constants {
     public void handle(final RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(STOP_MONITORING);
+            log(context.request());
             final StopMonitoringSubscriber subscriber = new StopMonitoringSubscriber();
             Flowable.fromCallable(() -> {
                 StopMonitoringParameters parameters = ParametersFactory.create(StopMonitoringParameters.class, context);

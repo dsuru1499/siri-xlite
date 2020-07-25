@@ -13,16 +13,18 @@ import siri_xlite.Configuration;
 import siri_xlite.common.Color;
 import siri_xlite.model.VehicleJourneyDocument;
 import siri_xlite.repositories.VehicleJourneyRepository;
-import siri_xlite.service.common.Constants;
 import siri_xlite.service.common.EstimatedTimetable;
 import siri_xlite.service.common.Messages;
 import siri_xlite.service.common.ParametersFactory;
+import siri_xlite.service.common.SiriService;
 
 import java.util.ResourceBundle;
 
+import static siri_xlite.service.common.Messages.LOAD_FROM_BACKEND;
+
 @Slf4j
 @Service
-public class EstimatedTimetableService implements EstimatedTimetable, Constants {
+public class EstimatedTimetableService extends SiriService implements EstimatedTimetable {
 
     private static final ResourceBundle messages = ResourceBundle
             .getBundle(Messages.class.getPackageName() + ".Messages");
@@ -37,6 +39,7 @@ public class EstimatedTimetableService implements EstimatedTimetable, Constants 
     public void handle(final RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(ESTIMATED_TIMETABLE);
+            log(context.request());
             final EstimatedTimetableSubscriber subscriber = new EstimatedTimetableSubscriber();
             Flowable.fromCallable(() -> {
                 EstimatedTimetableParameters parameters = ParametersFactory.create(EstimatedTimetableParameters.class,

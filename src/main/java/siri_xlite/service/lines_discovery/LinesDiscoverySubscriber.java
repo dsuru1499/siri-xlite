@@ -3,12 +3,11 @@ package siri_xlite.service.lines_discovery;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import siri_xlite.service.common.CollectionSubscriber;
-import siri_xlite.service.common.Constants;
 
 import static siri_xlite.common.JsonUtils.*;
 
 @Slf4j
-public class LinesDiscoverySubscriber extends CollectionSubscriber<LinesDiscoveryParameters> implements Constants {
+public class LinesDiscoverySubscriber extends CollectionSubscriber<LinesDiscoveryParameters> {
 
     private static final String DESTINATIONS = "destinations";
     private static final String LINE_REF = "lineRef";

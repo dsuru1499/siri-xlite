@@ -4,9 +4,6 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.infinispan.Cache;
-import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Polygon;
 import org.springframework.stereotype.Service;
@@ -16,32 +13,35 @@ import siri_xlite.Configuration;
 import siri_xlite.common.Color;
 import siri_xlite.common.OSMUtils;
 import siri_xlite.model.StopPointDocument;
+import siri_xlite.repositories.EtagsRepository;
 import siri_xlite.repositories.NotModifiedException;
 import siri_xlite.repositories.StopPointsRepository;
 import siri_xlite.service.common.*;
 
 import java.util.Date;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
+
+import static siri_xlite.service.common.Messages.LOAD_FROM_BACKEND;
 
 @Slf4j
 @Service
-public class StopPointsDiscoveryService implements StopPointsDiscovery, Constants {
+public class StopPointsDiscoveryService extends SiriService implements StopPointsDiscovery {
 
     private static final ResourceBundle messages = ResourceBundle
             .getBundle(Messages.class.getPackageName() + ".Messages");
 
     @Autowired
-    private EmbeddedCacheManager manager;
-    @Autowired
     private Configuration configuration;
     @Autowired
     private StopPointsRepository repository;
+    @Autowired
+    private EtagsRepository cache;
 
     @Override
     public void handle(final RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(STOPPOINTS_DISCOVERY);
+            log(context.request());
             final StopPointsDiscoverySubcriber subscriber = new StopPointsDiscoverySubcriber();
             Mono.fromCallable(() -> {
                 StopPointsDiscoveryParameters parameters = ParametersFactory.create(StopPointsDiscoveryParameters.class,
@@ -58,27 +58,15 @@ public class StopPointsDiscoveryService implements StopPointsDiscovery, Constant
     }
 
     private void onComplete(StopPointsDiscoverySubcriber subscriber, RoutingContext context) {
-        Date lastModified = subscriber.getLastModified();
-        if (lastModified != null) {
-            Cache<String, String> cache = manager.getCache(ETAGS);
-            String uri = context.request().uri();
-            cache.putForExternalRead(uri, String.valueOf(lastModified.getTime()), LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
-        }
+        cache.put(context.request().uri(), subscriber.getLastModified());
     }
 
-    private Flux<StopPointDocument> stream(StopPointsDiscoveryParameters parameters, RoutingContext context) {
-        Date when = CacheControl.getLastModified(context);
+    private Flux<StopPointDocument> stream(StopPointsDiscoveryParameters parameters, RoutingContext context)
+            throws NotModifiedException {
+        Date lastModified = CacheControl.getLastModified(context);
         String uri = context.request().uri();
-        if (when != null) {
-            Cache<String, String> cache = manager.getCache(ETAGS);
-            String cached = cache.get(uri);
-            if (StringUtils.isNotEmpty(cached)) {
-                Date lastModified = new Date(Long.parseLong(cached));
-                if (!lastModified.after(when)) {
-                    throw new NotModifiedException();
-                }
-            }
-        }
+        cache.validate(uri, lastModified);
+        log.info(messages.getString(LOAD_FROM_BACKEND), uri);
 
         log.info(messages.getString(LOAD_FROM_BACKEND), uri);
         if (parameters.getXtile() != null && parameters.getYtile() != null) {

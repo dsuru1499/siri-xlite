@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class DefaultService implements SiriService {
+public class DefaultService extends SiriService {
 
     @Override
     public void handle(final RoutingContext context) {

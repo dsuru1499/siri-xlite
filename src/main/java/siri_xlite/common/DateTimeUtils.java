@@ -58,6 +58,6 @@ public interface DateTimeUtils {
 
     static Date fromRFC1123(String text) {
         LocalDateTime dateTime = LocalDateTime.parse(text, DateTimeFormatter.RFC_1123_DATE_TIME);
-        return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+        return Date.from(dateTime.atZone(ZoneId.of("GMT")).toInstant());
     }
 }

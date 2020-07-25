@@ -3,15 +3,13 @@ package siri_xlite.service.stop_points_discovery;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import siri_xlite.service.common.CollectionSubscriber;
-import siri_xlite.service.common.Constants;
 
 import java.util.Collection;
 
 import static siri_xlite.common.JsonUtils.*;
 
 @Slf4j
-public class StopPointsDiscoverySubcriber extends CollectionSubscriber<StopPointsDiscoveryParameters>
-        implements Constants {
+public class StopPointsDiscoverySubcriber extends CollectionSubscriber<StopPointsDiscoveryParameters> {
 
     private static final String STOP_POINT_REF = "stopPointRef";
     private static final String STOP_NAME = "stopName";
