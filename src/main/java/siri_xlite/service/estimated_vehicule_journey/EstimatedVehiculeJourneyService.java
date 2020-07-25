@@ -75,7 +75,7 @@ public class EstimatedVehiculeJourneyService implements EstimatedVehiculeJourney
             String cached = cache.get(uri);
             if (StringUtils.isNotEmpty(cached)) {
                 Date lastModified = new Date(Long.parseLong(cached));
-                if (lastModified.after(when)) {
+                if (! lastModified.after(when)) {
                     log.info(messages.getString(REVALIDATE_RESSOURCE), uri);
                     throw new NotModifiedException();
                 }

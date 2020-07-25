@@ -74,7 +74,7 @@ public class StopPointsDiscoveryService implements StopPointsDiscovery, Constant
             String cached = cache.get(uri);
             if (StringUtils.isNotEmpty(cached)) {
                 Date lastModified = new Date(Long.parseLong(cached));
-                if (lastModified.after(when)) {
+                if (!lastModified.after(when)) {
                     throw new NotModifiedException();
                 }
             }

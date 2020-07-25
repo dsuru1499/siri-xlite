@@ -101,9 +101,9 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
     protected void writeResponse(Date lastModified) {
         this.context.response().putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(
-                        CacheControl.PUBLIC,
-                        CacheControl.MUST_REVALIDATE,
-                        CacheControl.PROXY_REVALIDATE,
+//                        CacheControl.PUBLIC,
+//                        CacheControl.MUST_REVALIDATE,
+//                        CacheControl.PROXY_REVALIDATE,
                         CacheControl.S_MAX_AGE + parameters.getSMaxAge(),
                         CacheControl.MAX_AGE + parameters.getMaxAge()))
                 .putHeader(HttpHeaders.LAST_MODIFIED, DateTimeUtils.toRFC1123(lastModified))
