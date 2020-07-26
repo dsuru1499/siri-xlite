@@ -2,10 +2,13 @@ package siri_xlite.common;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import io.vertx.core.Context;
+import io.vertx.ext.web.RoutingContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bson.Document;
+import siri_xlite.Configuration;
 import siri_xlite.service.common.SiriStructureFactory;
 
 import java.io.IOException;
@@ -28,7 +31,7 @@ public class JsonUtils {
 
     private static final JsonFactory factory = new JsonFactory();
 
-    public static void writeStartDocument(JsonGenerator writer, String href, String version) {
+    public static void writeStartDocument(JsonGenerator writer, Configuration configuration) {
         if (writer.isClosed()) {
             ExceptionUtils.wrapAndThrow(new Exception());
         }

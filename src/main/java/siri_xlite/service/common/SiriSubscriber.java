@@ -28,7 +28,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static siri_xlite.common.JsonUtils.createJsonWriter;
 
-
 @Slf4j
 public abstract class SiriSubscriber<T, P extends DefaultParameters> implements Subscriber<T> {
 
@@ -98,6 +97,8 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
         HttpServerResponse response = this.context.response()
                 .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(
+                        CacheControl.PUBLIC,
+                        CacheControl.MUST_REVALIDATE,
                         CacheControl.PROXY_REVALIDATE,
                         CacheControl.S_MAX_AGE + parameters.getSMaxAge(),
                         CacheControl.MAX_AGE + parameters.getMaxAge()))
@@ -111,6 +112,8 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
         HttpServerResponse response = this.context.response()
                 .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(
+                        CacheControl.PUBLIC,
+                        CacheControl.MUST_REVALIDATE,
                         CacheControl.PROXY_REVALIDATE,
                         CacheControl.S_MAX_AGE + parameters.getSMaxAge(),
                         CacheControl.MAX_AGE + parameters.getMaxAge()))

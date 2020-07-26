@@ -95,7 +95,6 @@ public class Verticle extends AbstractVerticle {
 
         HttpServerOptions options = new HttpServerOptions().setUseAlpn(true).setSsl(true)
                 .setKeyStoreOptions(new JksOptions().setPath("siri-xlite.jks").setPassword("siri-xlite"));
-
         vertx.createHttpServer(options).requestHandler(router).listen(configuration.getPort());
     }
 

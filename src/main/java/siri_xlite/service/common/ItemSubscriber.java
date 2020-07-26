@@ -26,7 +26,7 @@ public abstract class ItemSubscriber<P extends DefaultParameters> extends SiriSu
         try {
             count.incrementAndGet();
             this.current = document;
-            writeStartDocument(writer, context.request().absoluteURI(), configuration.getVersion());
+            writeStartDocument(writer, configuration);
             writeItem(document);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

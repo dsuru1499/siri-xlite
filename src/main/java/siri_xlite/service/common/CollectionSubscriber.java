@@ -17,7 +17,7 @@ public abstract class CollectionSubscriber<P extends DefaultParameters> extends 
         try {
             count.incrementAndGet();
             if (count.get() == 1) {
-                writeStartDocument(writer, context.request().absoluteURI(), configuration.getVersion());
+                writeStartDocument(writer, configuration);
                 writer.writeStartArray();
             }
             if (current == null || CacheControl.COMPARATOR.compare(document, current) > 0) {
