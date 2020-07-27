@@ -5,6 +5,7 @@ import io.vertx.ext.web.RoutingContext;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import siri_xlite.Configuration;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,22 +14,21 @@ import java.util.UUID;
 @Data
 public abstract class DefaultParameters implements Parameters {
 
+    protected Configuration configuration;
+
     protected MultiMap values;
 
     private LocalDateTime now;
 
     private String messageIdentifier;
 
-    private Integer maxAge = 3;
-
-    private Integer sMaxAge = 30;
-
     protected DefaultParameters() {
     }
 
     @Override
-    public void configure(RoutingContext context) throws SiriException {
-        values = context.request().params();
+    public void configure(Configuration configuration, RoutingContext context) throws SiriException {
+        this.configuration = configuration;
+        this.values = context.request().params();
         setNow(LocalDateTime.now());
         setMessageIdentifier(UUID.randomUUID().toString());
     }
@@ -62,5 +62,9 @@ public abstract class DefaultParameters implements Parameters {
         String value = values.get(name);
         return (StringUtils.isNotEmpty(value) ? Double.valueOf(value) : null);
     }
+
+    public abstract Integer getSMaxAge();
+
+    public abstract Integer getMaxAge();
 
 }

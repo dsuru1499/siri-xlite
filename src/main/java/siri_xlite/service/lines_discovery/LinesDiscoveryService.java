@@ -42,8 +42,8 @@ public class LinesDiscoveryService extends SiriService implements LinesDiscovery
             log(context.request());
             final LinesDiscoverySubscriber subscriber = new LinesDiscoverySubscriber();
             Mono.fromCallable(() -> {
-                LinesDiscoveryParameters parameters = ParametersFactory.create(LinesDiscoveryParameters.class, context);
-                subscriber.configure(configuration, parameters, context);
+                LinesDiscoveryParameters parameters = ParametersFactory.create(LinesDiscoveryParameters.class, configuration, context);
+                subscriber.configure(parameters, context);
                 return parameters;
             }).flatMapMany(parameters -> stream(parameters, context))
                     .doOnComplete(() -> onComplete(subscriber, context))
@@ -63,6 +63,7 @@ public class LinesDiscoveryService extends SiriService implements LinesDiscovery
         Date lastModified = CacheControl.getLastModified(context);
         String uri = context.request().uri();
         cache.validate(uri, lastModified);
+
         log.info(messages.getString(LOAD_FROM_BACKEND), uri);
         return repository.findAll();
     }

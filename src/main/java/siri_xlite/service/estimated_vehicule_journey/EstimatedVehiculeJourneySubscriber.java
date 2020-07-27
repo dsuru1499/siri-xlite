@@ -38,26 +38,29 @@ public class EstimatedVehiculeJourneySubscriber extends ItemSubscriber<Estimated
     }
 
     private void writeEstimatedCall(Object o) {
-        writeObject(writer, (Document) o, source -> {
-            StopPointInSequenceGroupMarshaller.getInstance().write(writer, source);
+        if (o instanceof Document) {
+            Document document = (Document) o;
+            writeObject(writer, document, source -> {
+                StopPointInSequenceGroupMarshaller.getInstance().write(writer, source);
 
-            // setExtraCall
-            writeBooleanField(writer, EXTRA_CALL, source);
+                // setExtraCall
+                writeBooleanField(writer, EXTRA_CALL, source);
 
-            // cancellation
-            writeBooleanField(writer, CANCELLATION, source);
+                // cancellation
+                writeBooleanField(writer, CANCELLATION, source);
 
-            // CallRealTimeInfoGroupMarshaller.getInstance().write(writer, source);
-            CallPropertyGroupMarshaller.getInstance().write(writer, source);
-            // CallNoteGroupMarshaller.getInstance().write(writer, source);
-            DisruptionGroupMarshaller.getInstance().write(writer, source);
-            OnwardVehicleArrivalTimesGroupMarshaller.getInstance().write(writer, source);
-            MonitoredStopArrivalStatusGroupMarshaller.getInstance().write(writer, source);
-            OnwardVehicleDepartureTimesGroupMarshaller.getInstance().write(writer, source);
-            // PassengerDepartureTimesGroupMarshaller.getInstance().write(writer, source);
-            MonitoredStopDepartureStatusGroupMarshaller.getInstance().write(writer, source);
-            HeadwayIntervalGroupMarshaller.getInstance().write(writer, source);
-            StopProximityGroupMarshaller.getInstance().write(writer, source);
-        });
+                // CallRealTimeInfoGroupMarshaller.getInstance().write(writer, source);
+                CallPropertyGroupMarshaller.getInstance().write(writer, source);
+                // CallNoteGroupMarshaller.getInstance().write(writer, source);
+                DisruptionGroupMarshaller.getInstance().write(writer, source);
+                OnwardVehicleArrivalTimesGroupMarshaller.getInstance().write(writer, source);
+                MonitoredStopArrivalStatusGroupMarshaller.getInstance().write(writer, source);
+                OnwardVehicleDepartureTimesGroupMarshaller.getInstance().write(writer, source);
+                // PassengerDepartureTimesGroupMarshaller.getInstance().write(writer, source);
+                MonitoredStopDepartureStatusGroupMarshaller.getInstance().write(writer, source);
+                HeadwayIntervalGroupMarshaller.getInstance().write(writer, source);
+                StopProximityGroupMarshaller.getInstance().write(writer, source);
+            });
+        }
     }
 }

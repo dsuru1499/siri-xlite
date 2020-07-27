@@ -43,8 +43,8 @@ public class EstimatedVehiculeJourneyService extends SiriService implements Esti
             final EstimatedVehiculeJourneySubscriber subscriber = new EstimatedVehiculeJourneySubscriber();
             Flowable.fromCallable(() -> {
                 EstimatedVehiculeJourneyParameters parameters = ParametersFactory
-                        .create(EstimatedVehiculeJourneyParameters.class, context);
-                subscriber.configure(configuration, parameters, context);
+                        .create(EstimatedVehiculeJourneyParameters.class, configuration, context);
+                subscriber.configure(parameters, context);
                 return parameters;
             }).flatMap(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(subscriber, context))
                     .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))
@@ -63,6 +63,7 @@ public class EstimatedVehiculeJourneyService extends SiriService implements Esti
         Date lastModified = CacheControl.getLastModified(context);
         String uri = context.request().uri();
         cache.validate(uri, lastModified);
+
         log.info(messages.getString(LOAD_FROM_BACKEND), uri);
         return repository.findById(parameters.getDatedVehicleJourneyRef());
     }

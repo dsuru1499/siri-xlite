@@ -3,6 +3,8 @@ package siri_xlite.service.estimated_timetable;
 import io.vertx.ext.web.RoutingContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Delegate;
+import siri_xlite.Configuration;
 import siri_xlite.service.common.DefaultParameters;
 import siri_xlite.service.common.SiriException;
 
@@ -15,11 +17,14 @@ public class EstimatedTimetableParameters extends DefaultParameters {
     private String lineRef;
 
     @Override
-    public void configure(RoutingContext context) throws SiriException {
-        super.configure(context);
-        setMaxAge(600);
-        setSMaxAge(600);
+    public void configure(Configuration configuration, RoutingContext context) throws SiriException {
+        super.configure(configuration, context);
         setLineRef(values.get(LINE_REF));
+    }
+
+    @Delegate
+    public Configuration.ServiceConfiguration getConfigurationS() {
+        return configuration.getEstimatedTimetable();
     }
 
 }

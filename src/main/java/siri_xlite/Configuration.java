@@ -1,12 +1,8 @@
 package siri_xlite;
 
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
-import siri_xlite.service.common.StopMonitoring;
-
-import java.util.List;
 
 @org.springframework.context.annotation.Configuration
 @PropertySource("application.yml")
@@ -14,12 +10,17 @@ import java.util.List;
 @Data
 public class Configuration {
 
-    private Integer port;
+    private Integer port = 8443;
 
-    private ServiceConfiguration estimatedVehiculeJourneyService;
+    private ServiceConfiguration linesDiscovery;
+    private ServiceConfiguration stopPointsDiscovery;
+    private ServiceConfiguration stopMonitoring;
+    private ServiceConfiguration estimatedTimetable;
+    private ServiceConfiguration estimatedVehicleJourney;
 
-    private class ServiceConfiguration {
-        Integer maxAge;
-        Integer sMaxAge;
+    @Data
+    public static class ServiceConfiguration {
+        private Integer maxAge = 0;
+        private Integer sMaxAge = 0;
     }
 }

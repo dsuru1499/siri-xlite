@@ -3,6 +3,7 @@ package siri_xlite.service.estimated_timetable;
 import io.vertx.ext.web.RoutingContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import siri_xlite.Configuration;
 import siri_xlite.service.common.ParametersFactory;
 
 @Data
@@ -14,10 +15,9 @@ public class EstimatedTimetableParametersFactory extends ParametersFactory<Estim
     }
 
     @Override
-    protected EstimatedTimetableParameters create(RoutingContext context) throws Exception {
+    protected EstimatedTimetableParameters create(Configuration configuration, RoutingContext context) throws Exception {
         EstimatedTimetableParameters parameters = new EstimatedTimetableParameters();
-        parameters.configure(context);
-        parameters.validate();
+        parameters.configure(configuration, context);
         return parameters;
     }
 }

@@ -1,6 +1,19 @@
 siri-xlite:
   port: 8443
-  estimated-vehicule-journey:
+
+  lines-discovery:
+    max-age: 30
+    s-maxage: 3600
+  stoppoints-discovery:
+    max-age: 30
+    s-maxage: 3600
+  stop-monitoring:
+    max-age: 30
+    s-maxage: 600
+  estimated-timetable:
+    max-age: 30
+    s-maxage: 600
+  estimated-vehicle-journey:
     max-age: 30
     s-maxage: 60
 

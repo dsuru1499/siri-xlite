@@ -3,6 +3,7 @@ package siri_xlite.service.stop_points_discovery;
 import io.vertx.ext.web.RoutingContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import siri_xlite.Configuration;
 import siri_xlite.service.common.ParametersFactory;
 
 @Data
@@ -14,10 +15,9 @@ public class StopPointsDiscoveryParametersFactory extends ParametersFactory<Stop
     }
 
     @Override
-    protected StopPointsDiscoveryParameters create(RoutingContext context) throws Exception {
+    protected StopPointsDiscoveryParameters create(Configuration configuration, RoutingContext context) throws Exception {
         StopPointsDiscoveryParameters parameters = new StopPointsDiscoveryParameters();
-        parameters.configure(context);
-        parameters.validate();
+        parameters.configure(configuration, context);
         return parameters;
     }
 }

@@ -42,8 +42,8 @@ public class StopMonitoringService extends SiriService implements StopMonitoring
             log(context.request());
             final StopMonitoringSubscriber subscriber = new StopMonitoringSubscriber();
             Flowable.fromCallable(() -> {
-                StopMonitoringParameters parameters = ParametersFactory.create(StopMonitoringParameters.class, context);
-                subscriber.configure(configuration, parameters, context);
+                StopMonitoringParameters parameters = ParametersFactory.create(StopMonitoringParameters.class, configuration, context);
+                subscriber.configure(parameters, context);
                 return parameters;
             }).flatMap(parameters -> stream(parameters, context))
                     .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))

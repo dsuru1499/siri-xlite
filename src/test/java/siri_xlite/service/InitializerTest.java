@@ -13,7 +13,7 @@ class InitializerTest {
 
     @Disabled
     @Test
-    void initialize() throws Exception {
+    void initialize() {
         initializer.initialize();
     }
 }

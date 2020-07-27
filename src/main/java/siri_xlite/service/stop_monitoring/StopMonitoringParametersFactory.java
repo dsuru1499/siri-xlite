@@ -3,6 +3,7 @@ package siri_xlite.service.stop_monitoring;
 import io.vertx.ext.web.RoutingContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import siri_xlite.Configuration;
 import siri_xlite.service.common.ParametersFactory;
 
 @Data
@@ -14,10 +15,9 @@ public class StopMonitoringParametersFactory extends ParametersFactory<StopMonit
     }
 
     @Override
-    protected StopMonitoringParameters create(RoutingContext context) throws Exception {
+    protected StopMonitoringParameters create(Configuration configuration, RoutingContext context) throws Exception {
         StopMonitoringParameters parameters = new StopMonitoringParameters();
-        parameters.configure(context);
-        parameters.validate();
+        parameters.configure(configuration, context);
         return parameters;
     }
 }

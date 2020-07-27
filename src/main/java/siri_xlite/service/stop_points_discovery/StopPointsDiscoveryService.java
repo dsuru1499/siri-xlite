@@ -45,8 +45,8 @@ public class StopPointsDiscoveryService extends SiriService implements StopPoint
             final StopPointsDiscoverySubcriber subscriber = new StopPointsDiscoverySubcriber();
             Mono.fromCallable(() -> {
                 StopPointsDiscoveryParameters parameters = ParametersFactory.create(StopPointsDiscoveryParameters.class,
-                        context);
-                subscriber.configure(configuration, parameters, context);
+                        configuration, context);
+                subscriber.configure(parameters, context);
                 return parameters;
             }).flatMapMany(parameters -> stream(parameters, context))
                     .doOnComplete(() -> onComplete(subscriber, context))
@@ -66,7 +66,6 @@ public class StopPointsDiscoveryService extends SiriService implements StopPoint
         Date lastModified = CacheControl.getLastModified(context);
         String uri = context.request().uri();
         cache.validate(uri, lastModified);
-        log.info(messages.getString(LOAD_FROM_BACKEND), uri);
 
         log.info(messages.getString(LOAD_FROM_BACKEND), uri);
         if (parameters.getXtile() != null && parameters.getYtile() != null) {

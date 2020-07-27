@@ -42,9 +42,9 @@ public class EstimatedTimetableService extends SiriService implements EstimatedT
             log(context.request());
             final EstimatedTimetableSubscriber subscriber = new EstimatedTimetableSubscriber();
             Flowable.fromCallable(() -> {
-                EstimatedTimetableParameters parameters = ParametersFactory.create(EstimatedTimetableParameters.class,
+                EstimatedTimetableParameters parameters = ParametersFactory.create(EstimatedTimetableParameters.class, configuration,
                         context);
-                subscriber.configure(configuration, parameters, context);
+                subscriber.configure(parameters, context);
                 return parameters;
             }).flatMap(parameters -> stream(parameters, context))
                     .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))

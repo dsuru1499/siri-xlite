@@ -2,13 +2,11 @@ package siri_xlite.common;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import io.vertx.core.Context;
-import io.vertx.ext.web.RoutingContext;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bson.Document;
-import siri_xlite.Configuration;
+import siri_xlite.service.common.Parameters;
 import siri_xlite.service.common.SiriStructureFactory;
 
 import java.io.IOException;
@@ -17,7 +15,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -31,7 +28,7 @@ public class JsonUtils {
 
     private static final JsonFactory factory = new JsonFactory();
 
-    public static void writeStartDocument(JsonGenerator writer, Configuration configuration) {
+    public static void writeStartDocument(JsonGenerator writer, Parameters parameters) {
         if (writer.isClosed()) {
             ExceptionUtils.wrapAndThrow(new Exception());
         }
@@ -86,7 +83,7 @@ public class JsonUtils {
     }
 
     public static void writeArrayField(JsonGenerator writer, String name, Document source) {
-        writeArray(writer, name, (List<?>) source.get(name, List.class));
+        writeArray(writer, name, source.get(name, List.class));
     }
 
     public static <T> void writeArrayField(JsonGenerator writer, String name, Document source, Consumer<T> consumer) {
@@ -199,7 +196,7 @@ public class JsonUtils {
         }
     }
 
-    public static <T> void writeArray(JsonGenerator writer, String name, Collection<T> values) {
+    public static <T> void writeArray(JsonGenerator writer, String name, List<?> values) {
         try {
             if (CollectionUtils.isNotEmpty(values)) {
                 writer.writeArrayFieldStart(name);
@@ -213,7 +210,7 @@ public class JsonUtils {
         }
     }
 
-    public static <T> void writeArray(JsonGenerator writer, String name, Collection<T> values, Consumer<T> consumer) {
+    public static <T> void writeArray(JsonGenerator writer, String name, List<T> values, Consumer<T> consumer) {
         try {
             if (CollectionUtils.isNotEmpty(values)) {
                 writer.writeArrayFieldStart(name);

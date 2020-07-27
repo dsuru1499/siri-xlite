@@ -3,6 +3,7 @@ package siri_xlite.service.estimated_vehicule_journey;
 import io.vertx.ext.web.RoutingContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import siri_xlite.Configuration;
 import siri_xlite.service.common.ParametersFactory;
 
 @Data
@@ -15,10 +16,9 @@ public class EstimatedVehiculeJourneyParametersFactory extends ParametersFactory
     }
 
     @Override
-    protected EstimatedVehiculeJourneyParameters create(RoutingContext context) throws Exception {
+    protected EstimatedVehiculeJourneyParameters create(Configuration configuration, RoutingContext context) throws Exception {
         EstimatedVehiculeJourneyParameters parameters = new EstimatedVehiculeJourneyParameters();
-        parameters.configure(context);
-        parameters.validate();
+        parameters.configure(configuration, context);
         return parameters;
     }
 }

@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import siri_xlite.service.common.CollectionSubscriber;
 
-import java.util.Collection;
+import java.util.List;
 
 import static siri_xlite.common.JsonUtils.*;
 
@@ -25,7 +25,7 @@ public class StopPointsDiscoverySubcriber extends CollectionSubscriber<StopPoint
             writeStringField(writer, STOP_POINT_REF, source);
             writeStringField(writer, STOP_NAME, source);
 
-            writeArray(writer, LINES, (Collection<?>) source.get(LINE_REFS),
+            writeArray(writer, LINES, (List<?>) source.get(LINE_REFS),
                     value -> writeObject(writer, value, (lineRef) -> writeField(writer, LINE_REFS, (String) lineRef)));
 
             writeObjectField(writer, LOCATION, source, location -> {

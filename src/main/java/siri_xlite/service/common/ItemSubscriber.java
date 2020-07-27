@@ -14,7 +14,8 @@ import static siri_xlite.common.JsonUtils.writeStartDocument;
 @Slf4j
 public abstract class ItemSubscriber<P extends DefaultParameters> extends SiriSubscriber<Document, P> {
 
-    private final AtomicInteger count = new AtomicInteger();
+    protected final AtomicInteger count = new AtomicInteger();
+    protected Document current;
 
     @Override
     public void onSubscribe(Subscription s) {
@@ -26,7 +27,7 @@ public abstract class ItemSubscriber<P extends DefaultParameters> extends SiriSu
         try {
             count.incrementAndGet();
             this.current = document;
-            writeStartDocument(writer, configuration);
+            writeStartDocument(writer, parameters);
             writeItem(document);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

@@ -5,8 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.infinispan.Cache;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import siri_xlite.common.Color;
+import org.springframework.stereotype.Repository;
 import siri_xlite.service.common.Messages;
 
 import java.util.Date;
@@ -15,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import static siri_xlite.service.common.Messages.REVALIDATE_RESSOURCE;
 
-@Service
+@Repository
 @Slf4j
 public class EtagsRepository {
 

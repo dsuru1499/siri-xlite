@@ -22,8 +22,11 @@ public class CacheControl {
     public static final Comparator<Document> COMPARATOR = Comparator.comparing(t -> t.getDate(RECCORDED_AT_TIME).getTime());
 
     public static Date getLastModified(RoutingContext context) {
-        String text = context.request().getHeader(HttpHeaders.IF_MODIFIED_SINCE);
-        return StringUtils.isNotEmpty(text) ? DateTimeUtils.fromRFC1123(text) : null;
+        if (context != null) {
+            String text = context.request().getHeader(HttpHeaders.IF_MODIFIED_SINCE);
+            return StringUtils.isNotEmpty(text) ? DateTimeUtils.fromRFC1123(text) : null;
+        }
+        return null;
     }
 
     public static Date getLastModified(Document document) {

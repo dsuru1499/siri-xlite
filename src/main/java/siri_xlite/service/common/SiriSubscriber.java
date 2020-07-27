@@ -8,13 +8,10 @@ import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
-import org.infinispan.manager.EmbeddedCacheManager;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import siri_xlite.Configuration;
 import siri_xlite.common.Color;
 import siri_xlite.common.DateTimeUtils;
 import siri_xlite.marshaller.json.SiriExceptionMarshaller;
@@ -24,7 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.net.HttpURLConnection;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static siri_xlite.common.JsonUtils.createJsonWriter;
 
@@ -32,23 +28,16 @@ import static siri_xlite.common.JsonUtils.createJsonWriter;
 public abstract class SiriSubscriber<T, P extends DefaultParameters> implements Subscriber<T> {
 
     @Autowired
-    protected EmbeddedCacheManager manager;
-    protected Configuration configuration;
-    protected DefaultParameters parameters;
+    protected P parameters;
     protected RoutingContext context;
     protected ByteArrayOutputStream out;
     protected JsonGenerator writer;
-    protected Document current;
-    protected AtomicInteger count;
 
-    public void configure(Configuration configuration, P parameters, RoutingContext context) {
-        this.configuration = configuration;
+    public void configure(P parameters, RoutingContext context) {
         this.parameters = parameters;
         this.context = context;
         this.out = new ByteArrayOutputStream(10 * 1024);
         this.writer = createJsonWriter(this.out);
-        this.current = null;
-        this.count = new AtomicInteger();
     }
 
     @Override

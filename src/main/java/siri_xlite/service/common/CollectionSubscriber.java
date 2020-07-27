@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static siri_xlite.common.JsonUtils.writeEndDocument;
 import static siri_xlite.common.JsonUtils.writeStartDocument;
@@ -12,12 +13,15 @@ import static siri_xlite.common.JsonUtils.writeStartDocument;
 @Slf4j
 public abstract class CollectionSubscriber<P extends DefaultParameters> extends SiriSubscriber<Document, P> {
 
+    protected final AtomicInteger count = new AtomicInteger();
+    protected Document current;
+
     @Override
     public void onNext(Document document) {
         try {
             count.incrementAndGet();
             if (count.get() == 1) {
-                writeStartDocument(writer, configuration);
+                writeStartDocument(writer, parameters);
                 writer.writeStartArray();
             }
             if (current == null || CacheControl.COMPARATOR.compare(document, current) > 0) {
