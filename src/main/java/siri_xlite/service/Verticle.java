@@ -3,7 +3,7 @@ package siri_xlite.service;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServerOptions;
-import io.vertx.core.net.JksOptions;
+import io.vertx.core.net.SelfSignedCertificate;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.FaviconHandler;
@@ -41,7 +41,8 @@ public class Verticle extends AbstractVerticle {
     public static final String SEP = "/";
     public static final String COLON = ":";
     public static final String HASH = "#";
-    private static final String PUBLIC = "public";
+    public static final String PUBLIC = "public";
+
     @Autowired
     Configuration configuration;
 
@@ -67,6 +68,19 @@ public class Verticle extends AbstractVerticle {
     public void start() throws Exception {
         super.start();
 
+        SelfSignedCertificate certificate = SelfSignedCertificate.create("localhost");
+        HttpServerOptions options = new HttpServerOptions()
+                .setCompressionSupported(true)
+                .setCompressionLevel(1)
+                .setUseAlpn(true)
+                .setSsl(true)
+                .setKeyCertOptions(certificate.keyCertOptions())
+                .setTrustOptions(certificate.trustOptions());
+
+        vertx.createHttpServer(options).requestHandler(getRouter()).listen(configuration.getPort());
+    }
+
+    private Router getRouter() {
         Router router = Router.router(vertx);
         router.route()
                 .handler(CorsHandler.create("*")
@@ -86,20 +100,6 @@ public class Verticle extends AbstractVerticle {
 
         router.route().handler(FaviconHandler.create());
         router.route().handler(StaticHandler.create(PUBLIC));
-
-        // SelfSignedCertificate certificate = SelfSignedCertificate.create();
-        // HttpServerOptions options = new HttpServerOptions()
-        // .setSsl(true)
-        // .setKeyCertOptions(certificate.keyCertOptions())
-        // .setTrustOptions(certificate.trustOptions());
-
-        HttpServerOptions options = new HttpServerOptions()
-                .setCompressionSupported(true)
-                .setCompressionLevel(1)
-                .setUseAlpn(true)
-                .setSsl(true)
-                .setKeyStoreOptions(new JksOptions().setPath("siri-xlite.jks").setPassword("siri-xlite"));
-        vertx.createHttpServer(options).requestHandler(router).listen(configuration.getPort());
+        return router;
     }
-
 }
