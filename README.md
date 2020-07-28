@@ -159,32 +159,29 @@ La durée de vie est parametrable (~ 10 mn).
     * stopPointRef : Identifiant de point d’arrêt (StopArea ou StopPoint).
    
 #### réponses
-
- * 200 OK : Collection de référence de ressource estimated-vehicle-journey (+ méta-données).  
+ 
+    * 200 OK : Collection de référence de ressource estimated-vehicle-journey 
+    (+ méta-données: voir definition EstimatedVehicleJourneyStructure).  
     - réference de la course partagé + index du monitoringRef dans la course (voir estimatedCalls[index])
-    - données theorique (EstimatedVehicleJourneyStructure) permetant le tri des reponses par ligne,destination,operateur... (voir definition du service StopMonitoring)
-
-...
-    [
+    - données theorique (EstimatedVehicleJourneyStructure) permetant le tri des reponses par ligne,destination,operateur... (voir definition du service StopMonitoring)  
+     [
         {
-            href: /siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]#[index]
-            lineRef:
-            routeRef	
-            directionRef	
-            directionName
-            destinationRef
-            operatorRef
-            stopPointRef:
-            order:
-            aimedDepartureTime:
-            aimedArrivalTime:
+            href: "/siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]#[index]"
+            lineRef: "" 
+            routeRef: ""	
+            directionRef: ""	
+            directionName: ""
+            destinationRef: ""
+            operatorRef: ""
+            stopPointRef: ""
+            order: ""
+            aimedDepartureTime: ""
+            aimedArrivalTime: ""
         },
     ]
-...
-  
- * 400 BAD_REQUEST : structure SiriException
- * 404 NOT_FOUND
- * 500 INTERNAL_SERVEUR_ERROR     
+    * 400 BAD_REQUEST : structure SiriException
+    * 404 NOT_FOUND
+    * 500 INTERNAL_SERVEUR_ERROR     
     
 #### ex:  https://localhost:8443/siri-xlite/stop-monitoring/StopArea:59:3893358
 ![](./images/sm.png)
@@ -214,26 +211,26 @@ La durée de vie est parametrable (~ 10 mn).
     * lineRef : Identifiant de ligne.
    
 #### réponses
-- réference de la course partagé 
-- données theorique (EstimatedVehicleJourneyStructure) permetant le tri des reponses par ligne,destination,operateur... (voir definition du service EstimatedTimetable)
-
-    * 200 OK : Collection de référence de ressource estimated-vehicle-journey (+ méta-données).
-    [
-      {
-        href: "/siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]"        
-        lineRef: 
-        routeRef:
-        directionRef:
-        directionName:
-        destinationRef:
-        operatorRef:
-        originExpectedDepartureTime:
-        destinationExpectedArrivalTime:
-        
-        (voir definition EstimatedVehicleJourneyStructure)
-      },
-     ...
-    ]
+     
+    * 200 OK : Collection de référence de ressource estimated-vehicle-journey 
+        (+ méta-données: voir definition EstimatedVehicleJourneyStructure).
+        - réference de la course partagé 
+        - données theorique (EstimatedVehicleJourneyStructure) permetant le tri des reponses par ligne,destination,operateur... (voir definition du service EstimatedTimetable)
+         
+        [
+                {
+                    href: "/siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]"        
+                    lineRef: 
+                    routeRef:
+                    directionRef:
+                    directionName:
+                    destinationRef:
+                    operatorRef:
+                    originExpectedDepartureTime:
+                    destinationExpectedArrivalTime:
+                },     
+         ]
+            
     * 304 NOT_MODIFIED : re-validation du cache HTTP
     * 400 BAD_REQUEST : structure SiriException
     * 404 NOT_FOUND
