@@ -167,19 +167,19 @@ La durée de vie est parametrable (~ 10 mn).
     * 200 OK : Collection de référence de ressource estimated-vehicle-journey (+ méta-données).
     [ 
        {
-        href: /siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]#[index]
-        lineRef:
-        routeRef	
-        directionRef	
-        directionName
-        destinationRef
-        operatorRef
-        stopPointRef:
-        order:
-        aimedDepartureTime:
-        aimedArrivalTime:
+            href: /siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]#[index]
+            lineRef:
+            routeRef	
+            directionRef	
+            directionName
+            destinationRef
+            operatorRef
+            stopPointRef:
+            order:
+            aimedDepartureTime:
+            aimedArrivalTime:
         
-        (voir definition EstimatedVehicleJourneyStructure)
+            (voir definition EstimatedVehicleJourneyStructure)
        },
        ...
     ]
