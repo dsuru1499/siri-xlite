@@ -161,7 +161,8 @@ La durée de vie est parametrable (~ 10 mn).
 #### réponses
  
     * 200 OK : Collection de référence de ressource estimated-vehicle-journey 
-        - réference de la course partagé + index du monitoringRef dans la course (voir estimatedCalls[index])
+        - réference de la course partagé + index du monitoringRef dans la course 
+          (voir estimatedCalls[index])
         - méta-données theorique permetant le tri des reponses par ligne, destination, operateur ...
         (voir definition EstimatedVehicleJourneyStructure).  
      [
