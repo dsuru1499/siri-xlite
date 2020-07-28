@@ -164,7 +164,7 @@ La durée de vie est parametrable (~ 10 mn).
     - réference de la course partagé + index du monitoringRef dans la course (voir estimatedCalls[index])
     - données theorique (EstimatedVehicleJourneyStructure) permetant le tri des reponses par ligne,destination,operateur... (voir definition du service StopMonitoring)
 
-
+...
     [
         {
             href: /siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]#[index]
@@ -180,6 +180,7 @@ La durée de vie est parametrable (~ 10 mn).
             aimedArrivalTime:
         },
     ]
+...
   
  * 400 BAD_REQUEST : structure SiriException
  * 404 NOT_FOUND
