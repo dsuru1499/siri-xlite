@@ -1,6 +1,4 @@
-package siri_xlite.service.common;
-
-import siri_xlite.common.DateTimeUtils;
+package siri_xlite.common;
 
 import java.time.Duration;
 import java.time.Instant;

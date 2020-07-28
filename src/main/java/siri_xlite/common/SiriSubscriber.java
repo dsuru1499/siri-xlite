@@ -1,4 +1,4 @@
-package siri_xlite.service.common;
+package siri_xlite.common;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -12,10 +12,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import siri_xlite.common.Color;
-import siri_xlite.common.DateTimeUtils;
 import siri_xlite.marshaller.json.SiriExceptionMarshaller;
-import siri_xlite.repositories.NotModifiedException;
 
 import java.io.ByteArrayOutputStream;
 import java.net.HttpURLConnection;

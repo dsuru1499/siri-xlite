@@ -10,17 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import siri_xlite.Configuration;
-import siri_xlite.common.Color;
+import siri_xlite.common.*;
 import siri_xlite.model.VehicleJourneyDocument;
 import siri_xlite.repositories.VehicleJourneyRepository;
-import siri_xlite.service.common.EstimatedTimetable;
-import siri_xlite.service.common.Messages;
-import siri_xlite.service.common.ParametersFactory;
-import siri_xlite.service.common.SiriService;
 
 import java.util.ResourceBundle;
 
-import static siri_xlite.service.common.Messages.LOAD_FROM_BACKEND;
+import static siri_xlite.common.Messages.LOAD_FROM_BACKEND;
 
 @Slf4j
 @Service

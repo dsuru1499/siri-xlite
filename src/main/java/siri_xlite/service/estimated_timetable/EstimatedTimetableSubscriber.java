@@ -4,10 +4,11 @@ import io.reactivex.exceptions.Exceptions;
 import io.vertx.core.http.HttpServerRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
-import siri_xlite.service.common.CollectionSubscriber;
+import siri_xlite.common.CollectionSubscriber;
 
 import java.util.Date;
 
+import static siri_xlite.common.EstimatedVehiculeJourney.ESTIMATED_VEHICLE_JOURNEY;
 import static siri_xlite.common.JsonUtils.*;
 import static siri_xlite.marshaller.json.EstimatedTimetableAlterationGroupMarshaller.DATED_VEHICLE_JOURNEY_REF;
 import static siri_xlite.marshaller.json.JourneyEndNamesGroupMarshaller.DESTINATION_REF;
@@ -20,7 +21,6 @@ import static siri_xlite.marshaller.json.SiriMarshaller.DESTINATION_EXPECTED_ARR
 import static siri_xlite.marshaller.json.SiriMarshaller.ORIGIN_EXPECTED_DEPARTURE_TIME;
 import static siri_xlite.service.Verticle.APPLICATION;
 import static siri_xlite.service.Verticle.SEP;
-import static siri_xlite.service.common.EstimatedVehiculeJourney.ESTIMATED_VEHICLE_JOURNEY;
 
 @Slf4j
 public class EstimatedTimetableSubscriber extends CollectionSubscriber<EstimatedTimetableParameters> {

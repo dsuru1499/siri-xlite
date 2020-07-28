@@ -1,7 +1,7 @@
 package siri_xlite.marshaller.json;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import siri_xlite.service.common.Parameters;
+import siri_xlite.common.Parameters;
 
 public interface Marshaller<T> {
 

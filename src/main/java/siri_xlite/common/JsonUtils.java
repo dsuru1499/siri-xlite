@@ -6,8 +6,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bson.Document;
-import siri_xlite.service.common.Parameters;
-import siri_xlite.service.common.SiriStructureFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;

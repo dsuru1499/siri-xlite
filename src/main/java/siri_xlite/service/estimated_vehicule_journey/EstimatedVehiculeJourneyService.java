@@ -9,17 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import siri_xlite.Configuration;
-import siri_xlite.common.Color;
+import siri_xlite.common.*;
 import siri_xlite.model.VehicleJourneyDocument;
 import siri_xlite.repositories.EtagsRepository;
-import siri_xlite.repositories.NotModifiedException;
 import siri_xlite.repositories.VehicleJourneyRepository;
-import siri_xlite.service.common.*;
 
 import java.util.Date;
 import java.util.ResourceBundle;
 
-import static siri_xlite.service.common.Messages.LOAD_FROM_BACKEND;
+import static siri_xlite.common.Messages.LOAD_FROM_BACKEND;
 
 @Slf4j
 @Service

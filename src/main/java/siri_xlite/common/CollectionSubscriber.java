@@ -1,9 +1,8 @@
-package siri_xlite.service.common;
+package siri_xlite.common;
 
 import io.reactivex.exceptions.Exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
-import org.reactivestreams.Subscription;
 
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,22 +11,22 @@ import static siri_xlite.common.JsonUtils.writeEndDocument;
 import static siri_xlite.common.JsonUtils.writeStartDocument;
 
 @Slf4j
-public abstract class ItemSubscriber<P extends DefaultParameters> extends SiriSubscriber<Document, P> {
+public abstract class CollectionSubscriber<P extends DefaultParameters> extends SiriSubscriber<Document, P> {
 
     protected final AtomicInteger count = new AtomicInteger();
     protected Document current;
 
     @Override
-    public void onSubscribe(Subscription s) {
-        s.request(Long.MAX_VALUE);
-    }
-
-    @Override
     public void onNext(Document document) {
         try {
             count.incrementAndGet();
-            this.current = document;
-            writeStartDocument(writer, parameters);
+            if (count.get() == 1) {
+                writeStartDocument(writer, parameters);
+                writer.writeStartArray();
+            }
+            if (current == null || CacheControl.COMPARATOR.compare(document, current) > 0) {
+                this.current = document;
+            }
             writeItem(document);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -41,6 +40,7 @@ public abstract class ItemSubscriber<P extends DefaultParameters> extends SiriSu
             if (count.get() == 0) {
                 writeNotFound();
             } else {
+                writer.writeEndArray();
                 writeEndDocument(writer);
                 writeResponse(getLastModified());
             }

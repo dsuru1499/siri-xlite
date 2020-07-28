@@ -1,4 +1,4 @@
-package siri_xlite.service.common;
+package siri_xlite.common;
 
 import java.util.ListResourceBundle;
 

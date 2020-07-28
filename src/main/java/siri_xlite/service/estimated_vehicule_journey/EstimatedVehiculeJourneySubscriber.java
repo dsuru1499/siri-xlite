@@ -2,8 +2,8 @@ package siri_xlite.service.estimated_vehicule_journey;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import siri_xlite.common.ItemSubscriber;
 import siri_xlite.marshaller.json.*;
-import siri_xlite.service.common.ItemSubscriber;
 
 import java.util.List;
 

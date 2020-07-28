@@ -1,4 +1,4 @@
-package siri_xlite.service.common;
+package siri_xlite.common;
 
 import com.google.common.base.CaseFormat;
 import io.vertx.ext.web.RoutingContext;

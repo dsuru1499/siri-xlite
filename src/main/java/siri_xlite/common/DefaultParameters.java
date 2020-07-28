@@ -1,4 +1,4 @@
-package siri_xlite.service.common;
+package siri_xlite.common;
 
 import io.vertx.core.MultiMap;
 import io.vertx.ext.web.RoutingContext;

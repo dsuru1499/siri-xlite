@@ -5,8 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Delegate;
 import siri_xlite.Configuration;
-import siri_xlite.service.common.DefaultParameters;
-import siri_xlite.service.common.SiriException;
+import siri_xlite.common.DefaultParameters;
+import siri_xlite.common.SiriException;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

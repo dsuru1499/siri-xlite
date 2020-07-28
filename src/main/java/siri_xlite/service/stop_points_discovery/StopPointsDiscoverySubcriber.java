@@ -2,7 +2,7 @@ package siri_xlite.service.stop_points_discovery;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
-import siri_xlite.service.common.CollectionSubscriber;
+import siri_xlite.common.CollectionSubscriber;
 
 import java.util.List;
 

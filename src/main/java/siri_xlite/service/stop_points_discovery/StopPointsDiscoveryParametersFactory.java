@@ -4,7 +4,7 @@ import io.vertx.ext.web.RoutingContext;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import siri_xlite.Configuration;
-import siri_xlite.service.common.ParametersFactory;
+import siri_xlite.common.ParametersFactory;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

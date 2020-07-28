@@ -1,11 +1,10 @@
-package siri_xlite.service.common;
+package siri_xlite.common;
 
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.log4j.Log4j;
-import siri_xlite.common.Color;
 
 @Log4j
 public abstract class SiriService implements Handler<RoutingContext> {

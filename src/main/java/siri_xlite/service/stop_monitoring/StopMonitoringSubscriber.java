@@ -4,11 +4,12 @@ import io.reactivex.exceptions.Exceptions;
 import io.vertx.core.http.HttpServerRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
-import siri_xlite.service.common.CollectionSubscriber;
+import siri_xlite.common.CollectionSubscriber;
 
 import java.util.Date;
 import java.util.List;
 
+import static siri_xlite.common.EstimatedVehiculeJourney.ESTIMATED_VEHICLE_JOURNEY;
 import static siri_xlite.common.JsonUtils.*;
 import static siri_xlite.marshaller.json.EstimatedTimetableAlterationGroupMarshaller.DATED_VEHICLE_JOURNEY_REF;
 import static siri_xlite.marshaller.json.JourneyEndNamesGroupMarshaller.DESTINATION_REF;
@@ -24,7 +25,6 @@ import static siri_xlite.marshaller.json.SiriMarshaller.INDEX;
 import static siri_xlite.marshaller.json.StopPointInSequenceGroupMarshaller.ORDER;
 import static siri_xlite.marshaller.json.StopPointInSequenceGroupMarshaller.STOP_POINT_REF;
 import static siri_xlite.service.Verticle.*;
-import static siri_xlite.service.common.EstimatedVehiculeJourney.ESTIMATED_VEHICLE_JOURNEY;
 
 @Slf4j
 public class StopMonitoringSubscriber extends CollectionSubscriber<StopMonitoringParameters> {

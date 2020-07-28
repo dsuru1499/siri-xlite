@@ -1,10 +1,9 @@
-package siri_xlite.service.common;
+package siri_xlite.common;
 
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
-import siri_xlite.common.DateTimeUtils;
 
 import java.util.Comparator;
 import java.util.Date;
@@ -18,8 +17,8 @@ public class CacheControl {
     public static final String PROXY_REVALIDATE = "proxy-revalidate";
     public static final String MUST_REVALIDATE = "must-revalidate";
 
-    public static final String RECCORDED_AT_TIME = "recordedAtTime";
-    public static final Comparator<Document> COMPARATOR = Comparator.comparing(t -> t.getDate(RECCORDED_AT_TIME).getTime());
+    public static final String RECORDED_AT_TIME = "recordedAtTime";
+    public static final Comparator<Document> COMPARATOR = Comparator.comparing(t -> t.getDate(RECORDED_AT_TIME).getTime());
 
     public static Date getLastModified(RoutingContext context) {
         if (context != null) {
@@ -30,7 +29,7 @@ public class CacheControl {
     }
 
     public static Date getLastModified(Document document) {
-        return (document != null) ? document.getDate(RECCORDED_AT_TIME) : null;
+        return (document != null) ? document.getDate(RECORDED_AT_TIME) : null;
     }
 
     public static Date getLastModified(List<? extends Document> list) {

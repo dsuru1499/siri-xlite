@@ -1,4 +1,4 @@
-package siri_xlite.service.common;
+package siri_xlite.common;
 
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;

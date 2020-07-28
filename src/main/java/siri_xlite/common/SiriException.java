@@ -1,4 +1,4 @@
-package siri_xlite.service.common;
+package siri_xlite.common;
 
 import lombok.Getter;
 import org.apache.commons.lang3.exception.ExceptionUtils;

@@ -6,13 +6,14 @@ import org.infinispan.Cache;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import siri_xlite.service.common.Messages;
+import siri_xlite.common.Messages;
+import siri_xlite.common.NotModifiedException;
 
 import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
-import static siri_xlite.service.common.Messages.REVALIDATE_RESSOURCE;
+import static siri_xlite.common.Messages.REVALIDATE_RESSOURCE;
 
 @Repository
 @Slf4j

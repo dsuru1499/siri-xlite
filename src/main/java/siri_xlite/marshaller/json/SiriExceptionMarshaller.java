@@ -3,7 +3,7 @@ package siri_xlite.marshaller.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import siri_xlite.service.common.SiriException;
+import siri_xlite.common.SiriException;
 
 import java.util.Collection;
 import java.util.Map;
