@@ -161,9 +161,9 @@ La durée de vie est parametrable (~ 10 mn).
 #### réponses
  
     * 200 OK : Collection de référence de ressource estimated-vehicle-journey 
-    (+ méta-données: voir definition EstimatedVehicleJourneyStructure).  
-    - réference de la course partagé + index du monitoringRef dans la course (voir estimatedCalls[index])
-    - données theorique (EstimatedVehicleJourneyStructure) permetant le tri des reponses par ligne,destination,operateur... (voir definition du service StopMonitoring)  
+        - réference de la course partagé + index du monitoringRef dans la course (voir estimatedCalls[index])
+        - méta-données theorique permetant le tri des reponses par ligne,destination,operateur...
+        (voir definition EstimatedVehicleJourneyStructure).  
      [
         {
             href: "/siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]#[index]"
@@ -211,12 +211,11 @@ La durée de vie est parametrable (~ 10 mn).
     * lineRef : Identifiant de ligne.
    
 #### réponses
-     
     * 200 OK : Collection de référence de ressource estimated-vehicle-journey 
-        (+ méta-données: voir definition EstimatedVehicleJourneyStructure).
         - réference de la course partagé 
-        - données theorique (EstimatedVehicleJourneyStructure) permetant le tri des reponses par ligne,destination,operateur... (voir definition du service EstimatedTimetable)
-         
+        - méta-données theorique permetant le tri des reponses par ligne,destination,operateur...
+        (voir definition EstimatedVehicleJourneyStructure).   
+            
         [
                 {
                     href: "/siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]"        
