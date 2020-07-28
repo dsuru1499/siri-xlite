@@ -79,7 +79,14 @@ StopMonitoring, EstimatedTimetable (voir ci-dessous)
     mvn -Dmaven.test.skip=true clean install
     docker-compose -f docker/docker-compose.yml build 
     docker-compose -f docker/docker-compose.yml up
-    
+
+### Client    
+
+    https://localhost/siri-xlite-cli/index.html
+
+![](./images/cli.png)
+
+
 ### Service lines discovery
 Ce service renvoie la liste des lignes définie dans l'offre de transport.
 
