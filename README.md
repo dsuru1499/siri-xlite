@@ -160,13 +160,13 @@ La durée de vie est parametrable (~ 10 mn).
    
 #### réponses
 
-- réference de la course partagé + index du monitoringRef dans la course (voir estimatedCalls[index])
-- données theorique (EstimatedVehicleJourneyStructure) permetant le tri des reponses par ligne,destination,operateur... (voir definition du service StopMonitoring)
+ * 200 OK : Collection de référence de ressource estimated-vehicle-journey (+ méta-données).  
+    - réference de la course partagé + index du monitoringRef dans la course (voir estimatedCalls[index])
+    - données theorique (EstimatedVehicleJourneyStructure) permetant le tri des reponses par ligne,destination,operateur... (voir definition du service StopMonitoring)
 
 
-    * 200 OK : Collection de référence de ressource estimated-vehicle-journey (+ méta-données).
-    [ 
-       {
+    [
+        {
             href: /siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]#[index]
             lineRef:
             routeRef	
@@ -178,28 +178,26 @@ La durée de vie est parametrable (~ 10 mn).
             order:
             aimedDepartureTime:
             aimedArrivalTime:
-        
-            (voir definition EstimatedVehicleJourneyStructure)
-       },
-       ...
+        },
     ]
-    * 400 BAD_REQUEST : structure SiriException
-    * 404 NOT_FOUND
-    * 500 INTERNAL_SERVEUR_ERROR     
+  
+ * 400 BAD_REQUEST : structure SiriException
+ * 404 NOT_FOUND
+ * 500 INTERNAL_SERVEUR_ERROR     
     
 #### ex:  https://localhost:8443/siri-xlite/stop-monitoring/StopArea:59:3893358
 ![](./images/sm.png)
 
 #### exemple code client rxjs
   Liste des 10 prochines des courses qui passe à un arrêt (isValid filtre les courses annulé ou déja passé). 
-   
+  
     http.get(url).pipe(
       mergeMap((t) => from(t)),
     ).pipe(
       concatMap((t) => http.get(t.href), this.isValid),
       take(10),
     );
-
+  
   Pour implémenté les filtres (par ligne/destination/operateur...), il suffit de trier les courses (méta-données)
   suivant les critéres  puis, en parallèle, d'executer la sequence de chargement.  
 
