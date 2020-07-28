@@ -21,28 +21,32 @@ La montée en charge du serveur et toute autant difficile.
 
 SIRI Xlite propose une API REST HATEOS (Hypermedia as the Engine of Application State ) pour les principaux 
 services LineDiscovery, StoppointsDiscovery, StopMonitoring, EstimatedTimetable utilisant 
-le protocole HTTP/2 ( client HTTP/2 avec cache locale, cache serveur HTTP/2, Serveur HTTP/2 de type "event loop"). 
+le protocole HTTP/2 ( client HTTP/2 avec cache prive, cache publique HTTP/2, serveur HTTP/2 de type "event loop"). 
 
-C’est-à-dire que chaque ressource est mise en cache (cache locale et cache serveur) et contrôlé par 
-les directives HTTP Etag et Cache-Control (max-age, s-maxage, proxy-revalidate).
+C’est-à-dire que chaque ressource est mise en cache (cache prive et cache publique) et contrôlé par 
+les directives HTTP last-modified et Cache-Control (max-age, s-maxage, proxy-revalidate).
 
-Le cache HTTP serveur (distant) dispose d’une API permettant l’invalidation d’une  ou plusieurs ressources 
+Le cache HTTP publique dispose d’une API permettant l’invalidation d’une ou plusieurs ressources 
 lors de la modification de l’offre de transport ou la modification de l’état des courses (EstimatedVehicleJourney) par les SAE. 
 
 Un cache cluster embarqué en mode invalidation permet l’optimisation de la revalidation du cache serveur HTTP.
 Celui-ci est invalidé lors de la modification de l’offre de transport ou la modification de l’état des courses.
 
-Les services SIRI StopMonitoring, EstimatedTimetable référence une ressource SIRI EstimatedVehicleJourney partagé.
-Le service StoppointsDiscovery fournit la liste complète des points d’arrêt ou par tuile ( même tuilage que OpenStreetMap) 
-Le service LineDiscovery fournit la liste des lignes.
+Services:
 
-Les ressources LineDiscovery, StoppointsDiscovery, StopMonitoring et EstimatedTimetable sont définies 
-par l'offre de transport du jour. Leur duré de vie théorique est la journée.
+- Le service LineDiscovery fournit la liste des lignes défini dans l'offre de transport. Leur duré de vie théorique est la journée.
 
+- Le service StoppointsDiscovery fournit la liste complète des points d’arrêt ou par tuile ( même tuilage que OpenStreetMap) défini dans l'offre de transport.
+ Leur duré de vie théorique est la journée.
+
+- Le service StopMonitoring fournit la liste des prochaines courses passant par un point d'arrêt défini dans l'offre de transport.
+La durée de vie est parametrable (~ 10 mn).
+
+- Le service EstimatedTimetable contient la liste des prochaines courses sur une ligne définie dans l'offre de transport.
+La durée de vie est parametrable (~ 10 mn).
+
+- Les services SIRI StopMonitoring, EstimatedTimetable référence une ressource SIRI EstimatedVehicleJourney partagé.
 La ressource partagée EstimatedVehicleJourney est référencée à la manière d'un hyper-lien (Xlink/Xpointer).
-
-Le protocole HTTP/2, l’utilisation d’un serveur de type « event loop » et de cache HTTP/2 locale 
-et serveur permet une optimisation des échanges avec le serveur siri-xlite.
 
 ## Remarques
 
@@ -137,8 +141,65 @@ Ce service renvoie la liste des points d'arrêt définie dans l'offre de transpo
 #### ex: https://localhost:8443/siri-xlite/stoppoints-discovery/33194/22549
 ![](./images/sd.png)
 
+### Service stop monitoring    
+Ce service renvoie la liste des prochaines courses passant par un point d'arrêt défini dans l'offre de transport.
+La durée de vie est parametrable (~ 10 mn).
+
+    GET /siri-xlite/stop-monitoring/[monitoringRef]
+    
+#### paramètres
+
+    * stopPointRef : Identifiant de point d’arrêt (StopArea ou StopPoint).
+   
+#### réponses
+
+- réference de la course partagé + index du monitoringRef dans la course (voir estimatedCalls[index])
+- données theorique (EstimatedVehicleJourneyStructure) permetant le tri des reponses par ligne,destination,operateur... (voir definition du service StopMonitoring)
+
+
+    * 200 OK : Collection de référence de ressource estimated-vehicle-journey (+ méta-données).
+    [ 
+       {
+        href: /siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]#[index]
+        lineRef:
+        routeRef	
+        directionRef	
+        directionName
+        destinationRef
+        operatorRef
+        stopPointRef:
+        order:
+        aimedDepartureTime:
+        aimedArrivalTime:
+        
+        (voir definition EstimatedVehicleJourneyStructure)
+       },
+       ...
+    ]
+    * 400 BAD_REQUEST : structure SiriException
+    * 404 NOT_FOUND
+    * 500 INTERNAL_SERVEUR_ERROR     
+    
+#### ex:  https://localhost:8443/siri-xlite/stop-monitoring/StopArea:59:3893358
+![](./images/sm.png)
+
+#### exemple code client rxjs
+  Liste des 10 prochines des courses qui passe à un arrêt (isValid filtre les courses annulé ou déja passé). 
+   
+    http.get(url).pipe(
+      mergeMap((t) => from(t)),
+    ).pipe(
+      concatMap((t) => http.get(t.href), this.isValid),
+      take(10),
+    );
+
+  Pour implémenté les filtres (par ligne/destination/operateur...), il suffit de trier les courses (méta-données)
+  suivant les critéres  puis, en parallèle, d'executer la sequence de chargement.  
+
+
 ### Service estimated timetable
-Ce service renvoie la liste des courses sur une ligne définie dans l'offre de transport.
+Ce service renvoie la liste des prochaines courses sur une ligne défini dans l'offre de transport.
+La durée de vie est parametrable (~ 10 mn).
 
     GET /siri-xlite/estimated-timetable/[lineRef]
     
@@ -147,16 +208,23 @@ Ce service renvoie la liste des courses sur une ligne définie dans l'offre de t
     * lineRef : Identifiant de ligne.
    
 #### réponses
+- réference de la course partagé 
+- données theorique (EstimatedVehicleJourneyStructure) permetant le tri des reponses par ligne,destination,operateur... (voir definition du service EstimatedTimetable)
 
     * 200 OK : Collection de référence de ressource estimated-vehicle-journey (+ méta-données).
     [
       {
-          "href": url,
-          "datedVehicleJourneyRef": string,
-          "destinationRef": string,
-          "routeRef": string,
-          "operatorRef": string,
-          "originAimedDepartureTime": timestamp
+        href: "/siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]"        
+        lineRef: 
+        routeRef:
+        directionRef:
+        directionName:
+        destinationRef:
+        operatorRef:
+        originExpectedDepartureTime:
+        destinationExpectedArrivalTime:
+        
+        (voir definition EstimatedVehicleJourneyStructure)
       },
      ...
     ]
@@ -168,43 +236,16 @@ Ce service renvoie la liste des courses sur une ligne définie dans l'offre de t
 #### ex: https://localhost:8443/siri-xlite/estimated-timetable/067167006:G
 ![](./images/et.png)
 
-### Service stop monitoring    
-Ce service renvoie la liste des courses passant par un point d'arrêt défini dans l'offre de transport.
-
-    GET /siri-xlite/stop-monitoring/[stopPointRef]
-    
-#### paramètres
-
-    * stopPointRef : Identifiant de point d’arrêt (StopArea ou StopPoint).
-   
-#### réponses
-
-    * 200 OK : Collection de référence de ressource estimated-vehicle-journey (+ méta-données).
-    [ 
-       {
-         "href": url,
-         "aimedDepartureTime": timestamp,
-         "order": 26,
-         "index": 25
-       },
-       ...
-    ]
-    * 304 NOT_MODIFIED : re-validation du cache HTTP
-    * 400 BAD_REQUEST : structure SiriException
-    * 404 NOT_FOUND
-    * 500 INTERNAL_SERVEUR_ERROR     
-    
-#### ex:  https://localhost:8443/siri-xlite/stop-monitoring/StopArea:59:3893358
-![](./images/sm.png)
 
 ### Service estimated vehicle journey
 Ce service renvoie la course référencée par les services estimated-timetable et stop-monitoring.
 
-    GET /siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]
+    GET /siri-xlite/estimated-vehicle-journey/[datedVehicleJourneyRef]#[index]
      
 #### paramètres
 
     * datedVehicleJourneyRef : Identifiant de course.
+    * index : index dans la course du monitoringRef (optionnel)
    
 #### reponses
 
@@ -219,8 +260,8 @@ Ce service renvoie la course référencée par les services estimated-timetable 
 
 #### Structure SiriException
     {
-        "errorCode": """,
-        "errorText": ""
+        "errorCode": string,
+        "errorText": string
     } 
     
 SiriException OtherError
@@ -228,7 +269,7 @@ SiriException OtherError
 ![](./images/err.png)
 
 ## TODO: 
-* Unifier les structures EstimatedVehicleJourney et MonitoredVehicleJourney 
+* Unifier les structures EstimatedVehicleJourneyStructure et MonitoredVehicleJourneyStructure 
 de définition des courses.   
 * Service connection-monitoring de gestion des correspondances.
 * Service situation-exchange de gestion des perturbations.
