@@ -190,12 +190,14 @@ La durée de vie est parametrable (~ 10 mn).
 #### exemple code client rxjs
   Liste des 10 prochines des courses qui passe à un arrêt (isValid filtre les courses annulé ou déja passé). 
   
+```javascript    
     http.get(url).pipe(
       mergeMap((t) => from(t)),
     ).pipe(
       concatMap((t) => http.get(t.href), this.isValid),
       take(10),
-    );
+    ); 
+```
   
   Pour implémenté les filtres (par ligne/destination/operateur...), il suffit de trier les courses (méta-données)
   suivant les critéres  puis, en parallèle, d'executer la sequence de chargement.  
