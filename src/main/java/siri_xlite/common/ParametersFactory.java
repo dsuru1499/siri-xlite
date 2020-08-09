@@ -9,15 +9,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-public abstract class ParametersFactory<T> {
+public abstract class ParametersFactory<T extends Parameters> {
 
     private static final Map<Class<? extends Parameters>, ParametersFactory<?>> _factories = new HashMap<>();
 
-    public static <T> void register(Class<? extends Parameters> clazz, ParametersFactory<T> factory) {
+    public static <T extends Parameters> void register(Class<T> clazz, ParametersFactory<T> factory) {
         _factories.put(clazz, factory);
     }
 
-    public static <T> T create(Class<? extends Parameters> clazz, Configuration configuration, RoutingContext context) throws Exception {
+    public static <T extends Parameters > T create(Class<T> clazz, Configuration configuration, RoutingContext context) throws Exception {
         ParametersFactory<?> factory = _factories.get(clazz);
         if (factory == null) {
             try {
@@ -35,13 +35,13 @@ public abstract class ParametersFactory<T> {
         return (T) parameters;
     }
 
-    private static String getClassName(Class<? extends Parameters> clazz) {
+    private static <T extends Parameters> String getClassName(Class<T> clazz) {
         String name = clazz.getSimpleName();
         String service = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE,
                 name.substring(0, name.lastIndexOf("Parameters")));
         return "siri_xlite.service." + service + "." + name + "Factory";
     }
 
-    protected abstract Parameters create(Configuration configuration, RoutingContext context) throws Exception;
+    protected abstract T create(Configuration configuration, RoutingContext context) throws Exception;
 
 }

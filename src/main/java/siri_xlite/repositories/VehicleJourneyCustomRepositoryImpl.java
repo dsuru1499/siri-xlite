@@ -22,9 +22,9 @@ import java.util.function.BiPredicate;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
-import static siri_xlite.marshaller.json.OnwardVehicleArrivalTimesGroupMarshaller.EXPECTED_ARRIVAL_TIME;
-import static siri_xlite.marshaller.json.OnwardVehicleDepartureTimesGroupMarshaller.EXPECTED_DEPARTURE_TIME;
-import static siri_xlite.marshaller.json.SiriMarshaller.*;
+import static siri_xlite.common.marshaller.json.OnwardVehicleArrivalTimesGroupMarshaller.EXPECTED_ARRIVAL_TIME;
+import static siri_xlite.common.marshaller.json.OnwardVehicleDepartureTimesGroupMarshaller.EXPECTED_DEPARTURE_TIME;
+import static siri_xlite.common.marshaller.json.SiriMarshaller.*;
 import static siri_xlite.repositories.VehicleJourneyRepository.COLLECTION_NAME;
 
 @Slf4j

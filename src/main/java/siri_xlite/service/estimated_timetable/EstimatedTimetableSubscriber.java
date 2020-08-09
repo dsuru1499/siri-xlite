@@ -10,15 +10,15 @@ import java.util.Date;
 
 import static siri_xlite.common.EstimatedVehiculeJourney.ESTIMATED_VEHICLE_JOURNEY;
 import static siri_xlite.common.JsonUtils.*;
-import static siri_xlite.marshaller.json.EstimatedTimetableAlterationGroupMarshaller.DATED_VEHICLE_JOURNEY_REF;
-import static siri_xlite.marshaller.json.JourneyEndNamesGroupMarshaller.DESTINATION_REF;
-import static siri_xlite.marshaller.json.JourneyPatternInfoGroupMarshaller.DIRECTION_NAME;
-import static siri_xlite.marshaller.json.JourneyPatternInfoGroupMarshaller.ROUTE_REF;
-import static siri_xlite.marshaller.json.LineIdentityGroupMarshaller.DIRECTION_REF;
-import static siri_xlite.marshaller.json.LineIdentityGroupMarshaller.LINE_REF;
-import static siri_xlite.marshaller.json.ServiceInfoGroupMarshaller.OPERATOR_REF;
-import static siri_xlite.marshaller.json.SiriMarshaller.DESTINATION_EXPECTED_ARRIVAL_TIME;
-import static siri_xlite.marshaller.json.SiriMarshaller.ORIGIN_EXPECTED_DEPARTURE_TIME;
+import static siri_xlite.common.marshaller.json.EstimatedTimetableAlterationGroupMarshaller.DATED_VEHICLE_JOURNEY_REF;
+import static siri_xlite.common.marshaller.json.JourneyEndNamesGroupMarshaller.DESTINATION_REF;
+import static siri_xlite.common.marshaller.json.JourneyPatternInfoGroupMarshaller.DIRECTION_NAME;
+import static siri_xlite.common.marshaller.json.JourneyPatternInfoGroupMarshaller.ROUTE_REF;
+import static siri_xlite.common.marshaller.json.LineIdentityGroupMarshaller.DIRECTION_REF;
+import static siri_xlite.common.marshaller.json.LineIdentityGroupMarshaller.LINE_REF;
+import static siri_xlite.common.marshaller.json.ServiceInfoGroupMarshaller.OPERATOR_REF;
+import static siri_xlite.common.marshaller.json.SiriMarshaller.DESTINATION_EXPECTED_ARRIVAL_TIME;
+import static siri_xlite.common.marshaller.json.SiriMarshaller.ORIGIN_EXPECTED_DEPARTURE_TIME;
 import static siri_xlite.service.Verticle.APPLICATION;
 import static siri_xlite.service.Verticle.SEP;
 

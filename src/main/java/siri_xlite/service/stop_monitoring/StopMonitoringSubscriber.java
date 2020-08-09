@@ -11,19 +11,19 @@ import java.util.List;
 
 import static siri_xlite.common.EstimatedVehiculeJourney.ESTIMATED_VEHICLE_JOURNEY;
 import static siri_xlite.common.JsonUtils.*;
-import static siri_xlite.marshaller.json.EstimatedTimetableAlterationGroupMarshaller.DATED_VEHICLE_JOURNEY_REF;
-import static siri_xlite.marshaller.json.JourneyEndNamesGroupMarshaller.DESTINATION_REF;
-import static siri_xlite.marshaller.json.JourneyPatternInfoGroupMarshaller.DIRECTION_NAME;
-import static siri_xlite.marshaller.json.JourneyPatternInfoGroupMarshaller.ROUTE_REF;
-import static siri_xlite.marshaller.json.LineIdentityGroupMarshaller.DIRECTION_REF;
-import static siri_xlite.marshaller.json.LineIdentityGroupMarshaller.LINE_REF;
-import static siri_xlite.marshaller.json.OnwardVehicleArrivalTimesGroupMarshaller.AIMED_ARRIVAL_TIME;
-import static siri_xlite.marshaller.json.OnwardVehicleDepartureTimesGroupMarshaller.AIMED_DEPARTURE_TIME;
-import static siri_xlite.marshaller.json.ServiceInfoGroupMarshaller.OPERATOR_REF;
-import static siri_xlite.marshaller.json.SiriMarshaller.CALLS;
-import static siri_xlite.marshaller.json.SiriMarshaller.INDEX;
-import static siri_xlite.marshaller.json.StopPointInSequenceGroupMarshaller.ORDER;
-import static siri_xlite.marshaller.json.StopPointInSequenceGroupMarshaller.STOP_POINT_REF;
+import static siri_xlite.common.marshaller.json.EstimatedTimetableAlterationGroupMarshaller.DATED_VEHICLE_JOURNEY_REF;
+import static siri_xlite.common.marshaller.json.JourneyEndNamesGroupMarshaller.DESTINATION_REF;
+import static siri_xlite.common.marshaller.json.JourneyPatternInfoGroupMarshaller.DIRECTION_NAME;
+import static siri_xlite.common.marshaller.json.JourneyPatternInfoGroupMarshaller.ROUTE_REF;
+import static siri_xlite.common.marshaller.json.LineIdentityGroupMarshaller.DIRECTION_REF;
+import static siri_xlite.common.marshaller.json.LineIdentityGroupMarshaller.LINE_REF;
+import static siri_xlite.common.marshaller.json.OnwardVehicleArrivalTimesGroupMarshaller.AIMED_ARRIVAL_TIME;
+import static siri_xlite.common.marshaller.json.OnwardVehicleDepartureTimesGroupMarshaller.AIMED_DEPARTURE_TIME;
+import static siri_xlite.common.marshaller.json.ServiceInfoGroupMarshaller.OPERATOR_REF;
+import static siri_xlite.common.marshaller.json.SiriMarshaller.CALLS;
+import static siri_xlite.common.marshaller.json.SiriMarshaller.INDEX;
+import static siri_xlite.common.marshaller.json.StopPointInSequenceGroupMarshaller.ORDER;
+import static siri_xlite.common.marshaller.json.StopPointInSequenceGroupMarshaller.STOP_POINT_REF;
 import static siri_xlite.service.Verticle.*;
 
 @Slf4j

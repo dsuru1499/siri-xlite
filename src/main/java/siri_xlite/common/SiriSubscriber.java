@@ -12,8 +12,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import siri_xlite.common.*;
-import siri_xlite.marshaller.json.SiriExceptionMarshaller;
+import siri_xlite.common.marshaller.json.SiriExceptionMarshaller;
 
 import java.io.ByteArrayOutputStream;
 import java.net.HttpURLConnection;

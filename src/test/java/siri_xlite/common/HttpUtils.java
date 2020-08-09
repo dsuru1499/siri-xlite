@@ -22,11 +22,11 @@ public class HttpUtils {
 
     static {
         try {
+            sslParameters = getSSLParameters();
             sslContext = getSSLContext();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        sslParameters = getSSLParameters();
     }
 
     private static SSLContext getSSLContext() throws Exception {
