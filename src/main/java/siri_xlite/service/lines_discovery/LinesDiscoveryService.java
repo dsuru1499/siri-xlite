@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import static siri_xlite.common.Messages.LOAD_FROM_BACKEND;
+import static siri_xlite.repositories.EtagsRepository.LIFESPAN;
 
 @Slf4j
 @Service
@@ -53,7 +54,7 @@ public class LinesDiscoveryService extends SiriService implements LinesDiscovery
     }
 
     private void onComplete(LinesDiscoverySubscriber subscriber, RoutingContext context) {
-        cache.put(context.request().uri(), subscriber.getLastModified());
+        cache.put(context.request().uri(), subscriber.getLastModified(), LIFESPAN);
     }
 
     private Flux<LineDocument> stream(LinesDiscoveryParameters parameters, RoutingContext context)

@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import static siri_xlite.common.Messages.LOAD_FROM_BACKEND;
+import static siri_xlite.repositories.EtagsRepository.LIFESPAN;
 
 @Slf4j
 @Service
@@ -44,7 +45,8 @@ public class EstimatedVehiculeJourneyService extends SiriService implements Esti
                         .create(EstimatedVehiculeJourneyParameters.class, configuration, context);
                 subscriber.configure(parameters, context);
                 return parameters;
-            }).flatMap(parameters -> stream(parameters, context)).doOnComplete(() -> onComplete(subscriber, context))
+            }).flatMap(parameters -> stream(parameters, context))
+                    .doOnComplete(() -> onComplete(subscriber, context))
                     .doAfterTerminate(() -> log.info(Color.YELLOW + monitor.stop() + Color.NORMAL))
                     .subscribe(subscriber);
         } catch (Exception e) {
@@ -53,7 +55,7 @@ public class EstimatedVehiculeJourneyService extends SiriService implements Esti
     }
 
     private void onComplete(EstimatedVehiculeJourneySubscriber subscriber, RoutingContext context) {
-        cache.put(context.request().uri(), subscriber.getLastModified());
+        cache.put(context.request().uri(), subscriber.getLastModified(), LIFESPAN);
     }
 
     private Mono<VehicleJourneyDocument> stream(EstimatedVehiculeJourneyParameters parameters, RoutingContext context)

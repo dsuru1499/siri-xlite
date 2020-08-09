@@ -19,8 +19,7 @@ import static siri_xlite.common.Messages.REVALIDATE_RESSOURCE;
 @Slf4j
 public class EtagsRepository {
 
-    private static final int LIFESPAN = 24 * 60 * 60;
-    private static final int MAX_IDLE = 60 * 60;
+    public static final int LIFESPAN = 24 * 60 * 60;
     private static final String ETAGS = "etags";
 
     private static final ResourceBundle messages = ResourceBundle
@@ -29,10 +28,10 @@ public class EtagsRepository {
     @Autowired
     private EmbeddedCacheManager manager;
 
-    public void put(String uri, Date lastModified) {
+    public void put(String uri, Date lastModified, long lifespan) {
         if (lastModified != null) {
             Cache<String, String> cache = manager.getCache(ETAGS);
-            cache.putForExternalRead(uri, String.valueOf(lastModified.getTime()), LIFESPAN, TimeUnit.SECONDS, MAX_IDLE, TimeUnit.SECONDS);
+            cache.putForExternalRead(uri, String.valueOf(lastModified.getTime()), lifespan, TimeUnit.SECONDS);
         }
     }
 

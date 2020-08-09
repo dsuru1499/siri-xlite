@@ -156,7 +156,7 @@ La durée de vie est parametrable (~ 10 mn).
     
 #### paramètres
 
-    * stopPointRef : Identifiant de point d’arrêt (StopArea ou StopPoint).
+    * monitoringRef : Identifiant de point d’arrêt (StopArea ou StopPoint).
    
 #### réponses
  
@@ -188,7 +188,7 @@ La durée de vie est parametrable (~ 10 mn).
 ![](./images/sm.png)
 
 #### exemple code client rxjs
-  Liste des 10 prochines des courses qui passe à un arrêt (isValid filtre les courses annulé ou déja passé). 
+  Liste des 10 prochaines des courses qui passe à un arrêt (isValid filtre les courses annulé ou déja passé). 
   
 ```javascript    
     http.get(url).pipe(

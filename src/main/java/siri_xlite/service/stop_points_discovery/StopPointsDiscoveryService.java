@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import static siri_xlite.common.Messages.LOAD_FROM_BACKEND;
+import static siri_xlite.repositories.EtagsRepository.LIFESPAN;
 
 @Slf4j
 @Service
@@ -55,7 +56,7 @@ public class StopPointsDiscoveryService extends SiriService implements StopPoint
     }
 
     private void onComplete(StopPointsDiscoverySubcriber subscriber, RoutingContext context) {
-        cache.put(context.request().uri(), subscriber.getLastModified());
+        cache.put(context.request().uri(), subscriber.getLastModified(), LIFESPAN);
     }
 
     private Flux<StopPointDocument> stream(StopPointsDiscoveryParameters parameters, RoutingContext context)
