@@ -28,6 +28,9 @@ public class EtagsRepository {
     @Autowired
     private EmbeddedCacheManager manager;
 
+    public void put(String uri, Date lastModified) {
+        put(uri, lastModified, LIFESPAN);
+    }
     public void put(String uri, Date lastModified, long lifespan) {
         if (lastModified != null) {
             Cache<String, String> cache = manager.getCache(ETAGS);

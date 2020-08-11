@@ -56,7 +56,7 @@ public class StopPointsDiscoveryService extends SiriService implements StopPoint
     }
 
     private void onComplete(StopPointsDiscoverySubcriber subscriber, RoutingContext context) {
-        cache.put(context.request().uri(), subscriber.getLastModified(), LIFESPAN);
+        cache.put(context.request().uri(), subscriber.getLastModified());
     }
 
     private Flux<StopPointDocument> stream(StopPointsDiscoveryParameters parameters, RoutingContext context)

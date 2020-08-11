@@ -54,7 +54,7 @@ public class LinesDiscoveryService extends SiriService implements LinesDiscovery
     }
 
     private void onComplete(LinesDiscoverySubscriber subscriber, RoutingContext context) {
-        cache.put(context.request().uri(), subscriber.getLastModified(), LIFESPAN);
+        cache.put(context.request().uri(), subscriber.getLastModified());
     }
 
     private Flux<LineDocument> stream(LinesDiscoveryParameters parameters, RoutingContext context)
