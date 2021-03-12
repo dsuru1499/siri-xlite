@@ -3,7 +3,6 @@ package siri_xlite.service.estimated_timetable;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 import io.reactivex.rxjava3.core.Flowable;
-import io.reactivex.rxjava3.core.Flowable;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,6 @@ public class EstimatedTimetableService extends SiriService implements EstimatedT
     public void handle(final RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(ESTIMATED_TIMETABLE);
-            log(context.request());
             final EstimatedTimetableSubscriber subscriber = new EstimatedTimetableSubscriber();
             Flowable.fromCallable(() -> {
                 EstimatedTimetableParameters parameters = ParametersFactory.create(EstimatedTimetableParameters.class, configuration,

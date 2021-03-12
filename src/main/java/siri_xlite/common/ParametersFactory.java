@@ -17,7 +17,7 @@ public abstract class ParametersFactory<T extends Parameters> {
         _factories.put(clazz, factory);
     }
 
-    public static <T extends Parameters > T create(Class<T> clazz, Configuration configuration, RoutingContext context) throws Exception {
+    public static <T extends Parameters> T create(Class<T> clazz, Configuration configuration, RoutingContext context) throws Exception {
         ParametersFactory<?> factory = _factories.get(clazz);
         if (factory == null) {
             try {

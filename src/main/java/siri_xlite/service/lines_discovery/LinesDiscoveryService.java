@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import static siri_xlite.common.Messages.LOAD_FROM_BACKEND;
-import static siri_xlite.repositories.EtagsRepository.LIFESPAN;
 
 @Slf4j
 @Service
@@ -38,7 +37,6 @@ public class LinesDiscoveryService extends SiriService implements LinesDiscovery
     public void handle(RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(LINES_DISCOVERY);
-            log(context.request());
             final LinesDiscoverySubscriber subscriber = new LinesDiscoverySubscriber();
             Mono.fromCallable(() -> {
                 LinesDiscoveryParameters parameters = ParametersFactory.create(LinesDiscoveryParameters.class, configuration, context);

@@ -5,6 +5,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.reactivex.rxjava3.exceptions.Exceptions;
 import io.vertx.core.MultiMap;
 import io.vertx.core.http.HttpHeaders;
+import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
@@ -80,6 +81,7 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
 
     protected void writeNotModified() throws Exception {
         writer.close();
+//        log(context.request());
         HttpServerResponse response = this.context.response()
                 .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(
@@ -89,11 +91,12 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
                         CacheControl.MAX_AGE + parameters.getMaxAge()))
                 .putHeader(HttpHeaders.LAST_MODIFIED, DateTimeUtils.toRFC1123(CacheControl.getLastModified(context)))
                 .setStatusCode(HttpURLConnection.HTTP_NOT_MODIFIED);
-        log(response);
+//        log(response);
         response.end();
     }
 
     protected void writeResponse(Date lastModified) {
+//        log(context.request());
         HttpServerResponse response = this.context.response()
                 .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .putHeader(HttpHeaders.CACHE_CONTROL, Arrays.asList(
@@ -102,11 +105,20 @@ public abstract class SiriSubscriber<T, P extends DefaultParameters> implements 
                         CacheControl.S_MAX_AGE + parameters.getSMaxAge(),
                         CacheControl.MAX_AGE + parameters.getMaxAge()))
                 .putHeader(HttpHeaders.LAST_MODIFIED, DateTimeUtils.toRFC1123(lastModified));
-        log(response);
+//        log(response);
         response.end(out.toString());
     }
 
-    private void log(HttpServerResponse response) {
+    public void log(HttpServerRequest request) {
+        log.info(Color.GREEN + "[DSU] GET " + request.uri() + Color.NORMAL);
+        MultiMap headers = request.headers();
+        for (String key : headers.names()) {
+            String value = String.join(",", headers.getAll(key));
+            log.info(Color.GREEN + key + "=" + value + Color.NORMAL);
+        }
+    }
+
+    public void log(HttpServerResponse response) {
         log.info(Color.GREEN
                 + String.format("[DSU] %d : %s", response.getStatusCode(), response.getStatusMessage())
                 + Color.NORMAL);

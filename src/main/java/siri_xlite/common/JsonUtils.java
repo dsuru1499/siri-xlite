@@ -85,7 +85,7 @@ public class JsonUtils {
     }
 
     public static <T> void writeArrayField(JsonGenerator writer, String name, Document source, Consumer<T> consumer) {
-        writeArray(writer, name,source.get(name, List.class), consumer);
+        writeArray(writer, name, source.get(name, List.class), consumer);
     }
 
     public static void writeObjectField(JsonGenerator writer, String name, Document source, Consumer<Document> consumer) {

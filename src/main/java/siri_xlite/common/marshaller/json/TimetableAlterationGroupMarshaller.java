@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import lombok.Getter;
 import org.bson.Document;
 
-import java.time.LocalDateTime;
-
 import static siri_xlite.common.JsonUtils.*;
 
 public class TimetableAlterationGroupMarshaller implements Marshaller<Document> {

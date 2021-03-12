@@ -36,7 +36,6 @@ public class StopMonitoringService extends SiriService implements StopMonitoring
     public void handle(final RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(STOP_MONITORING);
-            log(context.request());
             final StopMonitoringSubscriber subscriber = new StopMonitoringSubscriber();
             Flowable.fromCallable(() -> {
                 StopMonitoringParameters parameters = ParametersFactory.create(StopMonitoringParameters.class, configuration, context);

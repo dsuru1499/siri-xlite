@@ -37,7 +37,6 @@ public class EstimatedVehiculeJourneyService extends SiriService implements Esti
     public void handle(final RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(ESTIMATED_VEHICLE_JOURNEY);
-            log(context.request());
             final EstimatedVehiculeJourneySubscriber subscriber = new EstimatedVehiculeJourneySubscriber();
             Flowable.fromCallable(() -> {
                 EstimatedVehiculeJourneyParameters parameters = ParametersFactory

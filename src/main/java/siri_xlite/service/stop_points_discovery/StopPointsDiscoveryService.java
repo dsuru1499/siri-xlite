@@ -38,7 +38,6 @@ public class StopPointsDiscoveryService extends SiriService implements StopPoint
     public void handle(final RoutingContext context) {
         try {
             Monitor monitor = MonitorFactory.start(STOPPOINTS_DISCOVERY);
-            log(context.request());
             final StopPointsDiscoverySubcriber subscriber = new StopPointsDiscoverySubcriber();
             Mono.fromCallable(() -> {
                 StopPointsDiscoveryParameters parameters = ParametersFactory.create(StopPointsDiscoveryParameters.class,
