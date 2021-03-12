@@ -61,7 +61,7 @@ public class JourneyProgressGroupMarshaller implements Marshaller<Document> {
         // set occupancy
         Integer occupancy = source.getInteger(OCCUPANCY);
         if (occupancy != null) {
-            writeField(writer, MONITORING_ERROR, OccupancyEnumeration.values()[occupancy]);
+            writeField(writer, OCCUPANCY, OccupancyEnumeration.values()[occupancy]);
         }
 
         // set delay

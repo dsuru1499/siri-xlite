@@ -66,6 +66,7 @@ class VehicleJourney {
     Date originAimedDepartureTime;
     Date destinationAimedArrivalTime;
     Integer firstOrLastJourney;
+
     // DisruptionGroup
     // ? facilityConditionElement :[FacilityCondition];
     // facilityChangeElement :[FacilityChange];

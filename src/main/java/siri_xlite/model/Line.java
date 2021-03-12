@@ -13,6 +13,7 @@ import java.util.List;
 class Line {
     String lineRef;
     String lineName;
+    Boolean monitored;
     @Singular
     List<Destination> destinations;
 }

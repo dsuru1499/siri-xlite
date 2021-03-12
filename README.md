@@ -76,7 +76,8 @@ StopMonitoring, EstimatedTimetable (voir ci-dessous)
 
 ### Build
 
-    mvn -Dmaven.test.skip=true clean install
+    mkdir -p /tmp/siri && chmod a+w /tmp/siri
+    mvn -Dmaven.test.skip=true clean package
     docker-compose -f docker/docker-compose.yml build 
     docker-compose -f docker/docker-compose.yml up
 

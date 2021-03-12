@@ -17,7 +17,10 @@ services:
       - "mongodb"
     ports:
       - "8443:8443"
+    volumes:
+      - /tmp/siri:/tmp/siri:z
+
   mongodb:
-    image: "mongo"
+    image: "mongo:4.0.23"
     ports:
       - "27017:27017"

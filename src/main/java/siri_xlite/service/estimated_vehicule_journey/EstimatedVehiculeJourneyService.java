@@ -2,7 +2,7 @@ package siri_xlite.service.estimated_vehicule_journey;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-import io.reactivex.Flowable;
+import io.reactivex.rxjava3.core.Flowable;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

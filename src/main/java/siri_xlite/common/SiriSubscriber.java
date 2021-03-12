@@ -2,7 +2,7 @@ package siri_xlite.common;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.reactivex.exceptions.Exceptions;
+import io.reactivex.rxjava3.exceptions.Exceptions;
 import io.vertx.core.MultiMap;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerResponse;

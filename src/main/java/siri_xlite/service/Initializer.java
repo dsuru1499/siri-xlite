@@ -15,8 +15,8 @@ import gtfs.model.Stop.LocationType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.SetValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
-import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -27,11 +27,13 @@ import siri_xlite.common.ZipUtils;
 import siri_xlite.model.*;
 import uk.org.siri.siri.CallStatusEnumeration;
 
-import javax.annotation.PostConstruct;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -43,62 +45,48 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class Initializer {
-    private static final String SEP = "-";
+    private static final String VERSION_FILE = "version";
     private static final String ARCHIVE = "data.zip";
-    private static final String OUTPUT_DIR = "siri";
+    private static final String DATA_DIR = "siri";
     private static final int BULK_SIZE = 1000;
-
-    private MongoDatabase database;
 
     @Autowired
     private Environment environment;
 
-    @PostConstruct
-    void onStartup() {
-        String temp = environment.getProperty("java.io.tmpdir", "/tmp");
-        Path path = Paths.get(temp, OUTPUT_DIR);
-        if (Files.notExists(path)) {
-            initialize();
-        }
-    }
+    private MongoDatabase database;
 
     @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Paris")
-    void initialize() {
+    public void initialize() {
 
         Monitor monitor = MonitorFactory.start();
         log.info(Color.YELLOW + "[DSU] initialize model (~ 1mn)" + Color.NORMAL);
 
-        String temp = environment.getProperty("java.io.tmpdir", "/tmp");
-
-        Path path = Paths.get(temp, OUTPUT_DIR);
         try {
-            if (Files.notExists(path)) {
-                extractArchive(path);
-            }
-        } catch (Exception e) {
+            if (checkArchive()) {
+                String temp = environment.getProperty("java.io.tmpdir", "/tmp");
+                String host = environment.getProperty("spring.data.mongodb.host", "localhost");
+                String database = environment.getProperty("spring.data.mongodb.database", "siri");
+                log.info(Color.GREEN + String.format("[DSU] connect to %s on %s ", database, host) + Color.NORMAL);
+                MongoClient client = MongoClients.create("mongodb://" + host);
+                this.database = client.getDatabase(database);
 
-            try {
-                FileUtils.deleteDirectory(path.toFile());
-            } catch (IOException ignored) {
+                Path path = Paths.get(temp, DATA_DIR);
+                GtfsImporter importer = new GtfsImporter(path.toString());
+                SetValuedMap<String, Destination> destinations = new HashSetValuedHashMap<>();
+                SetValuedMap<String, String> lineRefs = new HashSetValuedHashMap<>();
+                fillVehicleJourney(importer, lineRefs, destinations);
+                fillAnnotatedLine(importer, destinations);
+                fillAnnotatedStopPoint(importer, lineRefs);
+                importer.dispose();
+                Path version = Paths.get(temp, DATA_DIR, VERSION_FILE);
+                File file = FileUtils.getFile(version.toString());
+                FileUtils.touch(file);
             }
+        } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
 
-        String host = environment.getProperty("spring.data.mongodb.host", "localhost");
-        String database = environment.getProperty("spring.data.mongodb.database", "siri");
-        MongoClient client = MongoClients.create("mongodb://" + host);
-        this.database = client.getDatabase(database);
-
-        GtfsImporter importer = new GtfsImporter(path.toString());
-        SetValuedMap<String, Destination> destinations = new HashSetValuedHashMap<>();
-        SetValuedMap<String, String> lineRefs = new HashSetValuedHashMap<>();
-        fillVehicleJourney(importer, lineRefs, destinations);
-        fillAnnotatedLine(importer, destinations);
-        fillAnnotatedStopPoint(importer, lineRefs);
-
-        importer.dispose();
         log.info(Color.YELLOW + "[DSU] model initialized : " + monitor.stop() + Color.NORMAL);
-
     }
 
     private void fillVehicleJourney(GtfsImporter importer, SetValuedMap<String, String> lineRefs,
@@ -132,10 +120,10 @@ public class Initializer {
             for (Route route : importer.getRouteById()) {
 
                 Index<Agency> agencies = importer.getAgencyById();
-                Agency agency = agencies.getValue(route.getAgencyId());
+                Agency agency = agencies.getValue(route.agencyId());
                 Index<Trip> trips = importer.getTripByRoute();
 
-                for (Trip trip : trips.values(route.getRouteId())) {
+                for (Trip trip : trips.values(route.routeId())) {
 
                     tripMonitor.start();
                     // log.info("TRIP {} " , trip.getTripId());
@@ -144,23 +132,23 @@ public class Initializer {
                     builder.recordedAtTime(now);
                     builder.bearing(0d);
                     builder.vehicleLocation(location.longitude(0d).latitude(0d).build());
-                    builder.vehicleJourneyName(trip.getTripId());
-                    builder.operatorRef(agency.getAgencyId());
-                    builder.directionName(trip.getTripHeadSign());
-                    builder.publishedLineName(route.getRouteLongName());
-                    builder.routeRef(trip.getTripId());
-                    builder.vehicleModes(new ArrayList<>(route.getRouteType().ordinal()));
-                    builder.journeyPatternName(trip.getTripId());
-                    builder.journeyPatternRef(trip.getTripId());
-                    builder.datedVehicleJourneyRef(trip.getTripId());
-                    builder.directionRef(trip.getDirectionId().name());
-                    builder.lineRef(route.getRouteId());
+                    builder.vehicleJourneyName(trip.tripId());
+                    builder.operatorRef(agency.agencyId());
+                    builder.directionName(trip.tripHeadSign());
+                    builder.publishedLineName(route.routeLongName());
+                    builder.routeRef(trip.tripId());
+                    builder.vehicleModes(new ArrayList<>(route.routeType().ordinal()));
+                    builder.journeyPatternName(trip.tripId());
+                    builder.journeyPatternRef(trip.tripId());
+                    builder.datedVehicleJourneyRef(trip.tripId());
+                    builder.directionRef(trip.directionId().name());
+                    builder.lineRef(route.routeId());
                     builder.monitored(true);
                     List<Document> calls = new ArrayList<>();
                     builder.calls(calls);
 
-                    Calendar calendar = calendars.getValue(trip.getServiceId());
-                    CalendarDate calendarDate = dates.getValue(trip.getServiceId());
+                    Calendar calendar = calendars.getValue(trip.serviceId());
+                    CalendarDate calendarDate = dates.getValue(trip.serviceId());
 
                     if (!filterByCalendar(calendar, calendarDate)) {
                         continue;
@@ -168,47 +156,47 @@ public class Initializer {
 
                     Index<StopTime> stopTimes = importer.getStopTimeByTrip();
 
-                    Iterator<StopTime> stopTimesIterator = stopTimes.values(trip.getTripId()).iterator();
+                    Iterator<StopTime> stopTimesIterator = stopTimes.values(trip.tripId()).iterator();
                     for (int i = 0; stopTimesIterator.hasNext(); i++) {
                         StopTime stopTime = stopTimesIterator.next();
                         stopTimeMonitor.start();
 
                         Index<Stop> stops = importer.getStopById();
-                        Stop stop = stops.getValue(stopTime.getStopId());
+                        Stop stop = stops.getValue(stopTime.stopId());
 
-                        lineRefs.put(stop.getStopId(), route.getRouteId());
+                        lineRefs.put(stop.stopId(), route.routeId());
 
-                        if (stop.locationType == LocationType.Stop && stop.parentStation != null
-                                && !stop.parentStation.isEmpty()) {
-                            Stop station = stops.getValue(stop.parentStation);
+                        if (stop.locationType() == LocationType.Stop && stop.parentStation() != null
+                                && !stop.parentStation().isEmpty()) {
+                            Stop station = stops.getValue(stop.parentStation());
                             if (station != null) {
-                                lineRefs.put(station.getStopId(), route.getRouteId());
+                                lineRefs.put(station.stopId(), route.routeId());
                             }
                         }
                         if (i == 0) {
-                            builder.originRef(stop.getStopId());
-                            builder.originName(stop.getStopName());
-                            builder.originAimedDepartureTime(stopTime.getDepartureTime().getTime());
-                            builder.originDisplay(stop.getStopName());
+                            builder.originRef(stop.stopId());
+                            builder.originName(stop.stopName());
+                            builder.originAimedDepartureTime(stopTime.departureTime().time());
+                            builder.originDisplay(stop.stopName());
                         }
 
                         if (!stopTimesIterator.hasNext()) {
-                            builder.destinationRef(stop.getStopId());
-                            builder.destinationName(stop.getStopName());
-                            builder.destinationAimedArrivalTime(stopTime.getArrivalTime().getTime());
-                            builder.destinationDisplay(stop.getStopName());
+                            builder.destinationRef(stop.stopId());
+                            builder.destinationName(stop.stopName());
+                            builder.destinationAimedArrivalTime(stopTime.arrivalTime().time());
+                            builder.destinationDisplay(stop.stopName());
 
-                            destinations.put(route.getRouteId(), Destination.builder().destinationRef(stop.getStopId())
-                                    .placeName(stop.getStopName()).build());
+                            destinations.put(route.routeId(), Destination.builder().destinationRef(stop.stopId())
+                                    .placeName(stop.stopName()).build());
                         }
 
-                        Date aimedArrivalTime = stopTime.getArrivalTime().getTime();
-                        Date aimedDepartureTime = stopTime.getDepartureTime().getTime();
+                        Date aimedArrivalTime = stopTime.arrivalTime().time();
+                        Date aimedDepartureTime = stopTime.departureTime().time();
                         calls.add(call.aimedArrivalTime(aimedArrivalTime).expectedArrivalTime(aimedArrivalTime)
                                 .actualArrivalTime(aimedArrivalTime).aimedDepartureTime(aimedDepartureTime)
                                 .expectedDepartureTime(aimedDepartureTime).actualDepartureTime(aimedDepartureTime)
-                                .destinationDisplay(stopTime.getStopHeadsign()).stopPointName(stop.getStopName())
-                                .stopPointRef(stopTime.getStopId()).order(stopTime.getStopSequence() + 1)
+                                .destinationDisplay(stopTime.stopHeadsign()).stopPointName(stop.stopName())
+                                .stopPointRef(stopTime.stopId()).order(stopTime.stopSequence() + 1)
                                 .departureStatus(CallStatusEnumeration.ON_TIME.ordinal())
                                 .arrivalStatus(CallStatusEnumeration.ON_TIME.ordinal()).build());
 
@@ -266,9 +254,9 @@ public class Initializer {
 
             for (Route route : importer.getRouteById()) {
                 routeMonitor.start();
-                LineDocument document = builder.recordedAtTime(now).lineRef(route.getRouteId())
-                        .lineName(route.getRouteLongName())
-                        .destinations(destinations.get(route.getRouteId()).stream().map(
+                LineDocument document = builder.recordedAtTime(now).lineRef(route.routeId())
+                        .lineName(route.routeLongName())
+                        .destinations(destinations.get(route.routeId()).stream().map(
                                 t -> destination.destinationRef(t.destinationRef()).placeName(t.placeName()).build())
                                 .collect(Collectors.toList()))
                         .build();
@@ -320,11 +308,14 @@ public class Initializer {
             for (Stop stop : importer.getStopById()) {
                 stopMonitor.start();
 
-                StopPointDocument document = builder.recordedAtTime(now).stopPointRef(stop.getStopId())
-                        .parent(stop.getParentStation()).stopName(stop.getStopName())
-                        .lineRefs(lineRefs.get(stop.getStopId()))
-                        .location(location.longitude(stop.getStopLon().doubleValue())
-                                .latitude(stop.getStopLat().doubleValue()).build())
+                StopPointDocument document = builder
+                        .recordedAtTime(now)
+                        .stopPointRef(stop.stopId())
+                        .parent(stop.parentStation())
+                        .stopName(stop.stopName())
+                        .lineRefs(lineRefs.get(stop.stopId()))
+                        .location(location.longitude(stop.stopLon().doubleValue())
+                                .latitude(stop.stopLat().doubleValue()).build())
                         .build();
 
                 documents.add(document);
@@ -367,25 +358,25 @@ public class Initializer {
             // 0)) {
             switch (day) {
                 case MONDAY:
-                    result = calendar.getMonday();
+                    result = calendar.monday();
                     break;
                 case TUESDAY:
-                    result = calendar.getTuesday();
+                    result = calendar.tuesday();
                     break;
                 case WEDNESDAY:
-                    result = calendar.getWednesday();
+                    result = calendar.wednesday();
                     break;
                 case THURSDAY:
-                    result = calendar.getThursday();
+                    result = calendar.thursday();
                     break;
                 case FRIDAY:
-                    result = calendar.getFriday();
+                    result = calendar.friday();
                     break;
                 case SATURDAY:
-                    result = calendar.getSaturday();
+                    result = calendar.saturday();
                     break;
                 case SUNDAY:
-                    result = calendar.getSunday();
+                    result = calendar.sunday();
                     break;
                 default:
                     break;
@@ -404,24 +395,30 @@ public class Initializer {
 
     private void extractArchive(Path path) throws IOException {
         Monitor monitor = MonitorFactory.start();
-
-        String temp = System.getProperty("java.io.tmpdir");
-        Files.createDirectories(path);
-        Path data = Paths.get(".", ARCHIVE);
-        InputStream in = new BufferedInputStream(Files.newInputStream(data));
-
-        // ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        // InputStream in = new BufferedInputStream(loader.getResourceAsStream(ARCHIVE));
-        File file = Paths.get(temp, OUTPUT_DIR, ARCHIVE).toFile();
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-        IOUtils.copy(in, out);
-        out.close();
-        in.close();
-        log.info(Color.YELLOW + "[DSU] copy file : " + file + " " + Color.NORMAL);
-
+        if (Files.notExists(path)) {
+            Files.createDirectories(path);
+        }
+        File file = Paths.get(".", ARCHIVE).toFile();
         ZipUtils.unzipArchive(file, path.toFile());
         log.info(Color.YELLOW + "[DSU] extract archive : " + path + " " + monitor.stop() + Color.NORMAL);
+    }
 
+    private boolean checkArchive() throws IOException {
+        String temp = System.getProperty("java.io.tmpdir");
+        Path path = Paths.get(temp, DATA_DIR);
+        Path version = path.resolve(VERSION_FILE);
+        if (Files.notExists(version)) {
+            extractArchive(path);
+            return true;
+        } else {
+            BasicFileAttributes attributes = Files.readAttributes(version, BasicFileAttributes.class);
+            FileTime creation = attributes.creationTime();
+            if (!DateUtils.isSameDay(new Date(), new Date(creation.toMillis()))) {
+                Files.delete(version);
+                return true;
+            }
+        }
+        return false;
     }
 
 }

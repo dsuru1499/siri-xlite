@@ -2,7 +2,7 @@ package siri_xlite.service.stop_monitoring;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-import io.reactivex.Flowable;
+import io.reactivex.rxjava3.core.Flowable;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import siri_xlite.common.*;
 import siri_xlite.model.VehicleJourneyDocument;
 import siri_xlite.repositories.EtagsRepository;
 import siri_xlite.repositories.VehicleJourneyRepository;
-import siri_xlite.service.stop_points_discovery.StopPointsDiscoverySubcriber;
 
 import java.util.ResourceBundle;
 
@@ -53,7 +52,7 @@ public class StopMonitoringService extends SiriService implements StopMonitoring
     }
 
     private void onComplete(StopMonitoringSubscriber subscriber, RoutingContext context) {
-        long lifespan = configuration.getEstimatedTimetable().getSMaxAge();
+        long lifespan = configuration.getStopMonitoring().getSMaxAge();
         cache.put(context.request().uri(), subscriber.getLastModified(), lifespan);
     }
 

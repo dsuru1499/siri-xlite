@@ -12,22 +12,24 @@ public class TimetableAlterationGroupMarshaller implements Marshaller<Document> 
 
     public static final String EXTRA_JOURNEY = "extraJourney";
     public static final String CANCELLATION = "cancellation";
-    public static final String DATED_DOCUMENT_REF = "datedDocumentRef";
-    public static final String FRAMED_DOCUMENT_REF = "framedDocumentRef";
+    public static final String DATED_VEHICLE_JOURNEY_REF = "datedVehicleJourneytRef";
+    public static final String FRAMED_VEHICLE_JOURNEY_REF = "framedVehicleJourneyRef";
     public static final String DATA_FRAME_REF = "dataFrameRef";
+    public static final String ANY = "any";
 
     @Getter
     private static final Marshaller<Document> instance = new TimetableAlterationGroupMarshaller();
 
     @Override
     public void write(JsonGenerator writer, Document source) {
-        // framedDocumentRef
-        writeObject(writer, FRAMED_DOCUMENT_REF, source.getString(DATED_DOCUMENT_REF), datedDocumentRef -> {
-            writeField(writer, DATED_DOCUMENT_REF, datedDocumentRef);
-            writeField(writer, DATA_FRAME_REF, LocalDateTime.now());
+
+        // FramedVehicleJourneyRef
+        writeObject(writer, FRAMED_VEHICLE_JOURNEY_REF, source.getString(DATED_VEHICLE_JOURNEY_REF), datedVehicleJourneyRef -> {
+            writeField(writer, DATED_VEHICLE_JOURNEY_REF, datedVehicleJourneyRef);
+            writeField(writer, DATA_FRAME_REF, ANY);
         });
 
-        // DocumentRef :string;
+        // vehicleJourneyRef :string;
 
         // set extraJourney
         writeBooleanField(writer, EXTRA_JOURNEY, source);

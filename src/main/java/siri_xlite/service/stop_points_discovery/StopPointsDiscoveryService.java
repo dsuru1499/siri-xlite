@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 import static siri_xlite.common.Messages.LOAD_FROM_BACKEND;
-import static siri_xlite.repositories.EtagsRepository.LIFESPAN;
 
 @Slf4j
 @Service

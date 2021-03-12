@@ -1,6 +1,6 @@
 package siri_xlite.service.estimated_timetable;
 
-import io.reactivex.exceptions.Exceptions;
+import io.reactivex.rxjava3.exceptions.Exceptions;
 import io.vertx.core.http.HttpServerRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;

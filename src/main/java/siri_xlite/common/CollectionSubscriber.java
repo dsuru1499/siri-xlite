@@ -1,6 +1,6 @@
 package siri_xlite.common;
 
-import io.reactivex.exceptions.Exceptions;
+import io.reactivex.rxjava3.exceptions.Exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 

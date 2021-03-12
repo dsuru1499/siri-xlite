@@ -2,9 +2,10 @@ package siri_xlite.common;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
-import io.reactivex.internal.subscribers.LambdaSubscriber;
+
+import io.reactivex.rxjava3.functions.Action;
+import io.reactivex.rxjava3.functions.Consumer;
+import io.reactivex.rxjava3.internal.subscribers.LambdaSubscriber;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;

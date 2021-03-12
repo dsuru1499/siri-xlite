@@ -36,6 +36,7 @@ public class Application {
     private void initialize() {
         Vertx vertx = Vertx.vertx();
         vertx.deployVerticle(siriVerticle);
+        initializer.initialize();
     }
 
     @Bean
